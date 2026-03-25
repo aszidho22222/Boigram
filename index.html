@@ -1,0 +1,1288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Smart E-Book Store</title>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@600;700&family=Nunito:wght@400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+    <style>
+        :root {
+            /* Premium Glowing Purple Theme - Light Mode */
+            --primary: #7000FF;     /* Deep Purple */
+            --secondary: #F202FF;   /* Glowing Magenta/Neon Purple */
+            --accent: #8A2BE2;      /* Blue Violet */
+            --bg-color: #F8F5FF;    /* Very Light Purple/White */
+            --card-bg: #ffffff;
+            --text-main: #2A1635;
+            --text-muted: #82728C;
+            --radius: 18px;
+            --glow: 0 4px 20px rgba(112, 0, 255, 0.3); /* Premium Glow */
+            --border-color: rgba(112, 0, 255, 0.1);
+        }
+
+        /* Global Dark Mode Theme */
+        body.dark-theme {
+            --bg-color: #12091A;    /* Very Dark Purple */
+            --card-bg: #1E112A;     /* Dark Card Purple */
+            --text-main: #EAE0F2;
+            --text-muted: #A393B3;
+            --glow: 0 4px 25px rgba(242, 2, 255, 0.4); /* Neon Glow for Dark Mode */
+            --border-color: rgba(242, 2, 255, 0.15);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-tap-highlight-color: transparent; transition: background-color 0.3s, color 0.3s; }
+        html, body { height: 100%; margin: 0; }
+        body {
+            font-family: 'Nunito', sans-serif; background-color: #000;
+            display: flex; justify-content: center; height: 100dvh; 
+            min-height: 100%; overflow: hidden;
+        }
+
+        h1, h2, h3, h4, .app-title { font-family: 'Montserrat', sans-serif; color: var(--text-main); }
+
+        #app-container {
+            width: 100%; max-width: 480px; height: 100%; max-height: 100dvh;
+            background: var(--bg-color); position: relative; display: flex;
+            flex-direction: column; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.8);
+        }
+
+        .grid-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding-bottom: 15px; }
+
+        .header {
+            padding: 20px; border-bottom-left-radius: 25px; border-bottom-right-radius: 25px;
+            position: relative; z-index: 10;
+        }
+        .header h2 { color: white; font-size: 22px; text-shadow: 1px 1px 3px rgba(0,0,0,0.2); }
+
+        .screen { display: none; flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 90px; }
+        .screen.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        ::-webkit-scrollbar { display: none; }
+
+        .card {
+            background: var(--card-bg); border-radius: var(--radius); padding: 16px;
+            margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border: 1px solid var(--border-color); transition: transform 0.2s, box-shadow 0.3s;
+        }
+        .card:active { transform: scale(0.98); }
+
+        /* Grids and Lists */
+        .grid-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding-bottom: 15px; }
+        
+        /* Recommendation Horizontal Scroll */
+        .horizontal-scroll {
+            display: flex; overflow-x: auto; gap: 12px; padding-bottom: 15px; scroll-snap-type: x mandatory; margin-bottom: 5px;
+        }
+        .horizontal-scroll .book-card { min-width: 150px; scroll-snap-align: start; flex: 0 0 auto; }
+
+        .book-card { 
+             display: flex; flex-direction: column; align-items: center; justify-content: space-between; height: 100%; padding: 12px; margin-bottom: 0; position: relative; cursor: pointer; background: var(--card-bg); border-radius: var(--radius); box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden;
+        }
+        .cover-wrapper { position: relative; width: 100%; margin-bottom: 8px;}
+        .book-cover { width: 100%; aspect-ratio: 4 / 5; border-radius: 12px; object-fit: cover; background: #eee; box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .book-info { flex: none; width: 100%; text-align: left; }
+        .book-info h3 { font-size: 14px; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 5px; }
+        .book-price { color: var(--secondary); font-weight: bold; font-size: 15px; text-shadow: 0 0 5px rgba(242, 2, 255, 0.3); }
+
+        .fav-btn {
+            background: var(--bg-color); border-radius: 50%; width: 30px; height: 30px; 
+            display: flex; align-items: center; justify-content: center; 
+            color: var(--text-muted); font-size: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+            transition: 0.3s; border: 1px solid var(--border-color);
+        }
+        .fav-btn.active { color: var(--secondary); box-shadow: 0 0 10px rgba(242, 2, 255, 0.4); border-color: var(--secondary); } 
+        .fav-btn:active { transform: scale(0.8); }
+
+        input, select, textarea {
+            width: 100%; padding: 14px; border-radius: var(--radius); border: 1.5px solid var(--border-color); margin-bottom: 15px; font-family: 'Nunito', sans-serif; font-size: 16px; outline: none; background: var(--bg-color); color: var(--text-main); transition: 0.3s;
+        }
+        input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 8px rgba(112, 0, 255, 0.2); }
+        input[type="checkbox"] { width: 20px; height: 20px; margin-bottom: 0; margin-right: 10px; display: inline-block; flex-shrink: 0; }
+        
+        .tnc-wrapper { display: flex; align-items: flex-start; text-align: left; margin-bottom: 20px; padding: 0 5px; }
+        .tnc-wrapper label { font-size: 13px; color: var(--text-muted); line-height: 1.5; cursor: pointer; }
+
+        .btn {
+            width: 100%; padding: 14px; border-radius: 25px; border: none; color: white; font-size: 16px; font-weight: bold; font-family: 'Montserrat', sans-serif; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.15); transition: 0.3s;
+        }
+        .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); box-shadow: var(--glow); }
+        .btn-secondary { background: var(--text-main); color: var(--bg-color); }
+        .btn-success { background: #00d2ff; background: linear-gradient(to right, #3a7bd5, #00d2ff); box-shadow: 0 4px 15px rgba(0, 210, 255, 0.4); }
+        .btn-danger { background: linear-gradient(135deg, #ff416c, #ff4b2b); box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4); }
+        .btn:active { transform: scale(0.95); }
+
+        .bottom-nav {
+            position: absolute; bottom: 0; left: 0; width: 100%; background: var(--card-bg); display: flex; justify-content: space-around; padding: 15px 0; border-top-left-radius: 25px; border-top-right-radius: 25px; box-shadow: 0 -4px 20px rgba(0,0,0,0.1); z-index: 20; border-top: 1px solid var(--border-color);
+        }
+        .nav-item { text-align: center; color: var(--text-muted); font-size: 20px; cursor: pointer; transition: 0.3s; flex: 1; }
+        .nav-item.active { color: var(--secondary); transform: translateY(-3px); text-shadow: 0 0 10px rgba(242, 2, 255, 0.4); }
+        .nav-label { font-size: 11px; display: block; margin-top: 4px; font-weight: bold; font-family: 'Nunito', sans-serif;}
+
+        #reading-screen { background: var(--bg-color); color: var(--text-main); z-index: 30; position: absolute; top:0; left:0; width:100%; height:100%; display:none; flex-direction: column; }
+        .read-tools { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: var(--card-bg); box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .read-content { flex: 1; padding: 20px; overflow-y: auto; font-size: 16px; line-height: 1.8; transition: 0.3s; white-space: pre-wrap; }
+        .read-footer { display: flex; justify-content: space-between; padding: 15px; background: var(--card-bg); box-shadow: 0 -2px 10px rgba(0,0,0,0.05); }
+
+        #ad-container { width: 100%; text-align: center; margin-bottom: 10px; display: none; }
+        .wallet-box { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 25px; border-radius: var(--radius); text-align: center; margin-bottom: 20px; box-shadow: var(--glow);}
+        .wallet-box h1 { color: white; font-size: 36px; margin-top: 10px; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
+
+        .modal-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 150; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(5px); }
+        .modal-content { background: var(--card-bg); border-radius: var(--radius); padding: 20px; width: 100%; max-height: 85vh; display: flex; flex-direction: column; box-shadow: var(--glow); animation: fadeIn 0.3s ease; border: 1px solid var(--border-color); position: relative;}
+        .tnc-text-area { overflow-y: auto; font-size: 13.5px; color: var(--text-main); line-height: 1.6; margin: 15px 0; padding-right: 5px; text-align: left; }
+
+        #toast { position: absolute; bottom: 90px; left: 50%; transform: translateX(-50%); background: var(--text-main); color: var(--bg-color); padding: 12px 25px; border-radius: 25px; font-size: 14px; font-weight: bold; display: none; z-index: 500; box-shadow: var(--glow);}
+        
+        .tag-badge { background: var(--bg-color); border: 1px solid var(--border-color); color: var(--secondary); padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+
+        /* --- Search Animation --- */
+        .top-bar-wrapper { display: flex; justify-content: space-between; align-items: center; padding: 5px 0 15px 0; gap: 10px; position: relative; z-index: 50; }
+        
+        .search-wrapper { display: flex; align-items: center; justify-content: flex-end; flex-grow: 1; position: relative; }
+        .search-input-anim { 
+            width: 0; opacity: 0; padding: 0; margin-bottom: 0 !important; 
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+            border: none; pointer-events: none; height: 45px; background: var(--card-bg); border-radius: 25px;
+        }
+        .search-input-anim.active { 
+            width: 100%; opacity: 1; padding: 0 15px 0 20px; margin-right: -40px; 
+            border: 1.5px solid var(--primary); pointer-events: auto; box-shadow: 0 2px 15px rgba(112,0,255,0.1);
+        }
+        .search-btn { 
+            background: var(--card-bg); border: 1px solid var(--border-color); font-size: 18px; color: var(--primary); 
+            cursor: pointer; width: 45px; height: 45px; border-radius: 50%; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: 0.3s; flex-shrink: 0; z-index: 2;
+        }
+
+        /* --- New Side Drawer Menu Styles --- */
+        #side-menu-drawer {
+            position: absolute; top: 0; left: -300px; width: 280px; max-width: 80%;
+            height: 100%; background: var(--card-bg); z-index: 300;
+            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 5px 0 25px rgba(0,0,0,0.15); display: flex; flex-direction: column;
+        }
+        #side-menu-drawer.open { left: 0; }
+        .drawer-overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.5); z-index: 299; backdrop-filter: blur(2px);
+            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
+        }
+        .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+        .drawer-header {
+            padding: 25px 20px; background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white; font-family: 'Montserrat', sans-serif; font-size: 22px; font-weight: bold;
+            display: flex; justify-content: space-between; align-items: center; box-shadow: var(--glow);
+        }
+        .drawer-item {
+            padding: 18px 20px; display: flex; align-items: center; gap: 15px;
+            cursor: pointer; color: var(--text-main); transition: 0.3s;
+            font-size: 16px; font-weight: bold; border-bottom: 1px solid var(--border-color);
+        }
+        .drawer-item:active { background: var(--border-color); }
+
+        /* Custom Category Dropdown */
+        .dropdown-menu { display: none; position: absolute; z-index: 100; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; box-shadow: var(--glow); overflow: hidden; animation: fadeIn 0.2s ease; }
+        .dropdown-item { padding: 12px 15px; cursor: pointer; color: var(--text-main); font-size: 14px; font-weight: bold; border-bottom: 1px solid var(--border-color); transition: 0.3s;}
+        .dropdown-item:active { background: var(--border-color); }
+        .custom-select-wrapper {
+            padding: 8px 15px; border-radius: 20px; border: 1px solid var(--border-color); background: var(--card-bg); color: var(--text-main); font-size: 13px; font-weight: bold; cursor: pointer; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 2px 8px rgba(0,0,0,0.05); min-width: 130px; transition: 0.3s;
+        }
+        .custom-select-wrapper:active { transform: scale(0.95); }
+        .cat-dropdown-menu { right: 0; left: auto; max-height: 200px; overflow-y: auto; width: 200px; top: 40px;}
+        
+        /* --- Full Screen Chat Q&A Styles --- */
+        .qa-full-screen {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: var(--bg-color); z-index: 250; display: none; flex-direction: column;
+            animation: fadeIn 0.3s ease;
+        }
+        .qa-header {
+            padding: 15px 20px; background: var(--card-bg); box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color);
+        }
+        .chat-area { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 20px;}
+        .chat-bubble { max-width: 85%; padding: 12px 18px; border-radius: 18px; font-size: 15px; line-height: 1.5; animation: fadeIn 0.3s ease; word-wrap: break-word; box-shadow: 0 2px 8px rgba(0,0,0,0.05);}
+        .chat-user { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border-bottom-right-radius: 4px; align-self: flex-end;}
+        .chat-bot { background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color); border-bottom-left-radius: 4px; align-self: flex-start; }
+        
+        /* Horizontal Scroll Questions */
+        .qa-horizontal-scroll {
+            display: flex; overflow-x: auto; gap: 12px; padding: 15px;
+            background: var(--card-bg); border-top: 1px solid var(--border-color);
+            scroll-snap-type: x mandatory; flex-wrap: nowrap; padding-bottom: 25px; /* extra padding for mobile */
+        }
+        .qa-horizontal-scroll::-webkit-scrollbar { display: none; }
+        .qa-btn-slide {
+            flex: 0 0 auto; min-width: 220px; max-width: 280px; scroll-snap-align: start;
+            background: var(--bg-color); border: 1.5px solid var(--secondary);
+            color: var(--secondary); padding: 12px 15px; border-radius: 15px;
+            font-size: 14px; font-weight: bold; cursor: pointer; text-align: left;
+            transition: 0.3s; white-space: normal; line-height: 1.4;
+        }
+        .qa-btn-slide:active { background: var(--secondary); color: white; transform: scale(0.98); }
+
+        .close-modal-icon { position: absolute; top: 15px; right: 15px; font-size: 20px; color: var(--text-muted); cursor: pointer; }
+
+        /* Social Buttons */
+        .social-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px; border-radius: 12px; margin-bottom: 10px; font-weight: bold; font-size: 15px; color: white; cursor: pointer; transition: 0.3s;}
+        .social-fb { background: #1877F2; } .social-tg { background: #2AABEE; }
+        .social-btn:active { transform: scale(0.98); opacity: 0.9;}
+    </style>
+</head>
+<body>
+
+<div id="app-container">
+    
+    <!-- Left Drawer Overlay -->
+    <div class="drawer-overlay" id="drawer-overlay" onclick="toggleMenu()"></div>
+    
+    <!-- Left Drawer Menu -->
+    <div id="side-menu-drawer">
+        <div class="drawer-header">
+            Smart Books 
+            <i class="fas fa-times" onclick="toggleMenu()" style="cursor: pointer; font-size: 24px;"></i>
+        </div>
+        <div style="flex: 1; overflow-y: auto;">
+            <div class="drawer-item" onclick="toggleGlobalDarkMode(); toggleMenu();">
+                <i class="fas fa-moon" id="menu-dark-icon" style="color: var(--primary); font-size: 20px; width: 30px; text-align: center;"></i> 
+                <span id="menu-dark-text">Dark Mode</span>
+            </div>
+            <div class="drawer-item" onclick="openModal('qa-modal'); toggleMenu();">
+                <i class="fas fa-comments" style="color: #f39c12; font-size: 20px; width: 30px; text-align: center;"></i> Support Q&A
+            </div>
+            <div class="drawer-item" onclick="openModal('report-modal'); toggleMenu();">
+                <i class="fas fa-flag" style="color: #e74c3c; font-size: 20px; width: 30px; text-align: center;"></i> Report Issue
+            </div>
+            <div class="drawer-item" onclick="openModal('community-modal'); toggleMenu();">
+                <i class="fas fa-users" style="color: #2ecc71; font-size: 20px; width: 30px; text-align: center;"></i> Community
+            </div>
+        </div>
+    </div>
+
+    <!-- Auth Screen -->
+    <div id="auth-screen" class="screen" style="padding-top: 100px;">
+        <h1 style="text-align: center; margin-bottom: 10px; color: var(--primary); text-shadow: var(--glow);">Smart Books</h1>
+        <p id="auth-title" style="text-align: center; color: var(--text-muted); margin-bottom: 30px;">Login to your account</p>
+        
+        <div id="login-box">
+            <input type="email" id="login-email" placeholder="Email Address">
+            <input type="password" id="login-pass" placeholder="Password">
+            <button class="btn btn-primary" onclick="login()">Login</button>
+            <p style="text-align: center; margin-top: 20px; font-size: 15px; color: var(--text-muted);">
+                Don't have an account? <span style="color: var(--secondary); font-weight: bold; cursor: pointer;" onclick="toggleAuth('register')">Sign Up</span>
+            </p>
+            <p style="text-align: center; margin-top: 15px; font-size: 14px; color: var(--text-muted);">
+                <span style="text-decoration: underline; cursor: pointer;" onclick="nav('home-screen')">Explore as Guest</span>
+            </p>
+        </div>
+
+        <div id="register-box" style="display: none;">
+            <input type="text" id="reg-name" placeholder="Full Name">
+            <input type="text" id="reg-username" placeholder="Username">
+            <input type="email" id="reg-email" placeholder="Email Address">
+            <input type="password" id="reg-pass" placeholder="Password">
+            
+            <div class="tnc-wrapper">
+                <input type="checkbox" id="agree-tnc">
+                <label for="agree-tnc">
+                    I agree to the <span style="color: var(--secondary); font-weight: bold; cursor: pointer; text-decoration: underline;" onclick="showTerms(); event.preventDefault();">Terms & Conditions</span> of the platform.
+                </label>
+            </div>
+
+            <button class="btn btn-primary" onclick="register()">Create Account</button>
+            <p style="text-align: center; margin-top: 20px; font-size: 15px; color: var(--text-muted);">
+                Already have an account? <span style="color: var(--secondary); font-weight: bold; cursor: pointer;" onclick="toggleAuth('login')">Login</span>
+            </p>
+            <p style="text-align: center; margin-top: 15px; font-size: 14px; color: var(--text-muted);">
+                <span style="text-decoration: underline; cursor: pointer;" onclick="nav('home-screen')">Explore as Guest</span>
+            </p>
+        </div>
+    </div>
+
+    <!-- Home Screen -->
+    <div id="home-screen" class="screen active">
+        <!-- Top Bar: Menu & Animated Search -->
+        <div class="top-bar-wrapper">
+            
+            <!-- Left: Hamburger Menu Button -->
+            <button class="search-btn" onclick="toggleMenu()">
+                <i class="fas fa-bars"></i>
+            </button>
+
+            <!-- Right: Animated Search Bar -->
+            <div class="search-wrapper">
+                <input type="text" id="search-box" class="search-input-anim" placeholder="Search books..." onkeyup="filterBooks()">
+                <button onclick="toggleSearch()" id="search-toggle-btn" class="search-btn">
+                    <i class="fas fa-search"></i>
+                </button>
+            </div>
+            
+        </div>
+        
+        <div id="ad-container"></div>
+
+        <!-- Recommended Section (Horizontal Scroll) -->
+        <div id="recommended-section" style="display: none;">
+            <h3 style="margin-bottom: 10px; font-size: 16px; color: var(--text-main);"><i class="fas fa-magic" style="color: var(--secondary); text-shadow: var(--glow);"></i> Recommended for You</h3>
+            <div id="recommended-list" class="horizontal-scroll"></div>
+        </div>
+
+        <!-- All Books & Custom Category Filter -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; position: relative;">
+            <h3 style="font-size: 16px; color: var(--text-main); margin: 0;">All Books</h3>
+            
+            <!-- Custom Category Dropdown -->
+            <div>
+                <div class="custom-select-wrapper" id="cat-toggle-btn" onclick="toggleCategoryMenu()">
+                    <span id="selected-cat-text">All Categories</span>
+                    <i class="fas fa-chevron-down" style="font-size: 11px; margin-left: 8px;"></i>
+                </div>
+                <div id="custom-cat-menu" class="dropdown-menu cat-dropdown-menu">
+                    <!-- Categories will load here -->
+                </div>
+            </div>
+        </div>
+        <div id="books-list" class="grid-list"></div>
+    </div>
+
+    <!-- Favorites Screen -->
+    <div id="fav-screen" class="screen" style="padding-top: 20px;">
+        <div id="fav-list" class="grid-list"></div>
+    </div>
+
+    <!-- Wallet Screen -->
+    <div id="wallet-screen" class="screen" style="padding-top: 20px;">
+        <div class="wallet-box">
+            <p style="font-size: 14px;">Available Balance</p>
+            <h1><i class="fas fa-coins"></i> <span id="user-balance">0</span></h1>
+        </div>
+        <div class="card">
+            <h3>Deposit Coins</h3>
+            <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 15px;">Deposit money to get coins.</p>
+            <button class="btn btn-primary" onclick="openPaymentScreen()">Make a Deposit</button>
+        </div>
+        <h4 style="margin: 10px 0 10px 5px;">Recent Requests</h4>
+        <div id="deposit-history"></div>
+    </div>
+
+    <!-- Payment Detail Screen -->
+    <div id="payment-screen" class="screen">
+        <button class="btn btn-secondary" style="width: auto; padding: 8px 15px; margin-bottom: 15px;" onclick="nav('wallet-screen')"><i class="fas fa-arrow-left"></i> Back</button>
+        <div class="card">
+            <h3 style="color: var(--secondary); margin-bottom: 10px;">Payment Instructions</h3>
+            <div id="admin-payment-info" style="padding: 15px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 12px; font-size: 15px; color: var(--text-main);">Loading...</div>
+        </div>
+        <div class="card">
+            <h3 style="margin-bottom: 15px;">Submit Details</h3>
+            <select id="pay-method" style="padding: 12px;">
+                <option value="" disabled selected>Select Payment Method</option>
+                <option value="bKash">bKash</option>
+                <option value="Nagad">Nagad</option>
+                <option value="Rocket">Rocket</option>
+            </select>
+            <input type="number" id="pay-amount" placeholder="Amount Sent (Min: 50)">
+            <input type="text" id="pay-trxid" placeholder="Transaction ID (TrxID)">
+            <button class="btn btn-primary" onclick="submitDepositRequest()">Submit Request</button>
+        </div>
+    </div>
+
+    <!-- Book Detail Screen -->
+    <div id="detail-screen" class="screen">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+            <button class="btn btn-secondary" style="width: auto; padding: 8px 15px; margin: 0;" onclick="nav('home-screen')"><i class="fas fa-arrow-left"></i> Back</button>
+            <button class="btn" style="width: auto; padding: 8px 15px; margin: 0; background: var(--bg-color); color: var(--primary); border: 1px solid var(--primary); border-radius: 25px; box-shadow: none;" onclick="copyBookLink()"><i class="fas fa-share-alt"></i> Share</button>
+        </div>
+        <div class="card" style="text-align: center;">
+            <img id="det-cover" src="" style="width: 140px; aspect-ratio: 4/5; object-fit: cover; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.15);">
+            <h2 id="det-title" style="margin-bottom: 5px;">Book Title</h2>
+            <p id="det-author" style="color: var(--text-muted); margin-bottom: 15px;">Author Name</p>
+            
+            <!-- Category & Word Count -->
+            <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">
+                <span id="det-category" style="background: var(--bg-color); border: 1px solid var(--border-color); padding: 5px 12px; border-radius: 15px; margin-right: 5px; font-weight: bold; color: var(--primary);">Category</span>
+                <span id="det-words">0 Words</span>
+            </div>
+
+            <!-- Hashtags -->
+            <div id="det-tags" style="margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 5px; justify-content: center;"></div>
+
+            <!-- Book Rating Display -->
+            <div id="det-rating-display" style="color: #f39c12; margin: 5px 0 15px 0; font-size: 15px;"></div>
+
+            <h1 style="color: var(--secondary); margin: 15px 0; text-shadow: var(--glow);"><span id="coin-icon"><i class="fas fa-coins"></i></span> <span id="det-price">0</span></h1>
+            <p id="det-desc" style="font-size: 14px; text-align: left; margin-bottom: 20px; line-height: 1.6; color: var(--text-muted);"></p>
+            
+            <div id="voucher-box" style="background: var(--bg-color); border: 1px solid var(--border-color); padding: 15px; border-radius: 12px; margin-bottom: 15px;">
+                <input type="text" id="voucher-code" placeholder="Voucher Code (Optional)" style="margin-bottom: 10px; border-radius: 10px;">
+                <button class="btn btn-secondary" onclick="applyVoucher()">Apply Discount</button>
+            </div>
+            
+            <button class="btn btn-primary" id="buy-btn" onclick="buyBook()">Buy Now</button>
+
+            <!-- Book Rating System -->
+            <div id="give-rating-box" style="display: none; margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--border-color);">
+                <h4 style="margin-bottom: 10px; color: var(--text-main);">Rate this Book</h4>
+                <div id="star-rating" style="font-size: 28px; display: flex; justify-content: center; gap: 10px; cursor: pointer;">
+                    <i class="fas fa-star" onclick="submitRating(1)"></i>
+                    <i class="fas fa-star" onclick="submitRating(2)"></i>
+                    <i class="fas fa-star" onclick="submitRating(3)"></i>
+                    <i class="fas fa-star" onclick="submitRating(4)"></i>
+                    <i class="fas fa-star" onclick="submitRating(5)"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- My Library Screen -->
+    <div id="library-screen" class="screen" style="padding-top: 20px;">
+        <div id="library-list" class="grid-list"></div>
+    </div>
+
+    <!-- Profile Screen -->
+    <div id="profile-screen" class="screen" style="padding-top: 20px;">
+        <div class="card" style="text-align: center; padding: 30px 15px;">
+            <div style="background: var(--bg-color); border: 2px solid var(--primary); width: 85px; height: 85px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 15px auto; font-size: 35px; color: var(--primary); box-shadow: var(--glow);"><i class="fas fa-user-circle"></i></div>
+            
+            <p style="color: var(--secondary); font-size: 14px; font-weight: bold; margin-bottom: 25px; text-transform: uppercase; text-shadow: var(--glow);" id="profile-role">USER</p>
+            
+            <!-- Editable Profile Info Box -->
+            <div style="text-align: left; background: var(--bg-color); border: 1px solid var(--border-color); padding: 15px; border-radius: 12px; margin-bottom: 25px;">
+                
+                <label style="font-size: 13px; color: var(--text-muted); margin-bottom: 5px; display: block; font-weight: bold;"><i class="fas fa-user"></i> Full Name</label>
+                <input type="text" id="edit-profile-name" placeholder="Your Name" style="margin-bottom: 15px; padding: 12px; font-size: 15px;">
+
+                <label style="font-size: 13px; color: var(--text-muted); margin-bottom: 5px; display: block; font-weight: bold;"><i class="fas fa-at"></i> Username</label>
+                <input type="text" id="edit-profile-username" placeholder="Username" style="margin-bottom: 15px; padding: 12px; font-size: 15px;">
+
+                <label style="font-size: 13px; color: var(--text-muted); margin-bottom: 5px; display: block; font-weight: bold;"><i class="fas fa-envelope"></i> Email Address</label>
+                <input type="email" id="edit-profile-email" readonly style="margin-bottom: 15px; padding: 12px; font-size: 15px; opacity: 0.7; cursor: not-allowed; background: var(--card-bg);">
+
+                <label style="font-size: 13px; color: var(--text-muted); margin-bottom: 5px; display: block; font-weight: bold;"><i class="fas fa-lock"></i> Password</label>
+                <div style="position: relative; margin-bottom: 15px;">
+                    <input type="password" id="edit-profile-password" placeholder="Loading..." style="margin-bottom: 0; padding: 12px; padding-right: 40px; font-size: 15px; width: 100%;">
+                    <i class="fas fa-eye" id="toggle-pwd-icon" onclick="togglePasswordVisibility()" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); cursor: pointer; font-size: 16px;"></i>
+                </div>
+
+                <button class="btn btn-success" onclick="updateProfile()" style="padding: 12px; font-size: 15px; border-radius: 12px;"><i class="fas fa-save"></i> Save Changes</button>
+            </div>
+
+            <!-- Smaller Logout Button with Confirmation -->
+            <button class="btn btn-danger" onclick="logout()" style="width: auto; padding: 10px 20px; font-size: 14px; margin: 0 auto; display: inline-flex; align-items: center; gap: 8px; border-radius: 20px;">
+                <i class="fas fa-sign-out-alt"></i> Logout Securely
+            </button>
+        </div>
+    </div>
+
+    <!-- Reading Mode Screen -->
+    <div id="reading-screen">
+        <div class="read-tools">
+            <button onclick="closeReading()" style="background:none;border:none;font-size:20px;color:inherit;cursor:pointer;"><i class="fas fa-arrow-left"></i></button>
+            <div id="read-page-indicator" style="font-size:14px; font-weight:bold; color:var(--secondary); text-shadow: var(--glow);">Page 1/1</div>
+            <div>
+                <button onclick="changeFontSize(-2)" style="background:none;border:none;font-size:18px;margin-right:10px;color:inherit;cursor:pointer;">A-</button>
+                <button onclick="changeFontSize(2)" style="background:none;border:none;font-size:18px;margin-right:15px;color:inherit;cursor:pointer;">A+</button>
+                <button onclick="toggleGlobalDarkMode()" style="background:none;border:none;font-size:20px;color:inherit;cursor:pointer;"><i class="fas fa-moon" id="read-dark-icon"></i></button>
+            </div>
+        </div>
+        <div id="read-content" class="read-content"></div>
+        <div class="read-footer">
+            <button onclick="prevReadPage()" class="btn btn-secondary" style="width: 48%; border-radius: 12px;"><i class="fas fa-chevron-left"></i> Prev</button>
+            <button onclick="nextReadPage()" class="btn btn-primary" style="width: 48%; border-radius: 12px;">Next <i class="fas fa-chevron-right"></i></button>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav" id="bottom-nav" style="display: flex;">
+        <div class="nav-item active" onclick="nav('home-screen')"><i class="fas fa-home"></i><span class="nav-label">Home</span></div>
+        <div class="nav-item" onclick="nav('fav-screen')"><i class="fas fa-heart"></i><span class="nav-label">Favs</span></div>
+        <div class="nav-item" onclick="nav('library-screen')"><i class="fas fa-book-open"></i><span class="nav-label">Library</span></div>
+        <div class="nav-item" onclick="nav('wallet-screen')"><i class="fas fa-wallet"></i><span class="nav-label">Wallet</span></div>
+        <div class="nav-item" onclick="nav('profile-screen')"><i class="fas fa-user"></i><span class="nav-label">Profile</span></div>
+    </div>
+
+    <!-- Modals -->
+    <!-- 1. T&C Modal -->
+    <div id="tnc-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h3 style="text-align: center; color: var(--primary);">শর্তাবলী</h3>
+            <div class="tnc-text-area">
+                <p>আমাদের প্ল্যাটফর্ম থেকে ই-বুক পড়ার জন্য আপনাকে নিচের নীতিমালাগুলো মেনে চলতে হবে:</p><br>
+                <p><b>১. ব্যক্তিগত ব্যবহার:</b> কেনা প্রতিটি ই-বুক শুধুমাত্র আপনার ব্যক্তিগত ব্যবহারের জন্য। একটি অ্যাকাউন্ট থেকে কেনা বই অন্য কাউকে শেয়ার করা, সোশ্যাল মিডিয়ায় আপলোড করা বা বাণিজ্যিক উদ্দেশ্যে ব্যবহার করা আইনত দণ্ডনীয় অপরাধ।</p><br>
+                <p><b>২. কপিরাইট সুরক্ষা:</b> ই-বুকের টেক্সট কপি করা বা স্ক্রিনশট নিয়ে ছড়িয়ে দেওয়া থেকে বিরত থাকুন। আমাদের সিস্টেমে কপিরাইট সুরক্ষার ব্যবস্থা রয়েছে এবং আইন ভঙ্গ করলে আপনার অ্যাকাউন্ট আজীবনের জন্য ব্লক করা হবে।</p><br>
+                <p><b>৩. রিফান্ড পলিসি:</b> যেহেতু ই-বুক একটি ডিজিটাল পণ্য, তাই একবার কেনা হয়ে গেলে বা পড়ার এক্সেস পেয়ে গেলে সাধারণত কোনো টাকা ফেরত (Refund) দেওয়া হয় কেজি দেওয়া হয় না। তবে টেকনিক্যাল কোনো সমস্যার কারণে বই দেখতে না পারলে আমাদের সাপোর্টে যোগাযোগ করুন।</p><br>
+                <p><b>৪. পেমেন্ট ভেরিফিকেশন:</b> পেমেন্ট করার পর সঠিক ট্রানজেকশন আইডি প্রদান করুন। ভুল তথ্য দিয়ে বই পাওয়ার চেষ্টা করলে আপনার অ্যাকাউন্টটি স্থগিত করা হতে পারে।</p><br>
+            </div>
+            <button class="btn btn-primary" onclick="acceptTerms()">আমি একমত (I Agree)</button>
+            <button class="btn btn-secondary" style="margin-top: 10px;" onclick="closeModal('tnc-modal')">বন্ধ করুন</button>
+        </div>
+    </div>
+
+    <!-- 2. FULL SCREEN Q&A Modal -->
+    <div id="qa-modal" class="qa-full-screen">
+        <div class="qa-header">
+            <div>
+                <h3 style="color: var(--primary); margin: 0; font-family: 'Montserrat', sans-serif;"><i class="fas fa-robot"></i> Auto Support</h3>
+                <p style="font-size: 11px; color: var(--text-muted); margin: 0; font-weight: bold;">Auto-clears in 5 mins</p>
+            </div>
+            <i class="fas fa-times" style="font-size: 24px; color: var(--text-muted); cursor: pointer;" onclick="closeModal('qa-modal')"></i>
+        </div>
+        
+        <div class="chat-area" id="chat-history">
+            <div class="chat-bubble chat-bot">Hello! How can I help you today? Please swipe and tap a question below.</div>
+        </div>
+        
+        <!-- Horizontal Scrollable Questions -->
+        <div id="qa-buttons" class="qa-horizontal-scroll">
+            <!-- Buttons injected via JS -->
+        </div>
+    </div>
+
+    <!-- 3. Report Modal -->
+    <div id="report-modal" class="modal-overlay">
+        <div class="modal-content">
+            <i class="fas fa-times close-modal-icon" onclick="closeModal('report-modal')"></i>
+            <h3 style="text-align: center; color: #e74c3c; margin-bottom: 15px;"><i class="fas fa-flag"></i> Report an Issue</h3>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px; text-align: center;">Have a problem with a book, payment, or app? Describe it below and admin will check it.</p>
+            
+            <textarea id="report-text" rows="5" placeholder="Write your problem here..." style="resize: none;"></textarea>
+            
+            <button class="btn btn-danger" onclick="submitReport()"><i class="fas fa-paper-plane"></i> Submit Report</button>
+        </div>
+    </div>
+
+    <!-- 4. Community Modal (Dynamic Links) -->
+    <div id="community-modal" class="modal-overlay">
+        <div class="modal-content" style="text-align: center;">
+            <i class="fas fa-times close-modal-icon" onclick="closeModal('community-modal')"></i>
+            <h3 style="color: #2ecc71; margin-bottom: 5px;"><i class="fas fa-users"></i> Our Community</h3>
+            <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 25px;">Join us to stay updated and get support.</p>
+            
+            <div class="social-btn social-fb" onclick="openCommunityLink('facebook')"><i class="fab fa-facebook-f"></i> Facebook Group</div>
+            <div class="social-btn social-tg" onclick="openCommunityLink('telegram')"><i class="fab fa-telegram-plane"></i> Telegram Channel</div>
+        </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast">Message</div>
+</div>
+
+<script>
+    const firebaseConfig = {
+        apiKey: "AIzaSyA0bpUzrk_umoC1MymKfhV2_x_qd7WfDwk",
+        authDomain: "e-book-bd-41a42.firebaseapp.com",
+        databaseURL: "https://e-book-bd-41a42-default-rtdb.asia-southeast1.firebasedatabase.app",
+        projectId: "e-book-bd-41a42",
+        storageBucket: "e-book-bd-41a42.firebasestorage.app",
+        messagingSenderId: "782336259676",
+        appId: "1:782336259676:web:116cc61b304ac31b885899"
+    };
+    
+    if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+    const db = firebase.database();
+    const auth = firebase.auth();
+
+    let currentUser = null, userData = null, currentBookId = null, currentBookData = null;
+    let voucherData = null, finalPrice = 0, fontSize = 16, allBooks = [], adminPaymentSettings = null; 
+    let currentCategory = ""; 
+
+    let currentReadingPages = [];
+    let currentReadingIndex = 0;
+
+    // --- Dynamic System Settings Variables ---
+    let sysWriterPercent = 50, sysAffiliatePercent = 20, sysUserDiscount = 10;
+    let blockedWords = [];
+    let communityLinks = { facebook: "https://facebook.com", telegram: "https://t.me" };
+
+    // ==========================================
+    // SYSTEM SETTINGS LOAD (Fixes Applied)
+    // ==========================================
+    function loadSystemSettings() {
+        // Dynamic Commissions & Discounts
+        db.ref('settings/commissions').on('value', snap => {
+            if(snap.exists()) {
+                let data = snap.val();
+                sysWriterPercent = data.writerPercent || 50;
+                sysAffiliatePercent = data.affiliatePercent || 20;
+                sysUserDiscount = data.userDiscountPercent || 10;
+            }
+        });
+        
+        // Blocked Words Checker
+        db.ref('settings/blockedWords').on('value', snap => {
+            blockedWords = [];
+            if(snap.exists()) { snap.forEach(child => blockedWords.push(child.val().toLowerCase())); }
+        });
+        
+        // Dynamic Community Links
+        db.ref('settings/community_user').on('value', snap => {
+            if(snap.exists()) {
+                let data = snap.val();
+                communityLinks.facebook = data.facebook || "https://facebook.com";
+                communityLinks.telegram = data.telegram || "https://t.me";
+            }
+        });
+    }
+
+    loadSystemSettings(); // Initialize immediately for guest users as well
+
+    function openCommunityLink(platform) {
+        window.open(communityLinks[platform], '_blank');
+    }
+
+    // ==========================================
+    // GLOBAL DARK MODE & MENU SYSTEM
+    // ==========================================
+    function applySavedTheme() {
+        const isDark = localStorage.getItem('smart_ebook_theme') === 'dark';
+        if(isDark) document.body.classList.add('dark-theme');
+        updateThemeIcons(isDark);
+    }
+
+    function toggleGlobalDarkMode() {
+        document.body.classList.toggle('dark-theme');
+        const isDark = document.body.classList.contains('dark-theme');
+        localStorage.setItem('smart_ebook_theme', isDark ? 'dark' : 'light');
+        updateThemeIcons(isDark);
+    }
+
+    function updateThemeIcons(isDark) {
+        const menuIcon = document.getElementById('menu-dark-icon');
+        const menuText = document.getElementById('menu-dark-text');
+        const readIcon = document.getElementById('read-dark-icon');
+        
+        if(isDark) {
+            if(menuIcon) { menuIcon.className = 'fas fa-sun'; menuText.innerText = 'Light Mode'; }
+            if(readIcon) readIcon.className = 'fas fa-sun';
+        } else {
+            if(menuIcon) { menuIcon.className = 'fas fa-moon'; menuText.innerText = 'Dark Mode'; }
+            if(readIcon) readIcon.className = 'fas fa-moon';
+        }
+    }
+
+    function toggleMenu() {
+        const drawer = document.getElementById('side-menu-drawer');
+        const overlay = document.getElementById('drawer-overlay');
+        drawer.classList.toggle('open');
+        overlay.classList.toggle('open');
+    }
+
+    function toggleCategoryMenu() {
+        const menu = document.getElementById('custom-cat-menu');
+        menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+    }
+
+    document.addEventListener('click', function(e) {
+        const catMenu = document.getElementById('custom-cat-menu');
+        const catBtn = document.getElementById('cat-toggle-btn');
+        if(catMenu && catMenu.style.display === 'block' && !catMenu.contains(e.target) && !catBtn.contains(e.target)) {
+            catMenu.style.display = 'none';
+        }
+    });
+    
+    applySavedTheme();
+
+    // ==========================================
+    // MODALS HANDLING & SYSTEM LOGIC
+    // ==========================================
+    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
+    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+    
+    let chatTimer = null;
+    const defaultQA = [
+        { q: "How to buy a book? What are the steps?", a: "To buy a book, go to the book detail page, deposit coins if needed, and click 'Buy Now'." },
+        { q: "How to deposit coins?", a: "Go to the Wallet screen, copy the admin payment number, send money, and submit your TrxID." }
+    ];
+
+    function loadQA() {
+        // Corrected path to Admin's targeted 'user' app questions
+        db.ref('settings/qa/user').on('value', snap => {
+            let qaData = snap.exists() ? snap.val() : defaultQA;
+            let btnHtml = '';
+            let qaList = Array.isArray(qaData) ? qaData : Object.values(qaData);
+            
+            qaList.forEach(item => {
+                let safeQ = item.q.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                let safeA = item.a.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                btnHtml += `<button class="qa-btn-slide" onclick="sendQA('${safeQ}', '${safeA}')">${item.q}</button>`;
+            });
+            document.getElementById('qa-buttons').innerHTML = btnHtml;
+        });
+    }
+
+    function sendQA(q, a) {
+        const chatBox = document.getElementById('chat-history');
+        chatBox.innerHTML += `<div class="chat-bubble chat-user">${q}</div>`;
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        setTimeout(() => {
+            chatBox.innerHTML += `<div class="chat-bubble chat-bot">${a}</div>`;
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }, 600);
+
+        clearTimeout(chatTimer);
+        chatTimer = setTimeout(() => {
+            chatBox.innerHTML = `<div class="chat-bubble chat-bot">Hello! How can I help you today? Please swipe and tap a question below.</div>`;
+            if(document.getElementById('qa-modal').style.display === 'flex') showToast("Chat history auto-cleared.");
+        }, 5 * 60 * 1000);
+    }
+
+    // Reports with Role and Blocked Words check
+    function submitReport() {
+        const text = document.getElementById('report-text').value.trim();
+        if(!text) return showToast("Report text cannot be empty!");
+        if(!currentUser) return showToast("Please login to submit reports.");
+
+        // Checking Blocked Words
+        let lowerText = text.toLowerCase();
+        let hasBlockedWord = blockedWords.some(word => lowerText.includes(word));
+        if(hasBlockedWord) return showToast("Warning: Please avoid using inappropriate words.");
+
+        db.ref('reports').push({
+            uid: currentUser.uid,
+            email: currentUser.email,
+            role: 'user', // Assigned Role dynamically
+            message: text,
+            timestamp: Date.now(),
+            status: 'pending'
+        }).then(() => {
+            showToast("Report submitted! Admin will review.");
+            document.getElementById('report-text').value = '';
+            closeModal('report-modal');
+        }).catch(e => showToast("Error: " + e.message));
+    }
+
+    loadCategories(); loadBooks(); checkAds(); loadQA();
+
+    function toggleSearch() {
+        const searchBox = document.getElementById('search-box');
+        const iconBtn = document.getElementById('search-toggle-btn');
+        
+        if(!searchBox.classList.contains('active')) {
+            searchBox.classList.add('active'); searchBox.focus();
+            iconBtn.innerHTML = '<i class="fas fa-times"></i>'; 
+            iconBtn.style.color = 'var(--secondary)'; iconBtn.style.borderColor = 'var(--primary)';
+        } else {
+            searchBox.classList.remove('active'); searchBox.value = ''; filterBooks(); 
+            iconBtn.innerHTML = '<i class="fas fa-search"></i>'; 
+            iconBtn.style.color = 'var(--primary)'; iconBtn.style.borderColor = 'var(--border-color)';
+        }
+    }
+
+    function loadCategories() {
+        db.ref('settings/categories').on('value', snap => {
+            let menu = document.getElementById('custom-cat-menu');
+            let html = `<div class="dropdown-item" onclick="selectCategory('', 'All Categories')">All Categories</div>
+                        <div class="dropdown-item" onclick="selectCategory('_FREE_', '🎁 Free Books')">🎁 Free Books</div>`;
+            if(snap.exists()) {
+                snap.forEach(child => { 
+                    let catName = child.val().name;
+                    html += `<div class="dropdown-item" onclick="selectCategory('${catName}', '${catName}')">${catName}</div>`; 
+                });
+            } else {
+                html += `<div class="dropdown-item" onclick="selectCategory('General', 'General')">General</div>
+                         <div class="dropdown-item" onclick="selectCategory('Novel', 'Novel')">Novel</div>`;
+            }
+            menu.innerHTML = html;
+        });
+    }
+
+    function selectCategory(val, text) {
+        currentCategory = val;
+        document.getElementById('selected-cat-text').innerText = text;
+        document.getElementById('custom-cat-menu').style.display = 'none';
+        filterBooks();
+    }
+
+    function getBookRatingInfo(book) {
+        if (!book.ratings) return { avg: 0, count: 0 };
+        let total = 0, count = 0;
+        for (let uid in book.ratings) { total += book.ratings[uid]; count++; }
+        return { avg: (total / count).toFixed(1), count: count };
+    }
+
+    function renderUserRating() {
+        if (!currentUser || !currentBookData) return;
+        let userRating = (currentBookData.ratings && currentBookData.ratings[currentUser.uid]) ? currentBookData.ratings[currentUser.uid] : 0;
+        let stars = document.getElementById('star-rating').children;
+        for(let i = 0; i < 5; i++) {
+            if(i < userRating) { stars[i].classList.replace('far', 'fas'); stars[i].style.color = '#f39c12'; } 
+            else { stars[i].classList.replace('fas', 'far'); stars[i].style.color = 'var(--text-muted)'; }
+        }
+    }
+
+    function submitRating(rating) {
+        if(!currentUser || !currentBookId) return;
+        db.ref(`books/${currentBookId}/ratings/${currentUser.uid}`).set(rating).then(() => { showToast("Rating saved! ⭐"); }).catch(err => showToast("Error saving rating: " + err.message));
+    }
+
+    function showTerms() { openModal('tnc-modal'); }
+    function acceptTerms() { document.getElementById('agree-tnc').checked = true; closeModal('tnc-modal'); }
+
+    function toggleAuth(mode) {
+        if(mode === 'register') {
+            document.getElementById('login-box').style.display = 'none'; document.getElementById('register-box').style.display = 'block'; document.getElementById('auth-title').innerText = "Create a new account";
+        } else {
+            document.getElementById('register-box').style.display = 'none'; document.getElementById('login-box').style.display = 'block'; document.getElementById('auth-title').innerText = "Login to your account";
+        }
+    }
+
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            currentUser = user; loadUserData(); loadLibrary(); loadAdminPaymentSettings(); 
+            document.getElementById('bottom-nav').style.display = 'flex';
+            
+            // --- SHARE BOOK DEEP LINK CHECK ---
+            const params = new URLSearchParams(window.location.search);
+            const bookParam = params.get('book');
+            if (bookParam) {
+                window.pendingBookOpen = bookParam; // loadBooks() এর ভেতরে এটি প্রসেস করা হবে
+            } else if(document.getElementById('auth-screen').classList.contains('active')){ 
+                nav('home-screen'); 
+            }
+        } else {
+            currentUser = null; userData = null; renderBooks(); 
+            document.getElementById('bottom-nav').style.display = 'flex'; 
+            
+            const params = new URLSearchParams(window.location.search);
+            const bookParam = params.get('book');
+            if (bookParam) {
+                window.pendingBookOpen = bookParam;
+                showToast("Please login to view this book.");
+                nav('auth-screen'); // লিংক দিয়ে আসলে আগে লগিন করতে হবে
+            } else {
+                nav('home-screen'); 
+            }
+        }
+    });
+
+    function register() {
+        const name = document.getElementById('reg-name').value.trim();
+        const username = document.getElementById('reg-username').value.trim();
+        const email = document.getElementById('reg-email').value.trim();
+        const pass = document.getElementById('reg-pass').value;
+        const isAgreed = document.getElementById('agree-tnc').checked;
+        
+        if(!name) return showToast("Enter your full name!"); 
+        if(!username) return showToast("Enter a username!"); 
+        if(!email || !pass) return showToast("Enter email and password!"); 
+        if(!isAgreed) return showToast("Please agree to the Terms & Conditions first!");
+        
+        auth.createUserWithEmailAndPassword(email, pass).then(res => {
+            db.ref('users/' + res.user.uid).set({ name: name, username: username, email: email, password: pass, coins: 0, role: 'user', joinedAt: Date.now(), status: 'active' }); 
+            showToast("Registration Successful!");
+        }).catch(err => showToast(err.message));
+    }
+
+    function login() {
+        const email = document.getElementById('login-email').value.trim(); const pass = document.getElementById('login-pass').value;
+        if(!email || !pass) return showToast("Enter email and password!");
+        auth.signInWithEmailAndPassword(email, pass).then(() => showToast("Logged in!")).catch(err => showToast(err.message));
+    }
+    
+    function logout() { 
+        if(confirm("Are you sure you want to logout?")) {
+            auth.signOut(); 
+        }
+    }
+
+    function loadUserData() {
+        db.ref('users/' + currentUser.uid).on('value', snap => {
+            if(snap.exists()){ 
+                userData = snap.val(); 
+                
+                // Blocked status check logic applied
+                if(userData.status === 'blocked') {
+                    showToast("Your account has been BLOCKED by Admin.");
+                    auth.signOut();
+                    return;
+                }
+
+            } else { userData = { name: "User", username: "", email: currentUser.email, coins: 0, favorites: {}, library: {} }; }
+            document.getElementById('user-balance').innerText = userData.coins || 0;
+            
+            document.getElementById('edit-profile-name').value = userData.name || 'User'; 
+            document.getElementById('edit-profile-username').value = userData.username || ''; 
+            document.getElementById('edit-profile-email').value = userData.email || currentUser.email;
+            document.getElementById('profile-role').innerText = userData.role || 'user';
+            document.getElementById('edit-profile-password').value = userData.password || '';
+            renderBooks();
+        });
+        
+        db.ref('depositRequests').orderByChild('uid').equalTo(currentUser.uid).on('value', snap => {
+            let html = ''; let reqs = []; snap.forEach(child => { reqs.push(child.val()); });
+            reqs.reverse().forEach(d => {
+                let color = d.status === 'pending' ? '#f39c12' : (d.status === 'approved' ? '#2ecc71' : '#e74c3c');
+                html += `<div class="card" style="padding:12px; display:flex; justify-content:space-between; align-items:center;">
+                    <div><span style="font-weight:bold; color:var(--text-main);"><i class="fas fa-coins text-warning" style="color:#f39c12;"></i> ${d.amount}</span>${d.method ? `<br><small style="color: var(--text-muted);">${d.method} - TrxID: ${d.trxId}</small>` : ''}</div>
+                    <span style="color:${color}; font-weight:bold; font-size:12px; background:var(--bg-color); padding: 4px 10px; border-radius:12px; border:1px solid var(--border-color);">${d.status.toUpperCase()}</span>
+                </div>`;
+            });
+            document.getElementById('deposit-history').innerHTML = html;
+        });
+    }
+
+    function updateProfile() {
+        const newName = document.getElementById('edit-profile-name').value.trim(); 
+        const newUsername = document.getElementById('edit-profile-username').value.trim(); 
+        const newPass = document.getElementById('edit-profile-password').value;
+        
+        if(!newName) return showToast("Name cannot be empty!"); 
+        if(!newUsername) return showToast("Username cannot be empty!"); 
+        if(!newPass || newPass.length < 6) return showToast("Password must be at least 6 characters!");
+
+        if(newPass !== userData.password) {
+            currentUser.updatePassword(newPass).then(() => {
+                db.ref('users/' + currentUser.uid).update({ name: newName, username: newUsername, password: newPass }).then(() => { showToast("Profile & Password updated!"); });
+            }).catch(err => {
+                if(err.code === 'auth/requires-recent-login') { showToast("Please re-login to change password."); } else { showToast("Error updating password: " + err.message); }
+            });
+        } else {
+            db.ref('users/' + currentUser.uid).update({ name: newName, username: newUsername }).then(() => { showToast("Profile updated!"); }).catch(err => showToast("Error: " + err.message));
+        }
+    }
+
+    function togglePasswordVisibility() {
+        const passInput = document.getElementById('edit-profile-password'); const icon = document.getElementById('toggle-pwd-icon');
+        if (passInput.type === 'password') { passInput.type = 'text'; icon.classList.remove('fa-eye'); icon.classList.add('fa-eye-slash'); } 
+        else { passInput.type = 'password'; icon.classList.remove('fa-eye-slash'); icon.classList.add('fa-eye'); }
+    }
+
+    function loadAdminPaymentSettings() {
+        db.ref('settings/payment').on('value', snap => {
+            if(snap.exists()) { adminPaymentSettings = snap.val(); } else { adminPaymentSettings = { bkash: "Not Set", nagad: "Not Set", rocket: "Not Set", instruction: "Send Money" }; }
+        });
+    }
+
+    function openPaymentScreen() {
+        if(!adminPaymentSettings) return showToast("Loading payment settings...");
+        document.getElementById('admin-payment-info').innerHTML = `
+            <div style="margin-bottom:8px;"><img src="https://i.imgur.com/vH1NxyZ.png" width="20" style="vertical-align:middle; border-radius:3px;"> <strong style="color:#e2136e;">bKash:</strong> ${adminPaymentSettings.bkash}</div>
+            <div style="margin-bottom:8px;"><img src="https://i.imgur.com/rN5nO7i.png" width="20" style="vertical-align:middle; border-radius:3px;"> <strong style="color:#f7931e;">Nagad:</strong> ${adminPaymentSettings.nagad}</div>
+            <div style="margin-bottom:8px;"><img src="https://i.imgur.com/f79k32V.png" width="20" style="vertical-align:middle; border-radius:3px;"> <strong style="color:#8c3494;">Rocket:</strong> ${adminPaymentSettings.rocket}</div>
+            <hr style="border:0; border-top:1px solid var(--border-color); margin: 10px 0;"><p style="color: var(--secondary); font-weight:bold; font-size:15px;"><i class="fas fa-info-circle"></i> Instruction: Make "${adminPaymentSettings.instruction}"</p>`;
+        nav('payment-screen');
+    }
+
+    function submitDepositRequest() {
+        let method = document.getElementById('pay-method').value; let amount = Number(document.getElementById('pay-amount').value); let trxId = document.getElementById('pay-trxid').value.trim();
+        if(!method) return showToast("Please select a payment method!"); if(amount < 50) return showToast("Minimum deposit is 50 coins!"); if(!trxId) return showToast("Transaction ID is required!");
+        db.ref('depositRequests').push({ uid: currentUser.uid, email: currentUser.email, method: method, amount: amount, trxId: trxId, status: 'pending', timestamp: Date.now() }).then(() => {
+            showToast("Request submitted successfully!"); document.getElementById('pay-method').value = ""; document.getElementById('pay-amount').value = ""; document.getElementById('pay-trxid').value = ""; nav('wallet-screen');
+        }).catch(err => showToast("Error: " + err.message));
+    }
+
+    // ==========================================
+    // BOOKS RENDERING & RECOMMENDATION
+    // ==========================================
+    function loadBooks() {
+        db.ref('books').on('value', snap => {
+            allBooks = []; snap.forEach(child => { let book = child.val(); book.id = child.key; if(book.status === 'approved') allBooks.push(book); });
+            renderBooks(); 
+            if(currentBookId && document.getElementById('detail-screen').classList.contains('active')) { openBookDetail(currentBookId); }
+            
+            // শেয়ার করা লিংকের মাধ্যমে ঢুকলে বইটি লোড করার লজিক
+            if (window.pendingBookOpen && allBooks.length > 0) {
+                if (currentUser) {
+                    let b = allBooks.find(x => x.id === window.pendingBookOpen);
+                    if (b) { openBookDetail(window.pendingBookOpen); }
+                    window.pendingBookOpen = null;
+                    // URL থেকে parameter মুছে ফেলা যাতে বারবার রিফ্রেশ করলে ওপেন না হয়
+                    window.history.replaceState({}, document.title, window.location.pathname);
+                }
+            }
+        });
+    }
+
+    function renderBooks() {
+        let homeHtml = '', recHtml = '', favHtml = '';
+        let q = document.getElementById('search-box').value.toLowerCase();
+        
+        let userTags = new Set();
+        if(userData && userData.library) {
+            Object.keys(userData.library).forEach(bookId => {
+                let b = allBooks.find(x => x.id === bookId);
+                if(b && b.hashtags) { b.hashtags.forEach(t => userTags.add(t.toLowerCase())); }
+            });
+        }
+
+        let hasRecommendations = false;
+
+        allBooks.forEach(book => {
+            let title = book.title || "Unknown Book";
+            let category = book.category || "General";
+            let bookPrice = Number(book.price) || 0;
+            // Updated coverUrl variable logic properly applied
+            let bookCover = book.coverUrl || book.cover || 'https://via.placeholder.com/150x200?text=Cover';
+            
+            if(!title.toLowerCase().includes(q)) return;
+
+            if (currentCategory === '_FREE_') {
+                if (bookPrice > 0) return; 
+            } else if (currentCategory && category !== currentCategory) {
+                return; 
+            }
+
+            let isFav = userData && userData.favorites && userData.favorites[book.id];
+            let favClass = isFav ? 'active' : '';
+            let priceDisplay = (bookPrice > 0) ? `<i class="fas fa-coins"></i> ${bookPrice}` : `<span style="color:#2ecc71;">FREE</span>`;
+            
+            let ratingInfo = getBookRatingInfo(book);
+            let ratingHtml = ratingInfo.count > 0 ? `<div style="font-size: 13px; color: #f39c12; margin-top: 5px;"><i class="fas fa-star"></i> ${ratingInfo.avg} <span style="color:var(--text-muted); font-size:11px;">(${ratingInfo.count})</span></div>` : `<div style="font-size: 12px; color: var(--text-muted); margin-top: 5px;"><i class="far fa-star"></i> No rating</div>`;
+
+            let cardHtml = `
+            <div class="card book-card" onclick="openBookDetail('${book.id}')">
+                <div class="cover-wrapper"><img src="${bookCover}" class="book-cover" onerror="this.src='https://via.placeholder.com/150x200?text=Cover'"></div>
+                <div class="book-info">
+                    <h3>${title}</h3>
+                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: 5px;">
+                        <div class="book-price">${priceDisplay}</div>
+                        <div class="fav-btn ${favClass}" onclick="toggleFav(event, '${book.id}')"><i class="fas fa-heart"></i></div>
+                    </div>
+                    ${ratingHtml}
+                </div>
+            </div>`;
+            
+            homeHtml += cardHtml; if(isFav) favHtml += cardHtml;
+
+            let isRecommended = false; let alreadyOwned = userData && userData.library && userData.library[book.id];
+            if(!alreadyOwned && book.hashtags) { book.hashtags.forEach(tag => { if(userTags.has(tag.toLowerCase())) isRecommended = true; }); }
+            if(isRecommended) { recHtml += cardHtml; hasRecommendations = true; }
+        });
+
+        document.getElementById('books-list').innerHTML = homeHtml;
+        document.getElementById('fav-list').innerHTML = (favHtml === '') ? '<p style="text-align:center; grid-column:span 2; color:var(--text-muted); margin-top:20px;">No favorite books found.</p>' : favHtml;
+
+        let recSection = document.getElementById('recommended-section');
+        if(hasRecommendations && q === '' && currentCategory === '') {
+            recSection.style.display = 'block'; document.getElementById('recommended-list').innerHTML = recHtml;
+        } else { recSection.style.display = 'none'; }
+    }
+
+    function filterBooks() { renderBooks(); }
+
+    function toggleFav(e, bookId) {
+        if(e) e.stopPropagation();
+        if(!currentUser) { showToast("Please login to add favorites."); nav('auth-screen'); return; }
+        if(!userData) { userData = { favorites: {} }; } 
+        let isFav = userData.favorites && userData.favorites[bookId];
+        if(isFav) { db.ref(`users/${currentUser.uid}/favorites/${bookId}`).remove().then(() => showToast("Removed from Favorites")); } 
+        else { db.ref(`users/${currentUser.uid}/favorites/${bookId}`).set(true).then(() => showToast("Added to Favorites ❤️")); }
+    }
+
+    function openBookDetail(id) {
+        if(!currentUser) { showToast("Please login to view details and buy books."); nav('auth-screen'); return; }
+
+        currentBookId = id; currentBookData = allBooks.find(b => b.id === id);
+        if(!currentBookData) return showToast("Error loading book!");
+
+        finalPrice = Number(currentBookData.price) || 0; voucherData = null;
+        // Adjusted cover & description variables correctly matching Writer & Admin app format
+        document.getElementById('det-cover').src = currentBookData.coverUrl || currentBookData.cover || 'https://via.placeholder.com/150x200?text=Cover';
+        document.getElementById('det-title').innerText = currentBookData.title || 'Unknown';
+        document.getElementById('det-desc').innerText = currentBookData.desc || currentBookData.description || 'No description available.';
+        document.getElementById('voucher-code').value = '';
+        document.getElementById('det-category').innerText = currentBookData.category || 'General';
+        document.getElementById('det-words').innerText = `${currentBookData.wordCount || 0} Words`;
+
+        let tagsHtml = '';
+        if(currentBookData.hashtags && Array.isArray(currentBookData.hashtags)){ currentBookData.hashtags.forEach(tag => { tagsHtml += `<span class="tag-badge">${tag}</span>`; }); }
+        document.getElementById('det-tags').innerHTML = tagsHtml;
+
+        let ratingInfo = getBookRatingInfo(currentBookData);
+        document.getElementById('det-rating-display').innerHTML = ratingInfo.count > 0 ? `<i class="fas fa-star"></i> ${ratingInfo.avg} out of 5 <span style="font-size: 13px; color:var(--text-muted);">(${ratingInfo.count} reviews)</span>` : `<i class="far fa-star"></i> No ratings yet`;
+        
+        if(finalPrice === 0) {
+            document.getElementById('det-price').innerHTML = "<span style='color:#2ecc71;'>FREE BOOK</span>";
+            document.getElementById('coin-icon').style.display = 'none'; document.getElementById('voucher-box').style.display = 'none';
+            document.getElementById('buy-btn').innerText = "Get Free"; document.getElementById('buy-btn').classList.replace('btn-primary', 'btn-success');
+        } else {
+            document.getElementById('det-price').innerText = finalPrice; document.getElementById('coin-icon').style.display = 'inline-block';
+            document.getElementById('voucher-box').style.display = 'block'; document.getElementById('buy-btn').innerText = "Buy Now"; document.getElementById('buy-btn').classList.replace('btn-success', 'btn-primary');
+        }
+
+        let alreadyOwned = userData && userData.library && userData.library[currentBookId];
+        if(alreadyOwned) {
+            document.getElementById('buy-btn').style.display = 'none'; document.getElementById('voucher-box').style.display = 'none';
+            document.getElementById('give-rating-box').style.display = 'block'; renderUserRating();
+        } else {
+            document.getElementById('buy-btn').style.display = 'block'; document.getElementById('give-rating-box').style.display = 'none';
+        }
+        nav('detail-screen');
+    }
+
+    // Adjusted dynamic discounts properly fetched from admin
+    function applyVoucher() {
+        const code = document.getElementById('voucher-code').value.trim();
+        if(!code) return showToast("Enter voucher code");
+        db.ref('vouchers/' + code).once('value', snap => {
+            if(snap.exists() && snap.val().status === 'active' && snap.val().bookId === currentBookId) {
+                voucherData = snap.val(); voucherData.code = code; 
+                
+                // Dynamic logic applied
+                let discountAmount = currentBookData.price * (sysUserDiscount / 100);
+                finalPrice = Math.floor(currentBookData.price - discountAmount);
+                if(finalPrice < 0) finalPrice = 0;
+                
+                document.getElementById('det-price').innerText = finalPrice + ` (-${sysUserDiscount}%)`; 
+                showToast("Voucher Applied!");
+            } else { showToast("Invalid or expired voucher for this book!"); }
+        });
+    }
+
+    async function buyBook() {
+        if(!currentBookData || !userData) return;
+        if(userData.library && userData.library[currentBookId]) return showToast("You already own this book!");
+
+        if(finalPrice === 0) {
+            showToast("Adding to library...");
+            const updates = {}; updates[`users/${currentUser.uid}/library/${currentBookId}`] = true; updates[`books/${currentBookId}/salesCount`] = firebase.database.ServerValue.increment(1);
+            db.ref().update(updates).then(() => { showToast("Book added to Library! 🎉"); nav('library-screen'); }).catch(e => showToast("Error: " + e.message));
+            return; 
+        }
+
+        if((Number(userData.coins) || 0) < finalPrice) return showToast("Insufficient coins! Please deposit.");
+        showToast("Processing purchase...");
+
+        const originalPrice = Number(currentBookData.price); 
+        
+        // Dynamic Commission Splitting Logic Applied
+        const writerSplit = originalPrice * (sysWriterPercent / 100); 
+        let affiliateSplit = 0, adminIncomeSplit = 0, systemReserveSplit = 0;
+
+        if (voucherData) { 
+            affiliateSplit = originalPrice * (sysAffiliatePercent / 100); 
+            adminIncomeSplit = finalPrice - writerSplit - affiliateSplit; 
+        } else { 
+            systemReserveSplit = originalPrice * (sysAffiliatePercent / 100); 
+            adminIncomeSplit = finalPrice - writerSplit - systemReserveSplit; 
+        }
+
+        const updates = {};
+        updates[`users/${currentUser.uid}/coins`] = firebase.database.ServerValue.increment(-finalPrice);
+        updates[`users/${currentUser.uid}/library/${currentBookId}`] = true; 
+        updates[`writers/${currentBookData.writerId}/wallet`] = firebase.database.ServerValue.increment(writerSplit);
+        
+        if (voucherData) { 
+            updates[`affiliates/${voucherData.affId}/wallet`] = firebase.database.ServerValue.increment(affiliateSplit); 
+            updates[`adminIncome/totalIncome`] = firebase.database.ServerValue.increment(adminIncomeSplit); 
+            updates[`vouchers/${voucherData.code}/status`] = 'used'; 
+        } else { 
+            updates[`adminIncome/totalIncome`] = firebase.database.ServerValue.increment(adminIncomeSplit); 
+            updates[`adminIncome/systemReserve`] = firebase.database.ServerValue.increment(systemReserveSplit); 
+        }
+        
+        updates[`adminIncome/totalSales`] = firebase.database.ServerValue.increment(1);
+
+        try { await db.ref().update(updates); showToast("Book purchased successfully!"); nav('library-screen'); } 
+        catch(e) { showToast("Error processing transaction!"); }
+    }
+
+    function loadLibrary() {
+        if(!currentUser) return;
+        db.ref(`users/${currentUser.uid}/library`).on('value', snap => {
+            let html = '';
+            if(snap.exists()) {
+                const libObj = snap.val();
+                Object.keys(libObj).forEach(bookId => {
+                    let b = allBooks.find(book => book.id === bookId);
+                    if(b) {
+                        let bCover = b.coverUrl || b.cover || 'https://via.placeholder.com/150x200?text=Cover';
+                        let ratingInfo = getBookRatingInfo(b);
+                        let ratingHtml = ratingInfo.count > 0 ? `<div style="font-size: 13px; color: #f39c12; margin-top: 5px;"><i class="fas fa-star"></i> ${ratingInfo.avg} <span style="color:var(--text-muted); font-size:11px;">(${ratingInfo.count})</span></div>` : `<div style="font-size: 12px; color: var(--text-muted); margin-top: 5px;"><i class="far fa-star"></i> No rating</div>`;
+
+                        html += `
+                        <div class="card book-card" onclick="openReadingMode('${b.id}')">
+                            <div class="cover-wrapper"><img src="${bCover}" class="book-cover"></div>
+                            <div class="book-info">
+                                <h3>${b.title}</h3>
+                                ${ratingHtml}
+                                <button class="btn btn-primary" style="padding: 8px; font-size:13px; margin-top: 10px; border-radius:10px; width: 100%;"><i class="fas fa-book-reader"></i> Read</button>
+                            </div>
+                        </div>`;
+                    }
+                });
+                document.getElementById('library-list').innerHTML = html;
+            } else { document.getElementById('library-list').innerHTML = '<p style="text-align:center; grid-column:span 2; color:var(--text-muted); margin-top:20px;">Your library is empty.</p>'; }
+        });
+    }
+
+    function checkAds() {
+        db.ref('adsControl').on('value', snap => {
+            let adDiv = document.getElementById('ad-container');
+            if(snap.exists() && snap.val().status === true) { adDiv.style.display = 'block'; adDiv.innerHTML = snap.val().script || `<div class="card" style="background:var(--bg-color); border-color:var(--primary); padding:20px; color:var(--primary); font-weight:bold;">[ Ad Space ]</div>`; } 
+            else { adDiv.style.display = 'none'; adDiv.innerHTML = ''; }
+        });
+    }
+
+    function nav(screenId) {
+        const protectedScreens = ['fav-screen', 'library-screen', 'wallet-screen', 'profile-screen', 'detail-screen'];
+        if (!currentUser && protectedScreens.includes(screenId)) { showToast("Please login to access this feature."); screenId = 'auth-screen'; }
+        document.querySelectorAll('.screen').forEach(el => el.classList.remove('active')); document.getElementById(screenId).classList.add('active');
+        
+        if(screenId === 'auth-screen') { document.getElementById('bottom-nav').style.display = 'none'; } 
+        else if(screenId !== 'reading-screen') { document.getElementById('bottom-nav').style.display = 'flex'; }
+
+        document.querySelectorAll('.nav-item').forEach(el => { el.classList.remove('active'); if(el.getAttribute('onclick') && el.getAttribute('onclick').includes(screenId)) { el.classList.add('active'); } });
+    }
+
+    // ==========================================
+    // READING MODE SYSTEM
+    // ==========================================
+    function openReadingMode(bookId) {
+        db.ref('books/' + bookId).once('value', snap => {
+            let book = snap.val();
+            if(book.pages && Array.isArray(book.pages)) { currentReadingPages = book.pages; } else if(book.content) { currentReadingPages = [book.content]; } else { currentReadingPages = ["No content available."]; }
+            currentReadingIndex = 0; renderReadingPage(); document.getElementById('reading-screen').style.display = 'flex';
+        });
+    }
+
+    function renderReadingPage() {
+        document.getElementById('read-content').innerText = currentReadingPages[currentReadingIndex] || "Empty Page";
+        document.getElementById('read-page-indicator').innerText = `Page ${currentReadingIndex + 1} / ${currentReadingPages.length}`;
+        document.getElementById('read-content').scrollTop = 0; 
+    }
+
+    function prevReadPage() { if(currentReadingIndex > 0) { currentReadingIndex--; renderReadingPage(); } else { showToast("This is the first page!"); } }
+    function nextReadPage() { if(currentReadingIndex < currentReadingPages.length - 1) { currentReadingIndex++; renderReadingPage(); } else { showToast("You have reached the end of the book! 🎉"); } }
+    function closeReading() { document.getElementById('reading-screen').style.display = 'none'; }
+    function changeFontSize(val) { fontSize += val; document.getElementById('read-content').style.fontSize = fontSize + 'px'; }
+
+    let toastTimeout;
+    function showToast(msg) {
+        const toast = document.getElementById('toast'); toast.innerText = msg; toast.style.display = 'block';
+        clearTimeout(toastTimeout); toastTimeout = setTimeout(() => toast.style.display = 'none', 3000);
+    }
+
+    // ==========================================
+    // SHARE BOOK SYSTEM
+    // ==========================================
+    function copyBookLink() {
+        if (!currentBookId) return;
+        
+        // Link with book parameter
+        const shareUrl = window.location.origin + window.location.pathname + "?book=" + currentBookId;
+        
+        const tempInput = document.createElement("input");
+        tempInput.value = shareUrl;
+        document.body.appendChild(tempInput);
+        tempInput.select();
+        try {
+            document.execCommand("copy");
+            showToast("Book link copied! 📋");
+        } catch (err) {
+            showToast("Failed to copy link.");
+        }
+        document.body.removeChild(tempInput);
+    }
+</script>
+
+</body>
+</html>
