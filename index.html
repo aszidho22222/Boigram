@@ -55,8 +55,6 @@
             flex-direction: column; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.8);
         }
 
-        .grid-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; padding-bottom: 15px; }
-
         .header {
             padding: 20px; border-bottom-left-radius: 25px; border-bottom-right-radius: 25px;
             position: relative; z-index: 10;
@@ -99,7 +97,8 @@
         .cover-wrapper { position: relative; width: 100%; margin-bottom: 8px;}
         .book-cover { width: 100%; aspect-ratio: 4 / 5; border-radius: 12px; object-fit: cover; background: #eee; box-shadow: 0 4px 10px rgba(0,0,0,0.1); pointer-events: none; }
         .book-info { flex: none; width: 100%; text-align: left; }
-        .book-info h3 { font-size: 14px; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 5px; }
+        .book-info h3 { font-size: 14px; color: var(--text-main); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px; }
+        .book-author { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 5px; }
         .book-price { color: var(--secondary); font-weight: bold; font-size: 15px; text-shadow: 0 0 5px rgba(242, 2, 255, 0.3); }
 
         .fav-btn {
@@ -126,6 +125,7 @@
         }
         .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); box-shadow: var(--glow); }
         .btn-secondary { background: var(--text-main); color: var(--bg-color); }
+        .btn-outline { background: transparent; color: var(--text-main); border: 2px solid var(--border-color); box-shadow: none; }
         .btn-success { background: #00d2ff; background: linear-gradient(to right, #3a7bd5, #00d2ff); box-shadow: 0 4px 15px rgba(0, 210, 255, 0.4); }
         .btn-danger { background: linear-gradient(135deg, #ff416c, #ff4b2b); box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4); }
         .btn:active { transform: scale(0.95); }
@@ -181,10 +181,10 @@
             cursor: pointer; width: 45px; height: 45px; border-radius: 50%; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: 0.3s; flex-shrink: 0; z-index: 2;
         }
 
-        /* --- New Side Drawer Menu Styles --- */
+        /* --- Professional Side Drawer Menu Styles --- */
         #side-menu-drawer {
             position: absolute; top: 0; left: -300px; width: 280px; max-width: 80%;
-            height: 100%; background: var(--card-bg); z-index: 300;
+            height: 100%; background: var(--bg-color); z-index: 300;
             transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             box-shadow: 5px 0 25px rgba(0,0,0,0.15); display: flex; flex-direction: column;
         }
@@ -195,17 +195,35 @@
             opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
         }
         .drawer-overlay.open { opacity: 1; pointer-events: auto; }
+        
         .drawer-header {
-            padding: 25px 20px; background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white; font-family: 'Montserrat', sans-serif; font-size: 22px; font-weight: bold;
-            display: flex; justify-content: space-between; align-items: center; box-shadow: var(--glow);
+            padding: 30px 20px 20px; background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white; display: flex; flex-direction: column; align-items: flex-start;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative;
         }
+        .drawer-header .close-btn {
+            position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 22px; color: rgba(255,255,255,0.8); transition: 0.3s;
+        }
+        .drawer-header .close-btn:active { transform: scale(0.9); }
+        .drawer-user-info { margin-top: 15px; }
+        .drawer-user-info h3 { font-family: 'Montserrat', sans-serif; font-size: 18px; margin-bottom: 3px; color: white; }
+        .drawer-user-info p { font-size: 13px; color: rgba(255,255,255,0.8); margin: 0; }
+        .drawer-avatar {
+            width: 60px; height: 60px; background: white; color: var(--primary);
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        
+        .drawer-menu-list { flex: 1; overflow-y: auto; padding: 20px 15px; }
         .drawer-item {
-            padding: 18px 20px; display: flex; align-items: center; gap: 15px;
+            padding: 14px 18px; display: flex; align-items: center; gap: 15px;
             cursor: pointer; color: var(--text-main); transition: 0.3s;
-            font-size: 16px; font-weight: bold; border-bottom: 1px solid var(--border-color);
+            font-size: 15px; font-weight: 600; border-radius: 12px; margin-bottom: 8px;
+            background: transparent;
         }
-        .drawer-item:active { background: var(--border-color); }
+        .drawer-item i { font-size: 18px; width: 24px; text-align: center; transition: 0.3s;}
+        .drawer-item:hover, .drawer-item:active { background: var(--card-bg); box-shadow: 0 2px 10px rgba(0,0,0,0.05); transform: translateX(5px); }
+        .drawer-item:hover i, .drawer-item:active i { transform: scale(1.1); }
         
         /* --- Full Screen Chat Q&A Styles --- */
         .qa-full-screen {
@@ -253,30 +271,39 @@
     <!-- Left Drawer Overlay -->
     <div class="drawer-overlay" id="drawer-overlay" onclick="toggleMenu()"></div>
     
-    <!-- Left Drawer Menu -->
+    <!-- Professional Left Drawer Menu -->
     <div id="side-menu-drawer">
         <div class="drawer-header">
-            Boigram
-            <i class="fas fa-times" onclick="toggleMenu()" style="cursor: pointer; font-size: 24px;"></i>
+            <i class="fas fa-times close-btn" onclick="toggleMenu()"></i>
+            <div class="drawer-avatar">
+                <i class="fas fa-user-circle"></i>
+            </div>
+            <div class="drawer-user-info">
+                <h3 id="drawer-user-name">Guest User</h3>
+                <p id="drawer-user-email">Please login to explore</p>
+            </div>
         </div>
-        <div style="flex: 1; overflow-y: auto;">
+        <div class="drawer-menu-list">
             <!-- Language Toggle Feature -->
             <div class="drawer-item" onclick="toggleLanguage(); toggleMenu();">
-                <i class="fas fa-language" style="color: #3498db; font-size: 20px; width: 30px; text-align: center;"></i> 
+                <i class="fas fa-language" style="color: #3498db;"></i> 
                 <span id="menu-lang-text">বাংলা (BN)</span>
             </div>
             <div class="drawer-item" onclick="toggleGlobalDarkMode(); toggleMenu();">
-                <i class="fas fa-moon" id="menu-dark-icon" style="color: var(--primary); font-size: 20px; width: 30px; text-align: center;"></i> 
+                <i class="fas fa-moon" id="menu-dark-icon" style="color: var(--primary);"></i> 
                 <span id="menu-dark-text">Dark Mode</span>
             </div>
+            
+            <div style="height: 1px; background: var(--border-color); margin: 15px 0;"></div> <!-- Divider -->
+            
             <div class="drawer-item" onclick="openModal('qa-modal'); toggleMenu();">
-                <i class="fas fa-comments" style="color: #f39c12; font-size: 20px; width: 30px; text-align: center;"></i> <span id="menu-qa-text">Support Q&A</span>
+                <i class="fas fa-comments" style="color: #f39c12;"></i> <span id="menu-qa-text">Support Q&A</span>
             </div>
             <div class="drawer-item" onclick="openModal('report-modal'); toggleMenu();">
-                <i class="fas fa-flag" style="color: #e74c3c; font-size: 20px; width: 30px; text-align: center;"></i> <span id="menu-rep-text">Report Issue</span>
+                <i class="fas fa-flag" style="color: #e74c3c;"></i> <span id="menu-rep-text">Report Issue</span>
             </div>
             <div class="drawer-item" onclick="openModal('community-modal'); toggleMenu();">
-                <i class="fas fa-users" style="color: #2ecc71; font-size: 20px; width: 30px; text-align: center;"></i> <span id="menu-com-text">Community</span>
+                <i class="fas fa-users" style="color: #2ecc71;"></i> <span id="menu-com-text">Community</span>
             </div>
         </div>
     </div>
@@ -290,11 +317,11 @@
             <input type="email" id="login-email" placeholder="Email Address">
             <input type="password" id="login-pass" placeholder="Password">
             <button class="btn btn-primary" onclick="login()"><span class="lang-login-btn">Login</span></button>
+            
+            <button class="btn btn-outline" onclick="nav('home-screen')"><i class="fas fa-compass"></i> Explore as Guest</button>
+            
             <p style="text-align: center; margin-top: 20px; font-size: 15px; color: var(--text-muted);">
                 Don't have an account? <span style="color: var(--secondary); font-weight: bold; cursor: pointer;" onclick="toggleAuth('register')">Sign Up</span>
-            </p>
-            <p style="text-align: center; margin-top: 15px; font-size: 14px; color: var(--text-muted);">
-                <span style="text-decoration: underline; cursor: pointer;" onclick="nav('home-screen')">Explore as Guest</span>
             </p>
         </div>
 
@@ -302,6 +329,7 @@
             <input type="text" id="reg-name" placeholder="Full Name">
             <input type="text" id="reg-username" placeholder="Username">
             <input type="email" id="reg-email" placeholder="Email Address">
+            <input type="tel" id="reg-phone" placeholder="Mobile Number (e.g. 017...)">
             <input type="password" id="reg-pass" placeholder="Password">
             
             <div class="tnc-wrapper">
@@ -312,11 +340,11 @@
             </div>
 
             <button class="btn btn-primary" onclick="register()">Create Account</button>
+            
+            <button class="btn btn-outline" onclick="nav('home-screen')"><i class="fas fa-compass"></i> Explore as Guest</button>
+
             <p style="text-align: center; margin-top: 20px; font-size: 15px; color: var(--text-muted);">
                 Already have an account? <span style="color: var(--secondary); font-weight: bold; cursor: pointer;" onclick="toggleAuth('login')">Login</span>
-            </p>
-            <p style="text-align: center; margin-top: 15px; font-size: 14px; color: var(--text-muted);">
-                <span style="text-decoration: underline; cursor: pointer;" onclick="nav('home-screen')">Explore as Guest</span>
             </p>
         </div>
     </div>
@@ -408,7 +436,7 @@
         <div class="card" style="text-align: center;">
             <img id="det-cover" src="" style="width: 140px; aspect-ratio: 4/5; object-fit: cover; border-radius: 12px; margin-bottom: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.15); pointer-events: none;">
             <h2 id="det-title" style="margin-bottom: 5px;">Book Title</h2>
-            <p id="det-author" style="color: var(--text-muted); margin-bottom: 15px;">Author Name</p>
+            <p id="det-author" style="color: var(--text-muted); margin-bottom: 15px; font-weight: bold;">Author Name</p>
             
             <!-- Category & Word Count -->
             <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">
@@ -470,11 +498,8 @@
                 <label style="font-size: 13px; color: var(--text-muted); margin-bottom: 5px; display: block; font-weight: bold;"><i class="fas fa-envelope"></i> Email Address</label>
                 <input type="email" id="edit-profile-email" readonly style="margin-bottom: 15px; padding: 12px; font-size: 15px; opacity: 0.7; cursor: not-allowed; background: var(--card-bg);">
 
-                <label style="font-size: 13px; color: var(--text-muted); margin-bottom: 5px; display: block; font-weight: bold;"><i class="fas fa-lock"></i> Change Password</label>
-                <div style="position: relative; margin-bottom: 15px;">
-                    <input type="password" id="edit-profile-password" placeholder="Enter new password to change" style="margin-bottom: 0; padding: 12px; padding-right: 40px; font-size: 15px; width: 100%;">
-                    <i class="fas fa-eye" id="toggle-pwd-icon" onclick="togglePasswordVisibility()" style="position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--text-muted); cursor: pointer; font-size: 16px;"></i>
-                </div>
+                <label style="font-size: 13px; color: var(--text-muted); margin-bottom: 5px; display: block; font-weight: bold;"><i class="fas fa-phone"></i> Mobile Number</label>
+                <input type="tel" id="edit-profile-phone" placeholder="Mobile Number" style="margin-bottom: 15px; padding: 12px; font-size: 15px;">
 
                 <button class="btn btn-success" onclick="updateProfile()" style="padding: 12px; font-size: 15px; border-radius: 12px;"><i class="fas fa-save"></i> Save Changes</button>
             </div>
@@ -492,6 +517,8 @@
             <button onclick="closeReading()" style="background:none;border:none;font-size:20px;color:inherit;cursor:pointer;"><i class="fas fa-arrow-left"></i></button>
             <div id="read-page-indicator" style="font-size:14px; font-weight:bold; color:var(--secondary); text-shadow: var(--glow);">Page 1/1</div>
             <div>
+                <!-- TTS Voice Button -->
+                <button onclick="toggleTTS()" id="tts-btn" style="background:none;border:none;font-size:18px;margin-right:12px;color:inherit;cursor:pointer;"><i class="fas fa-volume-up"></i></button>
                 <button onclick="changeFontSize(-2)" style="background:none;border:none;font-size:18px;margin-right:10px;color:inherit;cursor:pointer;">A-</button>
                 <button onclick="changeFontSize(2)" style="background:none;border:none;font-size:18px;margin-right:15px;color:inherit;cursor:pointer;">A+</button>
                 <button onclick="toggleGlobalDarkMode()" style="background:none;border:none;font-size:20px;color:inherit;cursor:pointer;"><i class="fas fa-moon" id="read-dark-icon"></i></button>
@@ -604,6 +631,9 @@
 
     let currentReadingPages = [];
     let currentReadingIndex = 0;
+    
+    // TTS State Variable
+    let isTTSActive = false;
 
     // --- Dynamic System Settings Variables ---
     let sysWriterPercent = 50, sysAffiliatePercent = 20, sysUserDiscount = 10;
@@ -833,7 +863,7 @@
     }
 
     // ==========================================
-    // UPDATED: Category UI with Slide Action
+    // Category UI with Slide Action
     // ==========================================
     function loadCategories() {
         db.ref('settings/categories').on('value', snap => {
@@ -897,44 +927,74 @@
     }
 
     // ==========================================
-    // RESTRICT WRITER/MARKETER LOGIN
+    // RESTRICT WRITER/MARKETER/AFFILIATE LOGIN
     // ==========================================
-    auth.onAuthStateChanged(user => {
+    auth.onAuthStateChanged(async user => {
         if (user) {
-            // Role Check Validation
-            db.ref('users/' + user.uid).once('value', snap => {
-                let uData = snap.val();
-                if(uData && (uData.role === 'writer' || uData.role === 'marketer' || uData.role === 'affiliate')) {
+            try {
+                let writerSnap = await db.ref('writers/' + user.uid).once('value');
+                if (writerSnap.exists()) {
                     auth.signOut();
-                    alert("Access Denied! Writers and Marketers cannot login to Boigram App.");
+                    alert("Access Denied! Writers cannot use the Boigram Reader App. Please use the Writer App.");
+                    nav('auth-screen'); // Keep them on the login interface
                     return;
                 }
-                
-                // Fallback validation if explicitly added into separate nodes
-                db.ref('writers/' + user.uid).once('value', wSnap => {
-                    if(wSnap.exists()) {
+
+                let affSnap = await db.ref('affiliates/' + user.uid).once('value');
+                if (affSnap.exists()) {
+                    auth.signOut();
+                    alert("Access Denied! Affiliates cannot use the Boigram Reader App. Please use the Affiliate App.");
+                    nav('auth-screen'); // Keep them on the login interface
+                    return;
+                }
+
+                let userSnap = await db.ref('users/' + user.uid).once('value');
+                if (userSnap.exists()) {
+                    let uData = userSnap.val();
+                    if(uData && (uData.role === 'writer' || uData.role === 'affiliate' || uData.role === 'marketer')) {
                         auth.signOut();
-                        alert("Access Denied! Writers cannot login to Boigram App.");
+                        alert("Access Denied! Invalid Role.");
+                        nav('auth-screen'); // Keep them on the login interface
                         return;
                     }
-                    
-                    // Authorized User Setup
-                    currentUser = user; loadUserData(); loadLibrary(); loadAdminPaymentSettings(); 
-                    document.getElementById('bottom-nav').style.display = 'flex';
-                    
-                    const params = new URLSearchParams(window.location.search);
-                    const bookParam = params.get('book');
-                    if (bookParam) {
-                        window.pendingBookOpen = bookParam; 
-                    } else if(document.getElementById('auth-screen').classList.contains('active')){ 
-                        nav('home-screen'); 
+                } else {
+                    if (document.getElementById('register-box').style.display === 'block') {
+                        // Registration in progress, let it pass
+                    } else {
+                        auth.signOut();
+                        alert("Account not found in Reader App. Please register here first.");
+                        nav('auth-screen'); // Keep them on the login interface
+                        return;
                     }
-                });
-            });
+                }
+                
+                // Authorized User Setup
+                currentUser = user; 
+                loadUserData(); 
+                loadLibrary(); 
+                loadAdminPaymentSettings(); 
+                document.getElementById('bottom-nav').style.display = 'flex';
+                
+                const params = new URLSearchParams(window.location.search);
+                const bookParam = params.get('book');
+                if (bookParam) {
+                    window.pendingBookOpen = bookParam; 
+                } else if(document.getElementById('auth-screen').classList.contains('active')){ 
+                    nav('home-screen'); 
+                }
+
+            } catch(error) {
+                console.error("Login Validation Error: ", error);
+            }
+
         } else {
             currentUser = null; userData = null; renderBooks(); 
             document.getElementById('bottom-nav').style.display = 'flex'; 
             
+            // Drawer update for guest
+            document.getElementById('drawer-user-name').innerText = 'Guest User';
+            document.getElementById('drawer-user-email').innerText = 'Please login to explore';
+
             const params = new URLSearchParams(window.location.search);
             const bookParam = params.get('book');
             if (bookParam) {
@@ -942,7 +1002,11 @@
                 showToast("Please login to view this book.");
                 nav('auth-screen');
             } else {
-                nav('home-screen'); 
+                if(document.getElementById('auth-screen').classList.contains('active')) {
+                    document.getElementById('bottom-nav').style.display = 'none';
+                } else {
+                    nav('home-screen'); 
+                }
             }
         }
     });
@@ -951,16 +1015,27 @@
         const name = document.getElementById('reg-name').value.trim();
         const username = document.getElementById('reg-username').value.trim();
         const email = document.getElementById('reg-email').value.trim();
+        const phone = document.getElementById('reg-phone').value.trim();
         const pass = document.getElementById('reg-pass').value;
         const isAgreed = document.getElementById('agree-tnc').checked;
         
         if(!name) return showToast("Enter your full name!"); 
         if(!username) return showToast("Enter a username!"); 
         if(!email || !pass) return showToast("Enter email and password!"); 
+        if(!phone || phone.length < 11) return showToast("Enter a valid mobile number!"); 
         if(!isAgreed) return showToast("Please agree to the Terms & Conditions first!");
         
         auth.createUserWithEmailAndPassword(email, pass).then(res => {
-            db.ref('users/' + res.user.uid).set({ name: name, username: username, email: email, coins: 0, role: 'user', joinedAt: Date.now(), status: 'active' }); 
+            db.ref('users/' + res.user.uid).set({ 
+                name: name, 
+                username: username, 
+                email: email, 
+                phone: phone, 
+                coins: 0, 
+                role: 'user', 
+                joinedAt: Date.now(), 
+                status: 'active' 
+            }); 
             showToast("Registration Successful!");
         }).catch(err => showToast(err.message));
     }
@@ -968,7 +1043,7 @@
     function login() {
         const email = document.getElementById('login-email').value.trim(); const pass = document.getElementById('login-pass').value;
         if(!email || !pass) return showToast("Enter email and password!");
-        auth.signInWithEmailAndPassword(email, pass).catch(err => showToast(err.message)); // Handling inside onAuthStateChanged
+        auth.signInWithEmailAndPassword(email, pass).catch(err => showToast(err.message));
     }
     
     function logout() { 
@@ -986,15 +1061,19 @@
                     return;
                 }
 
-            } else { userData = { name: "User", username: "", email: currentUser.email, coins: 0, favorites: {}, library: {} }; }
+            } else { userData = { name: "User", username: "", email: currentUser.email, phone: "", coins: 0, favorites: {}, library: {} }; }
             document.getElementById('user-balance').innerText = userData.coins || 0;
             
             document.getElementById('edit-profile-name').value = userData.name || 'User'; 
             document.getElementById('edit-profile-username').value = userData.username || ''; 
             document.getElementById('edit-profile-email').value = userData.email || currentUser.email;
+            document.getElementById('edit-profile-phone').value = userData.phone || '';
             document.getElementById('profile-role').innerText = userData.role || 'user';
             
-            document.getElementById('edit-profile-password').value = '';
+            // Update Drawer User Info
+            document.getElementById('drawer-user-name').innerText = userData.name || 'User';
+            document.getElementById('drawer-user-email').innerText = userData.email || currentUser.email;
+
             renderBooks();
         });
         
@@ -1029,32 +1108,17 @@
     function updateProfile() {
         const newName = document.getElementById('edit-profile-name').value.trim(); 
         const newUsername = document.getElementById('edit-profile-username').value.trim(); 
-        const newPass = document.getElementById('edit-profile-password').value;
+        const newPhone = document.getElementById('edit-profile-phone').value.trim();
         
         if(!newName) return showToast("Name cannot be empty!"); 
         if(!newUsername) return showToast("Username cannot be empty!"); 
-        if(newPass && newPass.length < 6) return showToast("Password must be at least 6 characters!");
+        if(!newPhone) return showToast("Mobile Number cannot be empty!");
 
-        let dbPayload = { name: newName, username: newUsername };
+        let dbPayload = { name: newName, username: newUsername, phone: newPhone };
 
-        if(newPass) {
-            currentUser.updatePassword(newPass).then(() => {
-                db.ref('users/' + currentUser.uid).update(dbPayload).then(() => { 
-                    showToast("Profile & Password updated!"); 
-                    document.getElementById('edit-profile-password').value = '';
-                });
-            }).catch(err => {
-                if(err.code === 'auth/requires-recent-login') { showToast("Please re-login to change password."); } else { showToast("Error updating password: " + err.message); }
-            });
-        } else {
-            db.ref('users/' + currentUser.uid).update(dbPayload).then(() => { showToast("Profile updated!"); }).catch(err => showToast("Error: " + err.message));
-        }
-    }
-
-    function togglePasswordVisibility() {
-        const passInput = document.getElementById('edit-profile-password'); const icon = document.getElementById('toggle-pwd-icon');
-        if (passInput.type === 'password') { passInput.type = 'text'; icon.classList.remove('fa-eye'); icon.classList.add('fa-eye-slash'); } 
-        else { passInput.type = 'password'; icon.classList.remove('fa-eye-slash'); icon.classList.add('fa-eye'); }
+        db.ref('users/' + currentUser.uid).update(dbPayload).then(() => { 
+            showToast("Profile updated!"); 
+        }).catch(err => showToast("Error: " + err.message));
     }
 
     function loadAdminPaymentSettings() {
@@ -1073,14 +1137,12 @@
         nav('payment-screen');
     }
 
-    // UPDATED LOADBOOKS FUNCTION FOR CASE-INSENSITIVE STATUS CHECK
     function loadBooks() {
         db.ref('books').on('value', snap => {
             allBooks = []; 
             snap.forEach(child => { 
                 let book = child.val(); 
                 book.id = child.key; 
-                // Admin might write "Approved", "approved", "Active" etc.
                 let status = book.status ? book.status.toLowerCase() : 'approved';
                 if(status === 'approved' || status === 'active' || !book.status) {
                     allBooks.push(book); 
@@ -1116,6 +1178,7 @@
 
         allBooks.forEach(book => {
             let title = book.title || "Unknown Book";
+            let authorName = book.author || book.writerName || "Unknown Author";
             let category = book.category || "General";
             let bookPrice = Number(book.price) || 0;
             let bookCover = book.coverUrl || book.cover || 'https://via.placeholder.com/150x200?text=Cover';
@@ -1140,6 +1203,7 @@
                 <div class="cover-wrapper"><img src="${bookCover}" class="book-cover" onerror="this.src='https://via.placeholder.com/150x200?text=Cover'"></div>
                 <div class="book-info">
                     <h3>${title}</h3>
+                    <div class="book-author"><i class="fas fa-feather-alt"></i> ${authorName}</div>
                     <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: 5px;">
                         <div class="book-price">${priceDisplay}</div>
                         <div class="fav-btn ${favClass}" onclick="toggleFav(event, '${book.id}')"><i class="fas fa-heart"></i></div>
@@ -1185,6 +1249,7 @@
         let d = langDict[currentLang];
         document.getElementById('det-cover').src = currentBookData.coverUrl || currentBookData.cover || 'https://via.placeholder.com/150x200?text=Cover';
         document.getElementById('det-title').innerText = currentBookData.title || 'Unknown';
+        document.getElementById('det-author').innerText = currentBookData.author || currentBookData.writerName || 'Unknown Author';
         document.getElementById('det-desc').innerText = currentBookData.desc || currentBookData.description || 'No description available.';
         document.getElementById('voucher-code').value = '';
         document.getElementById('det-category').innerText = currentBookData.category || 'General';
@@ -1238,14 +1303,40 @@
         if(!currentBookData || !userData) return;
         if(userData.library && userData.library[currentBookId]) return showToast("You already own this book!");
 
-        // Handle Free Book
+        // --- NEW UPDATE: Check for unrated free books in library before adding any new book ---
+        if(userData.library) {
+            let unratedFreeBook = null;
+            for(let libBookId of Object.keys(userData.library)) {
+                let b = allBooks.find(x => x.id === libBookId);
+                if(b && (Number(b.price) === 0 || !b.price)) {
+                    let hasRated = b.ratings && b.ratings[currentUser.uid];
+                    if(!hasRated) { unratedFreeBook = b; break; }
+                }
+            }
+            if(unratedFreeBook) {
+                showToast(`অনুগ্রহ করে আপনার লাইব্রেরির ফ্রি বই '${unratedFreeBook.title}'-এ রেটিং দিন।`);
+                openBookDetail(unratedFreeBook.id);
+                
+                setTimeout(() => {
+                    const ratingBox = document.getElementById('give-rating-box');
+                    if(ratingBox) {
+                        ratingBox.style.border = "2px solid #e74c3c";
+                        ratingBox.style.borderRadius = "12px";
+                        ratingBox.style.padding = "10px";
+                        ratingBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }, 500);
+                return;
+            }
+        }
+        // --- END UPDATE ---
+
+        // Handle Free Book without adding to Purchase History (Transactions)
         if(finalPrice === 0) {
             showToast("Adding to library...");
-            let txId = db.ref().push().key;
             const updates = {}; 
             updates[`users/${currentUser.uid}/library/${currentBookId}`] = true; 
             updates[`books/${currentBookId}/salesCount`] = firebase.database.ServerValue.increment(1);
-            updates[`transactions/${currentUser.uid}/${txId}`] = { bookId: currentBookId, title: currentBookData.title, amount: 0, timestamp: firebase.database.ServerValue.TIMESTAMP };
             
             db.ref().update(updates).then(() => { showToast("Book added to Library! 🎉"); nav('library-screen'); }).catch(e => showToast("Error: " + e.message));
             return; 
@@ -1290,6 +1381,25 @@
         catch(e) { showToast("Error processing transaction!"); }
     }
 
+    function submitDepositRequest() {
+        const amount = Number(document.getElementById('pay-amount').value);
+        const trxId = document.getElementById('pay-trxid').value.trim();
+        const method = document.getElementById('pay-method').value;
+
+        if(!method) return showToast("Please select a payment method.");
+        if(amount < 50) return showToast("Minimum deposit is 50.");
+        if(!trxId) return showToast("Please enter the Transaction ID.");
+
+        if(!currentUser) return showToast("Please login first.");
+
+        db.ref('depositRequests').push({
+            uid: currentUser.uid, email: currentUser.email, role: 'user', amount: amount, trxId: trxId, method: method, status: 'pending', timestamp: Date.now()
+        }).then(() => {
+            showToast("Request submitted successfully!");
+            document.getElementById('pay-amount').value = ''; document.getElementById('pay-trxid').value = ''; nav('wallet-screen');
+        }).catch(e => showToast("Error: " + e.message));
+    }
+
     function loadLibrary() {
         if(!currentUser) return;
         let d = langDict[currentLang];
@@ -1320,7 +1430,6 @@
         });
     }
 
-    // CHECK ADS FUNCTION ADDED TO FIX
     function checkAds() {
         db.ref('adsControl').on('value', snap => {
             let adDiv = document.getElementById('ad-container');
@@ -1344,43 +1453,22 @@
     }
 
     // ==========================================
-    // READING MODE SYSTEM (Watermark & Free Book Rating Block)
+    // READING MODE SYSTEM (Watermark & Text-To-Speech)
     // ==========================================
     function openReadingMode(bookId) {
-        // MANDATORY RATING CHECK FOR FREE BOOKS
-        if(userData && userData.library) {
-            let unratedFreeBook = null;
-            for(let libBookId of Object.keys(userData.library)) {
-                if(libBookId === bookId) continue; // Let user read the unrated book to rate it
-                let b = allBooks.find(x => x.id === libBookId);
-                if(b && (Number(b.price) === 0 || !b.price)) {
-                    let hasRated = b.ratings && b.ratings[currentUser.uid];
-                    if(!hasRated) { unratedFreeBook = b; break; }
-                }
-            }
-            if(unratedFreeBook) {
-                showToast(`Please rate the free book '${unratedFreeBook.title}' first!`);
-                openBookDetail(unratedFreeBook.id);
-                
-                // Highlight the rating section
-                setTimeout(() => {
-                    const ratingBox = document.getElementById('give-rating-box');
-                    if(ratingBox) {
-                        ratingBox.style.border = "2px solid #e74c3c";
-                        ratingBox.style.borderRadius = "12px";
-                        ratingBox.style.padding = "10px";
-                    }
-                }, 500);
-                return;
-            }
+        // Reset TTS when opening a new book
+        isTTSActive = false;
+        if(window.speechSynthesis) window.speechSynthesis.cancel();
+        const ttsBtnIcon = document.querySelector('#tts-btn i');
+        if(ttsBtnIcon) {
+            ttsBtnIcon.classList.replace('fa-volume-mute', 'fa-volume-up');
+            ttsBtnIcon.style.color = "inherit";
         }
 
-        // LOAD READING CONTENT
         db.ref('books/' + bookId).once('value', snap => {
             let book = snap.val();
             if(book.pages && Array.isArray(book.pages)) { currentReadingPages = book.pages; } else if(book.content) { currentReadingPages = [book.content]; } else { currentReadingPages = ["No content available."]; }
             
-            // Set Dynamic Watermark (Fixed to Username & Email)
             let wmContainer = document.getElementById('watermark-container');
             wmContainer.innerHTML = '';
             
@@ -1400,11 +1488,56 @@
         document.getElementById('read-content').innerText = currentReadingPages[currentReadingIndex] || "Empty Page";
         document.getElementById('read-page-indicator').innerText = `Page ${currentReadingIndex + 1} / ${currentReadingPages.length}`;
         document.getElementById('read-content').scrollTop = 0; 
+        
+        // Auto Speak on page change if TTS is active
+        if(isTTSActive) { speakCurrentPage(); }
+    }
+
+    // --- Google Text-To-Speech (TTS) Logic ---
+    function toggleTTS() {
+        if (!('speechSynthesis' in window)) {
+            return showToast("Your browser does not support text-to-speech.");
+        }
+        isTTSActive = !isTTSActive;
+        const ttsBtnIcon = document.querySelector('#tts-btn i');
+        
+        if (isTTSActive) {
+            ttsBtnIcon.classList.replace('fa-volume-up', 'fa-volume-mute');
+            ttsBtnIcon.style.color = "var(--secondary)";
+            showToast("Voice Reading Started");
+            speakCurrentPage();
+        } else {
+            ttsBtnIcon.classList.replace('fa-volume-mute', 'fa-volume-up');
+            ttsBtnIcon.style.color = "inherit";
+            showToast("Voice Reading Stopped");
+            window.speechSynthesis.cancel();
+        }
+    }
+
+    function speakCurrentPage() {
+        window.speechSynthesis.cancel(); // Stop current speech
+        if (!isTTSActive) return;
+        
+        let text = currentReadingPages[currentReadingIndex] || "";
+        if (!text) return;
+        
+        let utterance = new SpeechSynthesisUtterance(text);
+        
+        // Detect Bengali text for proper pronunciation mapping
+        const hasBengali = /[\u0980-\u09FF]/.test(text);
+        utterance.lang = hasBengali ? 'bn-BD' : 'en-US';
+        
+        window.speechSynthesis.speak(utterance);
     }
 
     function prevReadPage() { if(currentReadingIndex > 0) { currentReadingIndex--; renderReadingPage(); } else { showToast("This is the first page!"); } }
     function nextReadPage() { if(currentReadingIndex < currentReadingPages.length - 1) { currentReadingIndex++; renderReadingPage(); } else { showToast("You have reached the end of the book! 🎉"); } }
-    function closeReading() { document.getElementById('reading-screen').style.display = 'none'; }
+    
+    function closeReading() { 
+        document.getElementById('reading-screen').style.display = 'none'; 
+        if(window.speechSynthesis) window.speechSynthesis.cancel(); // Stop reading on close
+    }
+    
     function changeFontSize(val) { fontSize += val; document.getElementById('read-content').style.fontSize = fontSize + 'px'; }
 
     let toastTimeout;
@@ -1429,9 +1562,9 @@
     // ==========================================
     applyLanguage();
     loadCategories(); 
-    loadBooks();    /* ADDED TO FIX ISSUE 1 */
-    loadQA();       /* ADDED TO FIX ISSUE 2 */
-    checkAds();     /* ADDED TO FIX ISSUE 3 */
+    loadBooks();   
+    loadQA();      
+    checkAds();    
 
 </script>
 
