@@ -16,49 +16,60 @@
     <style>
         :root {
             /* Premium Glowing Purple Theme - Light Mode */
-            --primary: #7000FF;     /* Deep Purple */
-            --secondary: #F202FF;   /* Glowing Magenta/Neon Purple */
-            --accent: #8A2BE2;      /* Blue Violet */
-            --bg-color: #F8F5FF;    /* Very Light Purple/White */
+            --primary: #7000FF;     
+            --secondary: #F202FF;   
+            --accent: #8A2BE2;      
+            --bg-color: #F8F5FF;    
             --card-bg: #ffffff;
             --text-main: #2A1635;
             --text-muted: #82728C;
             --radius: 18px;
-            --glow: 0 4px 20px rgba(112, 0, 255, 0.3); /* Premium Glow */
+            --glow: 0 4px 20px rgba(112, 0, 255, 0.3); 
             --border-color: rgba(112, 0, 255, 0.1);
         }
 
         /* Global Dark Mode Theme */
         body.dark-theme {
-            --bg-color: #12091A;    /* Very Dark Purple */
-            --card-bg: #1E112A;     /* Dark Card Purple */
+            --bg-color: #12091A;    
+            --card-bg: #1E112A;     
             --text-main: #EAE0F2;
             --text-muted: #A393B3;
-            --glow: 0 4px 25px rgba(242, 2, 255, 0.4); /* Neon Glow for Dark Mode */
+            --glow: 0 4px 25px rgba(242, 2, 255, 0.4); 
             --border-color: rgba(242, 2, 255, 0.15);
+        }
+
+        /* Desktop UI Background Update */
+        body {
+            font-family: 'Nunito', sans-serif; 
+            background: linear-gradient(135deg, #12091A, #2A1635);
+            display: flex; justify-content: center; align-items: center; 
+            height: 100dvh; min-height: 100%; overflow: hidden; margin: 0;
+            transition: background 0.3s;
+        }
+
+        body.dark-theme {
+            background: linear-gradient(135deg, #000000, #12091A);
         }
 
         /* Anti-Copy Protection */
         * { margin: 0; padding: 0; box-sizing: border-box; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none; -webkit-tap-highlight-color: transparent; transition: background-color 0.3s, color 0.3s; }
-        html, body { height: 100%; margin: 0; }
-        body {
-            font-family: 'Nunito', sans-serif; background-color: #000;
-            display: flex; justify-content: center; height: 100dvh; 
-            min-height: 100%; overflow: hidden;
-        }
 
         h1, h2, h3, h4, .app-title { font-family: 'Montserrat', sans-serif; color: var(--text-main); }
 
+        /* Modified container for Desktop & Mobile responsiveness */
         #app-container {
-            width: 100%; max-width: 480px; height: 100%; max-height: 100dvh;
+            width: 100%; max-width: 450px; height: 100%; max-height: calc(100dvh - 30px);
             background: var(--bg-color); position: relative; display: flex;
-            flex-direction: column; overflow: hidden; box-shadow: 0 0 20px rgba(0,0,0,0.8);
+            flex-direction: column; overflow: hidden; 
+            box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+            border-radius: 25px;
         }
 
-        .header {
-            padding: 20px; border-bottom-left-radius: 25px; border-bottom-right-radius: 25px;
-            position: relative; z-index: 10;
+        @media (max-width: 480px) {
+            #app-container { max-height: 100dvh; border-radius: 0; box-shadow: none; }
         }
+
+        .header { padding: 20px; border-bottom-left-radius: 25px; border-bottom-right-radius: 25px; position: relative; z-index: 10; }
         .header h2 { color: white; font-size: 22px; text-shadow: 1px 1px 3px rgba(0,0,0,0.2); }
 
         .screen { display: none; flex: 1; overflow-y: auto; padding: 15px; padding-bottom: 90px; }
@@ -67,33 +78,18 @@
 
         ::-webkit-scrollbar { display: none; }
 
-        .card {
-            background: var(--card-bg); border-radius: var(--radius); padding: 16px;
-            margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            border: 1px solid var(--border-color); transition: transform 0.2s, box-shadow 0.3s;
-        }
+        .card { background: var(--card-bg); border-radius: var(--radius); padding: 16px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); border: 1px solid var(--border-color); transition: transform 0.2s, box-shadow 0.3s; }
         .card:active { transform: scale(0.98); }
 
-        /* Grids and Lists */
         .grid-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding-bottom: 15px; }
         
-        /* Recommendation & Categories Horizontal Scroll */
-        .horizontal-scroll {
-            display: flex; overflow-x: auto; gap: 10px; padding-bottom: 15px; scroll-snap-type: x mandatory; margin-bottom: 5px;
-        }
+        .horizontal-scroll { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 15px; scroll-snap-type: x mandatory; margin-bottom: 5px; scroll-behavior: smooth; }
         .horizontal-scroll .book-card { min-width: 150px; scroll-snap-align: start; flex: 0 0 auto; }
 
-        .cat-pill {
-            padding: 8px 18px; border-radius: 25px; border: 1.5px solid var(--border-color);
-            background: var(--card-bg); color: var(--text-muted); font-size: 13.5px; font-weight: bold;
-            cursor: pointer; white-space: nowrap; transition: 0.3s; flex-shrink: 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.03);
-        }
+        .cat-pill { padding: 8px 18px; border-radius: 25px; border: 1.5px solid var(--border-color); background: var(--card-bg); color: var(--text-muted); font-size: 13.5px; font-weight: bold; cursor: pointer; white-space: nowrap; transition: 0.3s; flex-shrink: 0; box-shadow: 0 2px 8px rgba(0,0,0,0.03); }
         .cat-pill.active { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border-color: transparent; box-shadow: var(--glow); }
 
-        .book-card { 
-             display: flex; flex-direction: column; align-items: center; justify-content: space-between; height: 100%; padding: 12px; margin-bottom: 0; position: relative; cursor: pointer; background: var(--card-bg); border-radius: var(--radius); box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden;
-        }
+        .book-card { display: flex; flex-direction: column; align-items: center; justify-content: space-between; height: 100%; padding: 12px; margin-bottom: 0; position: relative; cursor: pointer; background: var(--card-bg); border-radius: var(--radius); box-shadow: 0 4px 15px rgba(0,0,0,0.05); overflow: hidden; }
         .cover-wrapper { position: relative; width: 100%; margin-bottom: 8px;}
         .book-cover { width: 100%; aspect-ratio: 4 / 5; border-radius: 12px; object-fit: cover; background: #eee; box-shadow: 0 4px 10px rgba(0,0,0,0.1); pointer-events: none; }
         .book-info { flex: none; width: 100%; text-align: left; }
@@ -101,173 +97,114 @@
         .book-author { font-size: 11px; color: var(--text-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 5px; }
         .book-price { color: var(--secondary); font-weight: bold; font-size: 15px; text-shadow: 0 0 5px rgba(242, 2, 255, 0.3); }
 
-        .fav-btn {
-            background: var(--bg-color); border-radius: 50%; width: 30px; height: 30px; 
-            display: flex; align-items: center; justify-content: center; 
-            color: var(--text-muted); font-size: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
-            transition: 0.3s; border: 1px solid var(--border-color);
-        }
+        .fav-btn { background: var(--bg-color); border-radius: 50%; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 15px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); transition: 0.3s; border: 1px solid var(--border-color); }
         .fav-btn.active { color: var(--secondary); box-shadow: 0 0 10px rgba(242, 2, 255, 0.4); border-color: var(--secondary); } 
         .fav-btn:active { transform: scale(0.8); }
 
-        input, select, textarea {
-            width: 100%; padding: 14px; border-radius: var(--radius); border: 1.5px solid var(--border-color); margin-bottom: 15px; font-family: 'Nunito', sans-serif; font-size: 16px; outline: none; background: var(--bg-color); color: var(--text-main); transition: 0.3s;
-            user-select: text; -webkit-user-select: text; /* Allow typing */
-        }
+        input, select, textarea { width: 100%; padding: 14px; border-radius: var(--radius); border: 1.5px solid var(--border-color); margin-bottom: 15px; font-family: 'Nunito', sans-serif; font-size: 16px; outline: none; background: var(--bg-color); color: var(--text-main); transition: 0.3s; user-select: text; -webkit-user-select: text; }
         input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 8px rgba(112, 0, 255, 0.2); }
         input[type="checkbox"] { width: 20px; height: 20px; margin-bottom: 0; margin-right: 10px; display: inline-block; flex-shrink: 0; }
         
         .tnc-wrapper { display: flex; align-items: flex-start; text-align: left; margin-bottom: 20px; padding: 0 5px; }
         .tnc-wrapper label { font-size: 13px; color: var(--text-muted); line-height: 1.5; cursor: pointer; }
 
-        .btn {
-            width: 100%; padding: 14px; border-radius: 25px; border: none; color: white; font-size: 16px; font-weight: bold; font-family: 'Montserrat', sans-serif; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.15); transition: 0.3s;
-        }
+        .btn { width: 100%; padding: 14px; border-radius: 25px; border: none; color: white; font-size: 16px; font-weight: bold; font-family: 'Montserrat', sans-serif; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.15); transition: 0.3s; }
         .btn-primary { background: linear-gradient(135deg, var(--primary), var(--secondary)); box-shadow: var(--glow); }
         .btn-secondary { background: var(--text-main); color: var(--bg-color); }
         .btn-outline { background: transparent; color: var(--text-main); border: 2px solid var(--border-color); box-shadow: none; }
-        .btn-success { background: #00d2ff; background: linear-gradient(to right, #3a7bd5, #00d2ff); box-shadow: 0 4px 15px rgba(0, 210, 255, 0.4); }
+        .btn-success { background: linear-gradient(to right, #3a7bd5, #00d2ff); box-shadow: 0 4px 15px rgba(0, 210, 255, 0.4); }
         .btn-danger { background: linear-gradient(135deg, #ff416c, #ff4b2b); box-shadow: 0 4px 15px rgba(255, 65, 108, 0.4); }
         .btn:active { transform: scale(0.95); }
+        .btn:disabled { opacity: 0.7; cursor: not-allowed; transform: none; box-shadow: none; }
 
-        .bottom-nav {
-            position: absolute; bottom: 0; left: 0; width: 100%; background: var(--card-bg); display: flex; justify-content: space-around; padding: 15px 0; border-top-left-radius: 25px; border-top-right-radius: 25px; box-shadow: 0 -4px 20px rgba(0,0,0,0.1); z-index: 20; border-top: 1px solid var(--border-color);
-        }
+        .bottom-nav { position: absolute; bottom: 0; left: 0; width: 100%; background: var(--card-bg); display: flex; justify-content: space-around; padding: 15px 0; border-top-left-radius: 25px; border-top-right-radius: 25px; box-shadow: 0 -4px 20px rgba(0,0,0,0.1); z-index: 20; border-top: 1px solid var(--border-color); }
         .nav-item { text-align: center; color: var(--text-muted); font-size: 20px; cursor: pointer; transition: 0.3s; flex: 1; }
         .nav-item.active { color: var(--secondary); transform: translateY(-3px); text-shadow: 0 0 10px rgba(242, 2, 255, 0.4); }
         .nav-label { font-size: 11px; display: block; margin-top: 4px; font-weight: bold; font-family: 'Nunito', sans-serif;}
 
-        #reading-screen { background: var(--bg-color); color: var(--text-main); z-index: 30; position: absolute; top:0; left:0; width:100%; height:100%; display:none; flex-direction: column; overflow: hidden; }
+        #reading-screen { background: var(--bg-color); color: var(--text-main); z-index: 30; position: absolute; top:0; left:0; width:100%; height:100%; display:none; flex-direction: column; overflow: hidden; border-radius: inherit; }
         .read-tools { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: var(--card-bg); box-shadow: 0 2px 10px rgba(0,0,0,0.05); z-index: 2;}
         .read-content { flex: 1; padding: 20px; overflow-y: auto; font-size: 16px; line-height: 1.8; transition: 0.3s; white-space: pre-wrap; z-index: 1; position: relative;}
         .read-footer { display: flex; justify-content: space-between; padding: 15px; background: var(--card-bg); box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 2;}
 
-        /* Anti-Screenshot Watermark */
+        /* Updated Anti-Screenshot Watermark Canvas */
         .watermark-overlay {
-            position: absolute; top: 0; left: 0; width: 200%; height: 200%;
-            pointer-events: none; z-index: 0; display: flex; flex-wrap: wrap; 
-            overflow: hidden; opacity: 0.05; justify-content: center; align-items: center; 
-            gap: 40px; transform: rotate(-25deg) translate(-25%, -25%);
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none; z-index: 0; opacity: 1; /* Opacity handled in canvas ctx */
         }
-        .watermark-text { font-size: 22px; font-weight: bold; color: var(--text-main); white-space: nowrap; pointer-events: none;}
 
         #ad-container { width: 100%; text-align: center; margin-bottom: 10px; display: none; }
         .wallet-box { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 25px; border-radius: var(--radius); text-align: center; margin-bottom: 20px; box-shadow: var(--glow);}
         .wallet-box h1 { color: white; font-size: 36px; margin-top: 10px; text-shadow: 0 0 10px rgba(255,255,255,0.3); }
 
-        .modal-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 150; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(5px); }
+        .modal-overlay { display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 150; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(5px); border-radius: inherit; }
         .modal-content { background: var(--card-bg); border-radius: var(--radius); padding: 20px; width: 100%; max-height: 85vh; display: flex; flex-direction: column; box-shadow: var(--glow); animation: fadeIn 0.3s ease; border: 1px solid var(--border-color); position: relative;}
         .tnc-text-area { overflow-y: auto; font-size: 13.5px; color: var(--text-main); line-height: 1.6; margin: 15px 0; padding-right: 5px; text-align: left; }
 
-        #toast { position: absolute; bottom: 90px; left: 50%; transform: translateX(-50%); background: var(--text-main); color: var(--bg-color); padding: 12px 25px; border-radius: 25px; font-size: 14px; font-weight: bold; display: none; z-index: 500; box-shadow: var(--glow);}
+        #toast { position: absolute; bottom: 90px; left: 50%; transform: translateX(-50%); background: var(--text-main); color: var(--bg-color); padding: 12px 25px; border-radius: 25px; font-size: 14px; font-weight: bold; display: none; z-index: 500; box-shadow: var(--glow); white-space: nowrap;}
         
         .tag-badge { background: var(--bg-color); border: 1px solid var(--border-color); color: var(--secondary); padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; }
 
-        /* --- Search Animation --- */
         .top-bar-wrapper { display: flex; justify-content: space-between; align-items: center; padding: 5px 0 15px 0; gap: 10px; position: relative; z-index: 50; }
-        
         .search-wrapper { display: flex; align-items: center; justify-content: flex-end; flex-grow: 1; position: relative; }
-        .search-input-anim { 
-            width: 0; opacity: 0; padding: 0; margin-bottom: 0 !important; 
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
-            border: none; pointer-events: none; height: 45px; background: var(--card-bg); border-radius: 25px;
-        }
-        .search-input-anim.active { 
-            width: 100%; opacity: 1; padding: 0 15px 0 20px; margin-right: -40px; 
-            border: 1.5px solid var(--primary); pointer-events: auto; box-shadow: 0 2px 15px rgba(112,0,255,0.1);
-        }
-        .search-btn { 
-            background: var(--card-bg); border: 1px solid var(--border-color); font-size: 18px; color: var(--primary); 
-            cursor: pointer; width: 45px; height: 45px; border-radius: 50%; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: 0.3s; flex-shrink: 0; z-index: 2;
-        }
+        .search-input-anim { width: 0; opacity: 0; padding: 0; margin-bottom: 0 !important; transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); border: none; pointer-events: none; height: 45px; background: var(--card-bg); border-radius: 25px; }
+        .search-input-anim.active { width: 100%; opacity: 1; padding: 0 15px 0 20px; margin-right: -40px; border: 1.5px solid var(--primary); pointer-events: auto; box-shadow: 0 2px 15px rgba(112,0,255,0.1); }
+        .search-btn { background: var(--card-bg); border: 1px solid var(--border-color); font-size: 18px; color: var(--primary); cursor: pointer; width: 45px; height: 45px; border-radius: 50%; box-shadow: 0 2px 10px rgba(0,0,0,0.05); transition: 0.3s; flex-shrink: 0; z-index: 2; }
 
-        /* --- Professional Side Drawer Menu Styles --- */
-        #side-menu-drawer {
-            position: absolute; top: 0; left: -300px; width: 280px; max-width: 80%;
-            height: 100%; background: var(--bg-color); z-index: 300;
-            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            box-shadow: 5px 0 25px rgba(0,0,0,0.15); display: flex; flex-direction: column;
-        }
+        /* Professional Side Drawer Menu */
+        #side-menu-drawer { position: absolute; top: 0; left: -300px; width: 280px; max-width: 80%; height: 100%; background: var(--bg-color); z-index: 300; transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 5px 0 25px rgba(0,0,0,0.15); display: flex; flex-direction: column; border-top-left-radius: inherit; border-bottom-left-radius: inherit; }
         #side-menu-drawer.open { left: 0; }
-        .drawer-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.5); z-index: 299; backdrop-filter: blur(2px);
-            opacity: 0; pointer-events: none; transition: opacity 0.3s ease;
-        }
+        .drawer-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 299; backdrop-filter: blur(2px); opacity: 0; pointer-events: none; transition: opacity 0.3s ease; border-radius: inherit;}
         .drawer-overlay.open { opacity: 1; pointer-events: auto; }
         
-        .drawer-header {
-            padding: 30px 20px 20px; background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white; display: flex; flex-direction: column; align-items: flex-start;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative;
-        }
-        .drawer-header .close-btn {
-            position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 22px; color: rgba(255,255,255,0.8); transition: 0.3s;
-        }
+        .drawer-header { padding: 30px 20px 20px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; display: flex; flex-direction: column; align-items: flex-start; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; border-top-left-radius: inherit;}
+        .drawer-header .close-btn { position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 22px; color: rgba(255,255,255,0.8); transition: 0.3s; }
         .drawer-header .close-btn:active { transform: scale(0.9); }
         .drawer-user-info { margin-top: 15px; }
         .drawer-user-info h3 { font-family: 'Montserrat', sans-serif; font-size: 18px; margin-bottom: 3px; color: white; }
         .drawer-user-info p { font-size: 13px; color: rgba(255,255,255,0.8); margin: 0; }
-        .drawer-avatar {
-            width: 60px; height: 60px; background: white; color: var(--primary);
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
+        .drawer-avatar { width: 60px; height: 60px; background: white; color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 30px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
         
         .drawer-menu-list { flex: 1; overflow-y: auto; padding: 20px 15px; }
-        .drawer-item {
-            padding: 14px 18px; display: flex; align-items: center; gap: 15px;
-            cursor: pointer; color: var(--text-main); transition: 0.3s;
-            font-size: 15px; font-weight: 600; border-radius: 12px; margin-bottom: 8px;
-            background: transparent;
-        }
+        .drawer-item { padding: 14px 18px; display: flex; align-items: center; gap: 15px; cursor: pointer; color: var(--text-main); transition: 0.3s; font-size: 15px; font-weight: 600; border-radius: 12px; margin-bottom: 8px; background: transparent; }
         .drawer-item i { font-size: 18px; width: 24px; text-align: center; transition: 0.3s;}
         .drawer-item:hover, .drawer-item:active { background: var(--card-bg); box-shadow: 0 2px 10px rgba(0,0,0,0.05); transform: translateX(5px); }
         .drawer-item:hover i, .drawer-item:active i { transform: scale(1.1); }
         
-        /* --- Full Screen Chat Q&A Styles --- */
-        .qa-full-screen {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: var(--bg-color); z-index: 250; display: none; flex-direction: column;
-            animation: fadeIn 0.3s ease;
-        }
-        .qa-header {
-            padding: 15px 20px; background: var(--card-bg); box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-            display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color);
-        }
-        .chat-area { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 20px;}
+        /* Full Screen Chat Q&A */
+        .qa-full-screen { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg-color); z-index: 250; display: none; flex-direction: column; animation: fadeIn 0.3s ease; border-radius: inherit;}
+        .qa-header { padding: 15px 20px; background: var(--card-bg); box-shadow: 0 2px 10px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); border-top-left-radius: inherit; border-top-right-radius: inherit;}
+        .chat-area { flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 20px; scroll-behavior: smooth;}
         .chat-bubble { max-width: 85%; padding: 12px 18px; border-radius: 18px; font-size: 15px; line-height: 1.5; animation: fadeIn 0.3s ease; word-wrap: break-word; box-shadow: 0 2px 8px rgba(0,0,0,0.05);}
         .chat-user { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; border-bottom-right-radius: 4px; align-self: flex-end;}
         .chat-bot { background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color); border-bottom-left-radius: 4px; align-self: flex-start; }
         
-        /* Horizontal Scroll Questions */
-        .qa-horizontal-scroll {
-            display: flex; overflow-x: auto; gap: 12px; padding: 15px;
-            background: var(--card-bg); border-top: 1px solid var(--border-color);
-            scroll-snap-type: x mandatory; flex-wrap: nowrap; padding-bottom: 25px;
-        }
+        .qa-horizontal-scroll { display: flex; overflow-x: auto; gap: 12px; padding: 15px; background: var(--card-bg); border-top: 1px solid var(--border-color); scroll-snap-type: x mandatory; flex-wrap: nowrap; padding-bottom: 25px; scroll-behavior: smooth; border-bottom-left-radius: inherit; border-bottom-right-radius: inherit;}
         .qa-horizontal-scroll::-webkit-scrollbar { display: none; }
-        .qa-btn-slide {
-            flex: 0 0 auto; min-width: 220px; max-width: 280px; scroll-snap-align: start;
-            background: var(--bg-color); border: 1.5px solid var(--secondary);
-            color: var(--secondary); padding: 12px 15px; border-radius: 15px;
-            font-size: 14px; font-weight: bold; cursor: pointer; text-align: left;
-            transition: 0.3s; white-space: normal; line-height: 1.4;
-        }
+        .qa-btn-slide { flex: 0 0 auto; min-width: 220px; max-width: 280px; scroll-snap-align: start; background: var(--bg-color); border: 1.5px solid var(--secondary); color: var(--secondary); padding: 12px 15px; border-radius: 15px; font-size: 14px; font-weight: bold; cursor: pointer; text-align: left; transition: 0.3s; white-space: normal; line-height: 1.4; }
         .qa-btn-slide:active { background: var(--secondary); color: white; transform: scale(0.98); }
+        .qa-btn-slide:disabled { opacity: 0.5; cursor: not-allowed; }
 
         .close-modal-icon { position: absolute; top: 15px; right: 15px; font-size: 20px; color: var(--text-muted); cursor: pointer; }
 
-        /* Social Buttons */
         .social-btn { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px; border-radius: 12px; margin-bottom: 10px; font-weight: bold; font-size: 15px; color: white; cursor: pointer; transition: 0.3s;}
         .social-fb { background: #1877F2; } .social-tg { background: #2AABEE; }
         .social-btn:active { transform: scale(0.98); opacity: 0.9;}
+
+        /* Global Loader */
+        #global-loader { display:none; position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9999; justify-content:center; align-items:center; backdrop-filter:blur(3px); border-radius: inherit;}
+        .spinner { border:4px solid rgba(255,255,255,0.3); border-top:4px solid var(--primary); border-radius:50%; width:45px; height:45px; animation:spin 1s linear infinite; }
+        @keyframes spin { 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
+
     </style>
 </head>
 <body>
 
 <div id="app-container">
     
+    <!-- Global Loader -->
+    <div id="global-loader"><div class="spinner"></div></div>
+
     <!-- Left Drawer Overlay -->
     <div class="drawer-overlay" id="drawer-overlay" onclick="toggleMenu()"></div>
     
@@ -284,7 +221,6 @@
             </div>
         </div>
         <div class="drawer-menu-list">
-            <!-- Language Toggle Feature -->
             <div class="drawer-item" onclick="toggleLanguage(); toggleMenu();">
                 <i class="fas fa-language" style="color: #3498db;"></i> 
                 <span id="menu-lang-text">বাংলা (BN)</span>
@@ -305,6 +241,12 @@
             <div class="drawer-item" onclick="openModal('community-modal'); toggleMenu();">
                 <i class="fas fa-users" style="color: #2ecc71;"></i> <span id="menu-com-text">Community</span>
             </div>
+            
+            <!-- Moved Logout Button here -->
+            <div style="height: 1px; background: var(--border-color); margin: 15px 0;" id="logout-divider"></div>
+            <div class="drawer-item" id="drawer-logout-btn" onclick="logout(); toggleMenu();" style="display: none;">
+                <i class="fas fa-sign-out-alt" style="color: #e74c3c;"></i> <span style="color: #e74c3c; font-weight: bold;">Logout Securely</span>
+            </div>
         </div>
     </div>
 
@@ -318,7 +260,7 @@
             <input type="password" id="login-pass" placeholder="Password">
             <button class="btn btn-primary" onclick="login()"><span class="lang-login-btn">Login</span></button>
             
-            <button class="btn btn-outline" onclick="nav('home-screen')"><i class="fas fa-compass"></i> Explore as Guest</button>
+            <button class="btn btn-outline" onclick="nav('home-screen')" style="margin-top:15px;"><i class="fas fa-compass"></i> Explore as Guest</button>
             
             <p style="text-align: center; margin-top: 20px; font-size: 15px; color: var(--text-muted);">
                 Don't have an account? <span style="color: var(--secondary); font-weight: bold; cursor: pointer;" onclick="toggleAuth('register')">Sign Up</span>
@@ -341,7 +283,7 @@
 
             <button class="btn btn-primary" onclick="register()">Create Account</button>
             
-            <button class="btn btn-outline" onclick="nav('home-screen')"><i class="fas fa-compass"></i> Explore as Guest</button>
+            <button class="btn btn-outline" onclick="nav('home-screen')" style="margin-top:15px;"><i class="fas fa-compass"></i> Explore as Guest</button>
 
             <p style="text-align: center; margin-top: 20px; font-size: 15px; color: var(--text-muted);">
                 Already have an account? <span style="color: var(--secondary); font-weight: bold; cursor: pointer;" onclick="toggleAuth('login')">Login</span>
@@ -362,16 +304,12 @@
         
         <div id="ad-container"></div>
 
-        <!-- Recommended Section (Horizontal Scroll) -->
         <div id="recommended-section" style="display: none;">
             <h3 style="margin-bottom: 10px; font-size: 16px; color: var(--text-main);"><i class="fas fa-magic" style="color: var(--secondary); text-shadow: var(--glow);"></i> <span id="rec-text">Recommended for You</span></h3>
             <div id="recommended-list" class="horizontal-scroll"></div>
         </div>
 
-        <!-- NEW: Horizontal Scroll Categories -->
-        <div id="category-scroll" class="horizontal-scroll" style="margin-bottom: 15px; border-bottom: none; gap: 8px;">
-            <!-- Buttons injected via JS -->
-        </div>
+        <div id="category-scroll" class="horizontal-scroll" style="margin-bottom: 15px; border-bottom: none; gap: 8px;"></div>
 
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
             <h3 style="font-size: 16px; color: var(--text-main); margin: 0;"><span class="lang-all">All Books</span></h3>
@@ -438,16 +376,13 @@
             <h2 id="det-title" style="margin-bottom: 5px;">Book Title</h2>
             <p id="det-author" style="color: var(--text-muted); margin-bottom: 15px; font-weight: bold;">Author Name</p>
             
-            <!-- Category & Word Count -->
             <div style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">
                 <span id="det-category" style="background: var(--bg-color); border: 1px solid var(--border-color); padding: 5px 12px; border-radius: 15px; margin-right: 5px; font-weight: bold; color: var(--primary);">Category</span>
                 <span id="det-words">0 Words</span>
             </div>
 
-            <!-- Hashtags -->
             <div id="det-tags" style="margin-bottom: 15px; display: flex; flex-wrap: wrap; gap: 5px; justify-content: center;"></div>
 
-            <!-- Book Rating Display -->
             <div id="det-rating-display" style="color: #f39c12; margin: 5px 0 15px 0; font-size: 15px;"></div>
 
             <h1 style="color: var(--secondary); margin: 15px 0; text-shadow: var(--glow);"><span id="coin-icon"><i class="fas fa-coins"></i></span> <span id="det-price">0</span></h1>
@@ -459,18 +394,8 @@
             </div>
             
             <button class="btn btn-primary" id="buy-btn" onclick="buyBook()"><span class="lang-buy">Buy Now</span></button>
-
-            <!-- Book Rating System -->
-            <div id="give-rating-box" style="display: none; margin-top: 25px; padding-top: 20px; border-top: 1px solid var(--border-color); transition: 0.3s;">
-                <h4 style="margin-bottom: 10px; color: var(--text-main);">Rate this Book</h4>
-                <div id="star-rating" style="font-size: 28px; display: flex; justify-content: center; gap: 10px; cursor: pointer;">
-                    <i class="fas fa-star" onclick="submitRating(1)"></i>
-                    <i class="fas fa-star" onclick="submitRating(2)"></i>
-                    <i class="fas fa-star" onclick="submitRating(3)"></i>
-                    <i class="fas fa-star" onclick="submitRating(4)"></i>
-                    <i class="fas fa-star" onclick="submitRating(5)"></i>
-                </div>
-            </div>
+            
+            <!-- Removed the forced rating border div from here -->
         </div>
     </div>
 
@@ -486,7 +411,6 @@
             
             <p style="color: var(--secondary); font-size: 14px; font-weight: bold; margin-bottom: 25px; text-transform: uppercase; text-shadow: var(--glow);" id="profile-role">USER</p>
             
-            <!-- Editable Profile Info Box -->
             <div style="text-align: left; background: var(--bg-color); border: 1px solid var(--border-color); padding: 15px; border-radius: 12px; margin-bottom: 25px;">
                 
                 <label style="font-size: 13px; color: var(--text-muted); margin-bottom: 5px; display: block; font-weight: bold;"><i class="fas fa-user"></i> Full Name</label>
@@ -503,11 +427,7 @@
 
                 <button class="btn btn-success" onclick="updateProfile()" style="padding: 12px; font-size: 15px; border-radius: 12px;"><i class="fas fa-save"></i> Save Changes</button>
             </div>
-
-            <!-- Smaller Logout Button with Confirmation -->
-            <button class="btn btn-danger" onclick="logout()" style="width: auto; padding: 10px 20px; font-size: 14px; margin: 0 auto; display: inline-flex; align-items: center; gap: 8px; border-radius: 20px;">
-                <i class="fas fa-sign-out-alt"></i> Logout Securely
-            </button>
+            <!-- Logout Button moved to Menu -->
         </div>
     </div>
 
@@ -525,7 +445,7 @@
             </div>
         </div>
         
-        <!-- Anti-Screenshot Watermark Container -->
+        <!-- Dynamic Anti-Screenshot Watermark Container (Canvas Based) -->
         <div id="watermark-container" class="watermark-overlay"></div>
 
         <div id="read-content" class="read-content"></div>
@@ -575,7 +495,6 @@
             <div class="chat-bubble chat-bot">Hello! How can I help you today? Please swipe and tap a question below.</div>
         </div>
         
-        <!-- Horizontal Scrollable Questions -->
         <div id="qa-buttons" class="qa-horizontal-scroll">
             <!-- Buttons injected via JS -->
         </div>
@@ -606,6 +525,27 @@
         </div>
     </div>
 
+    <!-- 5. Polite Rating Modal -->
+    <div id="rating-modal" class="modal-overlay">
+        <div class="modal-content" style="text-align: center;">
+            <i class="fas fa-times close-modal-icon" onclick="closeModal('rating-modal')"></i>
+            <h2 style="color: var(--primary); margin-bottom: 10px;">অভিনন্দন! 🎉</h2>
+            <p style="font-size: 14px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.6;">
+                আপনি বইটি সফলভাবে পড়েছেন! অনুগ্রহ করে আপনার মূল্যবান রেটিং প্রদান করুন। আপনার রেটিং লেখককে আরো ভালো লিখতে উৎসাহিত করবে।
+            </p>
+            
+            <div id="modal-star-rating" style="font-size: 35px; display: flex; justify-content: center; gap: 15px; cursor: pointer; margin-bottom: 20px;">
+                <i class="far fa-star text-muted" onclick="submitRating(1, true)"></i>
+                <i class="far fa-star text-muted" onclick="submitRating(2, true)"></i>
+                <i class="far fa-star text-muted" onclick="submitRating(3, true)"></i>
+                <i class="far fa-star text-muted" onclick="submitRating(4, true)"></i>
+                <i class="far fa-star text-muted" onclick="submitRating(5, true)"></i>
+            </div>
+            
+            <button class="btn btn-outline" style="padding: 10px;" onclick="closeModal('rating-modal')">না, ধন্যবাদ</button>
+        </div>
+    </div>
+
     <!-- Toast -->
     <div id="toast">Message</div>
 </div>
@@ -628,11 +568,8 @@
     let currentUser = null, userData = null, currentBookId = null, currentBookData = null;
     let voucherData = null, finalPrice = 0, fontSize = 16, allBooks = [], adminPaymentSettings = null; 
     let currentCategory = ""; 
-
     let currentReadingPages = [];
     let currentReadingIndex = 0;
-    
-    // TTS State Variable
     let isTTSActive = false;
 
     // --- Dynamic System Settings Variables ---
@@ -640,32 +577,17 @@
     let blockedWords = [];
     let communityLinks = { facebook: "https://facebook.com", telegram: "https://t.me" };
 
+    // --- Loading System Setup ---
+    function showLoader() { document.getElementById('global-loader').style.display = 'flex'; }
+    function hideLoader() { document.getElementById('global-loader').style.display = 'none'; }
+
     // ==========================================
     // LANGUAGE TRANSLATION SYSTEM
     // ==========================================
     let currentLang = localStorage.getItem('boigram_lang') || 'en';
-
     const langDict = {
-        'en': {
-            langName: "বাংলা (BN)",
-            search_ph: "Search books...",
-            menu_dark: "Dark Mode", menu_light: "Light Mode",
-            menu_lang: "বাংলা (BN)", menu_qa: "Support Q&A", menu_rep: "Report Issue", menu_com: "Community",
-            auth_login: "Login to your account", auth_reg: "Create a new account",
-            home: "Home", favs: "Favs", lib: "Library", wallet: "Wallet", prof: "Profile",
-            rec: "Recommended for You", all: "All Books", free: "Free Books",
-            buy: "Buy Now", get_free: "Get Free", read: "Read"
-        },
-        'bn': {
-            langName: "English (EN)",
-            search_ph: "বই খুঁজুন...",
-            menu_dark: "ডার্ক মোড", menu_light: "লাইট মোড",
-            menu_lang: "English (EN)", menu_qa: "সাপোর্ট প্রশ্ন", menu_rep: "সমস্যা জানান", menu_com: "কমিউনিটি",
-            auth_login: "আপনার অ্যাকাউন্টে লগইন করুন", auth_reg: "নতুন অ্যাকাউন্ট তৈরি করুন",
-            home: "হোম", favs: "পছন্দ", lib: "লাইব্রেরি", wallet: "ওয়ালেট", prof: "প্রোফাইল",
-            rec: "আপনার জন্য প্রস্তাবিত", all: "সকল বই", free: "ফ্রি বই",
-            buy: "কিনুন", get_free: "ফ্রি নিন", read: "পড়ুন"
-        }
+        'en': { langName: "বাংলা (BN)", search_ph: "Search books...", menu_dark: "Dark Mode", menu_light: "Light Mode", menu_lang: "বাংলা (BN)", menu_qa: "Support Q&A", menu_rep: "Report Issue", menu_com: "Community", auth_login: "Login to your account", auth_reg: "Create a new account", home: "Home", favs: "Favs", lib: "Library", wallet: "Wallet", prof: "Profile", rec: "Recommended for You", all: "All Books", free: "Free Books", buy: "Buy Now", get_free: "Get Free", read: "Read" },
+        'bn': { langName: "English (EN)", search_ph: "বই খুঁজুন...", menu_dark: "ডার্ক মোড", menu_light: "লাইট মোড", menu_lang: "English (EN)", menu_qa: "সাপোর্ট প্রশ্ন", menu_rep: "সমস্যা জানান", menu_com: "কমিউনিটি", auth_login: "আপনার অ্যাকাউন্টে লগইন করুন", auth_reg: "নতুন অ্যাকাউন্ট তৈরি করুন", home: "হোম", favs: "পছন্দ", lib: "লাইব্রেরি", wallet: "ওয়ালেট", prof: "প্রোফাইল", rec: "আপনার জন্য প্রস্তাবিত", all: "সকল বই", free: "ফ্রি বই", buy: "কিনুন", get_free: "ফ্রি নিন", read: "পড়ুন" }
     };
 
     function toggleLanguage() {
@@ -676,28 +598,21 @@
 
     function applyLanguage() {
         let d = langDict[currentLang];
-        
         document.getElementById('search-box').placeholder = d.search_ph;
         document.getElementById('menu-lang-text').innerText = d.menu_lang;
         document.getElementById('menu-qa-text').innerText = d.menu_qa;
         document.getElementById('menu-rep-text').innerText = d.menu_rep;
         document.getElementById('menu-com-text').innerText = d.menu_com;
-        
         document.getElementById('nav-home').innerText = d.home;
         document.getElementById('nav-fav').innerText = d.favs;
         document.getElementById('nav-lib').innerText = d.lib;
         document.getElementById('nav-wal').innerText = d.wallet;
         document.getElementById('nav-prof').innerText = d.prof;
-
         document.querySelectorAll('.lang-all').forEach(el => el.innerText = d.all);
         document.querySelectorAll('.lang-free').forEach(el => el.innerText = d.free);
-        
         if(document.getElementById('rec-text')) document.getElementById('rec-text').innerText = d.rec;
-        
         let authTitle = document.getElementById('auth-title');
-        if(document.getElementById('register-box').style.display === 'none') { authTitle.innerText = d.auth_login; } 
-        else { authTitle.innerText = d.auth_reg; }
-
+        if(document.getElementById('register-box').style.display === 'none') { authTitle.innerText = d.auth_login; } else { authTitle.innerText = d.auth_reg; }
         if (allBooks.length > 0) renderBooks();
         loadLibrary();
         updateThemeIcons(document.body.classList.contains('dark-theme'));
@@ -707,41 +622,23 @@
     // Anti-Copy & Anti-Right-Click Protection
     // ==========================================
     document.addEventListener('contextmenu', e => { e.preventDefault(); });
-    document.addEventListener('copy', e => { 
-        e.preventDefault(); 
-        showToast("Copying content is not allowed!"); 
-    });
-    document.addEventListener('keydown', e => {
-        if(e.ctrlKey && (e.key === 'c' || e.key === 'C' || e.key === 'p' || e.key === 'P')) {
-            e.preventDefault();
-            showToast("Action disabled!");
-        }
-    });
+    document.addEventListener('copy', e => { e.preventDefault(); showToast("Copying content is not allowed!"); });
+    document.addEventListener('keydown', e => { if(e.ctrlKey && (e.key === 'c' || e.key === 'C' || e.key === 'p' || e.key === 'P')) { e.preventDefault(); showToast("Action disabled!"); } });
 
     function loadSystemSettings() {
         db.ref('settings/commissions').on('value', snap => {
             if(snap.exists()) {
                 let data = snap.val();
-                sysWriterPercent = data.writerPercent || 50;
-                sysAffiliatePercent = data.affiliatePercent || 20;
-                sysUserDiscount = data.userDiscountPercent || 10;
+                sysWriterPercent = data.writerPercent || 50; sysAffiliatePercent = data.affiliatePercent || 20; sysUserDiscount = data.userDiscountPercent || 10;
             }
         });
-        
         db.ref('settings/blockedWords').on('value', snap => {
-            blockedWords = [];
-            if(snap.exists()) { snap.forEach(child => blockedWords.push(child.val().toLowerCase())); }
+            blockedWords = []; if(snap.exists()) { snap.forEach(child => blockedWords.push(child.val().toLowerCase())); }
         });
-        
         db.ref('settings/community_user').on('value', snap => {
-            if(snap.exists()) {
-                let data = snap.val();
-                communityLinks.facebook = data.facebook || "https://facebook.com";
-                communityLinks.telegram = data.telegram || "https://t.me";
-            }
+            if(snap.exists()) { let data = snap.val(); communityLinks.facebook = data.facebook || "https://facebook.com"; communityLinks.telegram = data.telegram || "https://t.me"; }
         });
     }
-
     loadSystemSettings();
 
     function openCommunityLink(platform) { window.open(communityLinks[platform], '_blank'); }
@@ -760,14 +657,13 @@
         const isDark = document.body.classList.contains('dark-theme');
         localStorage.setItem('boigram_theme', isDark ? 'dark' : 'light');
         updateThemeIcons(isDark);
+        // Refresh Watermark dynamically for color change
+        if(document.getElementById('reading-screen').style.display === 'flex') { generateCanvasWatermark(); }
     }
 
     function updateThemeIcons(isDark) {
         let d = langDict[currentLang];
-        const menuIcon = document.getElementById('menu-dark-icon');
-        const menuText = document.getElementById('menu-dark-text');
-        const readIcon = document.getElementById('read-dark-icon');
-        
+        const menuIcon = document.getElementById('menu-dark-icon'); const menuText = document.getElementById('menu-dark-text'); const readIcon = document.getElementById('read-dark-icon');
         if(isDark) {
             if(menuIcon) { menuIcon.className = 'fas fa-sun'; menuText.innerText = d.menu_light; }
             if(readIcon) readIcon.className = 'fas fa-sun';
@@ -780,19 +676,18 @@
     function toggleMenu() {
         const drawer = document.getElementById('side-menu-drawer');
         const overlay = document.getElementById('drawer-overlay');
-        drawer.classList.toggle('open');
-        overlay.classList.toggle('open');
+        drawer.classList.toggle('open'); overlay.classList.toggle('open');
     }
-
     applySavedTheme();
 
     // ==========================================
-    // MODALS HANDLING & SYSTEM LOGIC
+    // MODALS & FIX: CHAT SYSTEM
     // ==========================================
     function openModal(id) { document.getElementById(id).style.display = 'flex'; }
     function closeModal(id) { document.getElementById(id).style.display = 'none'; }
     
     let chatTimer = null;
+    let isBotTyping = false;
     const defaultQA = [
         { q: "How to buy a book? What are the steps?", a: "To buy a book, go to the book detail page, deposit coins if needed, and click 'Buy Now'." },
         { q: "How to deposit coins?", a: "Go to the Wallet screen, copy the admin payment number, send money, and submit your TrxID." }
@@ -801,27 +696,33 @@
     function loadQA() {
         db.ref('settings/qa/user').on('value', snap => {
             let qaData = snap.exists() ? snap.val() : defaultQA;
-            let btnHtml = '';
-            let qaList = Array.isArray(qaData) ? qaData : Object.values(qaData);
-            
+            let btnHtml = ''; let qaList = Array.isArray(qaData) ? qaData : Object.values(qaData);
             qaList.forEach(item => {
                 let safeQ = item.q.replace(/'/g, "\\'").replace(/"/g, '&quot;');
                 let safeA = item.a.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-                btnHtml += `<button class="qa-btn-slide" onclick="sendQA('${safeQ}', '${safeA}')">${item.q}</button>`;
+                btnHtml += `<button class="qa-btn-slide" onclick="sendQA(this, '${safeQ}', '${safeA}')">${item.q}</button>`;
             });
             document.getElementById('qa-buttons').innerHTML = btnHtml;
         });
     }
 
-    function sendQA(q, a) {
+    // FIX: Optimized Chatting system (No blanking, spamming blocked, smooth scroll)
+    function sendQA(btnNode, q, a) {
+        if(isBotTyping) return; // Prevent spam clicking
+        isBotTyping = true;
+        btnNode.disabled = true;
+
         const chatBox = document.getElementById('chat-history');
-        chatBox.innerHTML += `<div class="chat-bubble chat-user">${q}</div>`;
+        // insertAdjacentHTML prevents DOM blanking/re-render issues
+        chatBox.insertAdjacentHTML('beforeend', `<div class="chat-bubble chat-user">${q}</div>`);
         chatBox.scrollTop = chatBox.scrollHeight;
 
         setTimeout(() => {
-            chatBox.innerHTML += `<div class="chat-bubble chat-bot">${a}</div>`;
+            chatBox.insertAdjacentHTML('beforeend', `<div class="chat-bubble chat-bot">${a}</div>`);
             chatBox.scrollTop = chatBox.scrollHeight;
-        }, 600);
+            isBotTyping = false;
+            btnNode.disabled = false;
+        }, 800);
 
         clearTimeout(chatTimer);
         chatTimer = setTimeout(() => {
@@ -834,54 +735,43 @@
         const text = document.getElementById('report-text').value.trim();
         if(!text) return showToast("Report text cannot be empty!");
         if(!currentUser) return showToast("Please login to submit reports.");
-
         let lowerText = text.toLowerCase();
         let hasBlockedWord = blockedWords.some(word => lowerText.includes(word));
         if(hasBlockedWord) return showToast("Warning: Please avoid using inappropriate words.");
 
+        showLoader();
         db.ref('reports').push({
             uid: currentUser.uid, email: currentUser.email, role: 'user', message: text, timestamp: Date.now(), status: 'pending'
         }).then(() => {
-            showToast("Report submitted! Admin will review.");
+            hideLoader(); showToast("Report submitted! Admin will review.");
             document.getElementById('report-text').value = ''; closeModal('report-modal');
-        }).catch(e => showToast("Error: " + e.message));
+        }).catch(e => { hideLoader(); showToast("Error: " + e.message); });
     }
 
     function toggleSearch() {
         const searchBox = document.getElementById('search-box');
         const iconBtn = document.getElementById('search-toggle-btn');
-        
         if(!searchBox.classList.contains('active')) {
             searchBox.classList.add('active'); searchBox.focus();
-            iconBtn.innerHTML = '<i class="fas fa-times"></i>'; 
-            iconBtn.style.color = 'var(--secondary)'; iconBtn.style.borderColor = 'var(--primary)';
+            iconBtn.innerHTML = '<i class="fas fa-times"></i>'; iconBtn.style.color = 'var(--secondary)'; iconBtn.style.borderColor = 'var(--primary)';
         } else {
             searchBox.classList.remove('active'); searchBox.value = ''; filterBooks(); 
-            iconBtn.innerHTML = '<i class="fas fa-search"></i>'; 
-            iconBtn.style.color = 'var(--primary)'; iconBtn.style.borderColor = 'var(--border-color)';
+            iconBtn.innerHTML = '<i class="fas fa-search"></i>'; iconBtn.style.color = 'var(--primary)'; iconBtn.style.borderColor = 'var(--border-color)';
         }
     }
 
-    // ==========================================
-    // Category UI with Slide Action
-    // ==========================================
     function loadCategories() {
         db.ref('settings/categories').on('value', snap => {
             let menu = document.getElementById('category-scroll');
             let d = langDict[currentLang];
             let html = `<div class="cat-pill active" id="cat-all" onclick="selectCategory('', 'cat-all')"><span class="lang-all">${d.all}</span></div>
                         <div class="cat-pill" id="cat-free" onclick="selectCategory('_FREE_', 'cat-free')">🎁 <span class="lang-free">${d.free}</span></div>`;
-            
             if(snap.exists()) {
-                let i = 0;
-                snap.forEach(child => { 
-                    let catName = child.val().name;
-                    html += `<div class="cat-pill" id="cat-i-${i}" onclick="selectCategory('${catName}', 'cat-i-${i}')">${catName}</div>`; 
-                    i++;
+                let i = 0; snap.forEach(child => { 
+                    let catName = child.val().name; html += `<div class="cat-pill" id="cat-i-${i}" onclick="selectCategory('${catName}', 'cat-i-${i}')">${catName}</div>`; i++;
                 });
             }
-            menu.innerHTML = html;
-            applyLanguage();
+            menu.innerHTML = html; applyLanguage();
         });
     }
 
@@ -899,19 +789,20 @@
         return { avg: (total / count).toFixed(1), count: count };
     }
 
-    function renderUserRating() {
-        if (!currentUser || !currentBookData) return;
-        let userRating = (currentBookData.ratings && currentBookData.ratings[currentUser.uid]) ? currentBookData.ratings[currentUser.uid] : 0;
-        let stars = document.getElementById('star-rating').children;
-        for(let i = 0; i < 5; i++) {
-            if(i < userRating) { stars[i].classList.replace('far', 'fas'); stars[i].style.color = '#f39c12'; } 
-            else { stars[i].classList.replace('fas', 'far'); stars[i].style.color = 'var(--text-muted)'; }
-        }
-    }
-
-    function submitRating(rating) {
+    // FIX: Removed forced block. Submits rating politely via modal or detail page.
+    function submitRating(rating, isFromModal = false) {
         if(!currentUser || !currentBookId) return;
-        db.ref(`books/${currentBookId}/ratings/${currentUser.uid}`).set(rating).then(() => { showToast("Rating saved! ⭐"); }).catch(err => showToast("Error saving rating: " + err.message));
+        
+        let stars = isFromModal ? document.getElementById('modal-star-rating').children : document.getElementById('star-rating').children;
+        for(let i = 0; i < 5; i++) {
+            if(i < rating) { stars[i].className = 'fas fa-star'; stars[i].style.color = '#f39c12'; } 
+            else { stars[i].className = 'far fa-star text-muted'; stars[i].style.color = 'var(--text-muted)'; }
+        }
+
+        db.ref(`books/${currentBookId}/ratings/${currentUser.uid}`).set(rating).then(() => { 
+            showToast("ধন্যবাদ! আপনার রেটিং সেভ হয়েছে। ⭐"); 
+            if(isFromModal) { setTimeout(() => { closeModal('rating-modal'); }, 1000); }
+        }).catch(err => showToast("Error saving rating: " + err.message));
     }
 
     function showTerms() { openModal('tnc-modal'); }
@@ -927,157 +818,94 @@
     }
 
     // ==========================================
-    // RESTRICT WRITER/MARKETER/AFFILIATE LOGIN
+    // AUTHENTICATION & RESTRICTION
     // ==========================================
     auth.onAuthStateChanged(async user => {
         if (user) {
             try {
                 let writerSnap = await db.ref('writers/' + user.uid).once('value');
-                if (writerSnap.exists()) {
-                    auth.signOut();
-                    alert("Access Denied! Writers cannot use the Boigram Reader App. Please use the Writer App.");
-                    nav('auth-screen'); // Keep them on the login interface
-                    return;
-                }
+                if (writerSnap.exists()) { auth.signOut(); alert("Access Denied! Use Writer App."); nav('auth-screen'); return; }
 
                 let affSnap = await db.ref('affiliates/' + user.uid).once('value');
-                if (affSnap.exists()) {
-                    auth.signOut();
-                    alert("Access Denied! Affiliates cannot use the Boigram Reader App. Please use the Affiliate App.");
-                    nav('auth-screen'); // Keep them on the login interface
-                    return;
-                }
+                if (affSnap.exists()) { auth.signOut(); alert("Access Denied! Use Affiliate App."); nav('auth-screen'); return; }
 
                 let userSnap = await db.ref('users/' + user.uid).once('value');
                 if (userSnap.exists()) {
                     let uData = userSnap.val();
-                    if(uData && (uData.role === 'writer' || uData.role === 'affiliate' || uData.role === 'marketer')) {
-                        auth.signOut();
-                        alert("Access Denied! Invalid Role.");
-                        nav('auth-screen'); // Keep them on the login interface
-                        return;
-                    }
-                } else {
-                    if (document.getElementById('register-box').style.display === 'block') {
-                        // Registration in progress, let it pass
-                    } else {
-                        auth.signOut();
-                        alert("Account not found in Reader App. Please register here first.");
-                        nav('auth-screen'); // Keep them on the login interface
-                        return;
-                    }
+                    if(uData && (uData.role === 'writer' || uData.role === 'affiliate' || uData.role === 'marketer')) { auth.signOut(); alert("Access Denied! Invalid Role."); nav('auth-screen'); return; }
+                } else if (!document.getElementById('register-box').style.display === 'block') {
+                    auth.signOut(); alert("Account not found. Please register."); nav('auth-screen'); return;
                 }
                 
-                // Authorized User Setup
-                currentUser = user; 
-                loadUserData(); 
-                loadLibrary(); 
-                loadAdminPaymentSettings(); 
+                currentUser = user; loadUserData(); loadLibrary(); loadAdminPaymentSettings(); 
                 document.getElementById('bottom-nav').style.display = 'flex';
-                
+                document.getElementById('drawer-logout-btn').style.display = 'flex'; // Show logout
+                document.getElementById('logout-divider').style.display = 'block';
+
                 const params = new URLSearchParams(window.location.search);
                 const bookParam = params.get('book');
-                if (bookParam) {
-                    window.pendingBookOpen = bookParam; 
-                } else if(document.getElementById('auth-screen').classList.contains('active')){ 
-                    nav('home-screen'); 
-                }
+                if (bookParam) { window.pendingBookOpen = bookParam; } 
+                else if(document.getElementById('auth-screen').classList.contains('active')){ nav('home-screen'); }
 
-            } catch(error) {
-                console.error("Login Validation Error: ", error);
-            }
-
+            } catch(error) { console.error("Login Error: ", error); }
         } else {
             currentUser = null; userData = null; renderBooks(); 
             document.getElementById('bottom-nav').style.display = 'flex'; 
-            
-            // Drawer update for guest
             document.getElementById('drawer-user-name').innerText = 'Guest User';
             document.getElementById('drawer-user-email').innerText = 'Please login to explore';
+            document.getElementById('drawer-logout-btn').style.display = 'none'; // Hide logout
+            document.getElementById('logout-divider').style.display = 'none';
 
             const params = new URLSearchParams(window.location.search);
             const bookParam = params.get('book');
             if (bookParam) {
-                window.pendingBookOpen = bookParam;
-                showToast("Please login to view this book.");
-                nav('auth-screen');
+                window.pendingBookOpen = bookParam; showToast("Please login to view this book."); nav('auth-screen');
             } else {
-                if(document.getElementById('auth-screen').classList.contains('active')) {
-                    document.getElementById('bottom-nav').style.display = 'none';
-                } else {
-                    nav('home-screen'); 
-                }
+                if(document.getElementById('auth-screen').classList.contains('active')) { document.getElementById('bottom-nav').style.display = 'none'; } 
+                else { nav('home-screen'); }
             }
         }
     });
 
     function register() {
-        const name = document.getElementById('reg-name').value.trim();
-        const username = document.getElementById('reg-username').value.trim();
-        const email = document.getElementById('reg-email').value.trim();
-        const phone = document.getElementById('reg-phone').value.trim();
-        const pass = document.getElementById('reg-pass').value;
-        const isAgreed = document.getElementById('agree-tnc').checked;
+        const name = document.getElementById('reg-name').value.trim(); const username = document.getElementById('reg-username').value.trim(); const email = document.getElementById('reg-email').value.trim(); const phone = document.getElementById('reg-phone').value.trim(); const pass = document.getElementById('reg-pass').value; const isAgreed = document.getElementById('agree-tnc').checked;
+        if(!name || !username || !email || !pass || !phone || phone.length < 11 || !isAgreed) return showToast("Please fill all fields and agree to T&C!");
         
-        if(!name) return showToast("Enter your full name!"); 
-        if(!username) return showToast("Enter a username!"); 
-        if(!email || !pass) return showToast("Enter email and password!"); 
-        if(!phone || phone.length < 11) return showToast("Enter a valid mobile number!"); 
-        if(!isAgreed) return showToast("Please agree to the Terms & Conditions first!");
-        
+        showLoader();
         auth.createUserWithEmailAndPassword(email, pass).then(res => {
-            db.ref('users/' + res.user.uid).set({ 
-                name: name, 
-                username: username, 
-                email: email, 
-                phone: phone, 
-                coins: 0, 
-                role: 'user', 
-                joinedAt: Date.now(), 
-                status: 'active' 
-            }); 
-            showToast("Registration Successful!");
-        }).catch(err => showToast(err.message));
+            db.ref('users/' + res.user.uid).set({ name: name, username: username, email: email, phone: phone, coins: 0, role: 'user', joinedAt: Date.now(), status: 'active' }); 
+            hideLoader(); showToast("Registration Successful!");
+        }).catch(err => { hideLoader(); showToast(err.message); });
     }
 
     function login() {
         const email = document.getElementById('login-email').value.trim(); const pass = document.getElementById('login-pass').value;
         if(!email || !pass) return showToast("Enter email and password!");
-        auth.signInWithEmailAndPassword(email, pass).catch(err => showToast(err.message));
+        showLoader();
+        auth.signInWithEmailAndPassword(email, pass).then(()=> hideLoader()).catch(err => { hideLoader(); showToast(err.message); });
     }
     
-    function logout() { 
-        if(confirm("Are you sure you want to logout?")) { auth.signOut(); }
-    }
+    function logout() { if(confirm("Are you sure you want to logout?")) { auth.signOut(); } }
 
     function loadUserData() {
         db.ref('users/' + currentUser.uid).on('value', snap => {
             if(snap.exists()){ 
                 userData = snap.val(); 
-                
-                if(userData.status === 'blocked') {
-                    showToast("Your account has been BLOCKED by Admin.");
-                    auth.signOut();
-                    return;
-                }
-
+                if(userData.status === 'blocked') { showToast("Your account has been BLOCKED."); auth.signOut(); return; }
             } else { userData = { name: "User", username: "", email: currentUser.email, phone: "", coins: 0, favorites: {}, library: {} }; }
-            document.getElementById('user-balance').innerText = userData.coins || 0;
             
+            document.getElementById('user-balance').innerText = userData.coins || 0;
             document.getElementById('edit-profile-name').value = userData.name || 'User'; 
             document.getElementById('edit-profile-username').value = userData.username || ''; 
             document.getElementById('edit-profile-email').value = userData.email || currentUser.email;
             document.getElementById('edit-profile-phone').value = userData.phone || '';
             document.getElementById('profile-role').innerText = userData.role || 'user';
             
-            // Update Drawer User Info
             document.getElementById('drawer-user-name').innerText = userData.name || 'User';
             document.getElementById('drawer-user-email').innerText = userData.email || currentUser.email;
-
             renderBooks();
         });
         
-        // Deposit History
         db.ref('depositRequests').orderByChild('uid').equalTo(currentUser.uid).on('value', snap => {
             let html = ''; let reqs = []; snap.forEach(child => { reqs.push(child.val()); });
             reqs.reverse().forEach(d => {
@@ -1090,7 +918,6 @@
             document.getElementById('deposit-history').innerHTML = html;
         });
 
-        // Purchase History
         db.ref(`transactions/${currentUser.uid}`).on('value', snap => {
             let html = ''; let txs = []; snap.forEach(child => { txs.push(child.val()); });
             txs.reverse().forEach(tx => {
@@ -1109,16 +936,11 @@
         const newName = document.getElementById('edit-profile-name').value.trim(); 
         const newUsername = document.getElementById('edit-profile-username').value.trim(); 
         const newPhone = document.getElementById('edit-profile-phone').value.trim();
-        
-        if(!newName) return showToast("Name cannot be empty!"); 
-        if(!newUsername) return showToast("Username cannot be empty!"); 
-        if(!newPhone) return showToast("Mobile Number cannot be empty!");
-
-        let dbPayload = { name: newName, username: newUsername, phone: newPhone };
-
-        db.ref('users/' + currentUser.uid).update(dbPayload).then(() => { 
-            showToast("Profile updated!"); 
-        }).catch(err => showToast("Error: " + err.message));
+        if(!newName || !newUsername || !newPhone) return showToast("Fields cannot be empty!");
+        showLoader();
+        db.ref('users/' + currentUser.uid).update({ name: newName, username: newUsername, phone: newPhone }).then(() => { 
+            hideLoader(); showToast("Profile updated!"); 
+        }).catch(err => { hideLoader(); showToast("Error: " + err.message); });
     }
 
     function loadAdminPaymentSettings() {
@@ -1141,22 +963,17 @@
         db.ref('books').on('value', snap => {
             allBooks = []; 
             snap.forEach(child => { 
-                let book = child.val(); 
-                book.id = child.key; 
+                let book = child.val(); book.id = child.key; 
                 let status = book.status ? book.status.toLowerCase() : 'approved';
-                if(status === 'approved' || status === 'active' || !book.status) {
-                    allBooks.push(book); 
-                }
+                if(status === 'approved' || status === 'active' || !book.status) { allBooks.push(book); }
             });
             renderBooks(); 
             if(currentBookId && document.getElementById('detail-screen').classList.contains('active')) { openBookDetail(currentBookId); }
-            
             if (window.pendingBookOpen && allBooks.length > 0) {
                 if (currentUser) {
                     let b = allBooks.find(x => x.id === window.pendingBookOpen);
                     if (b) { openBookDetail(window.pendingBookOpen); }
-                    window.pendingBookOpen = null;
-                    window.history.replaceState({}, document.title, window.location.pathname);
+                    window.pendingBookOpen = null; window.history.replaceState({}, document.title, window.location.pathname);
                 }
             }
         });
@@ -1165,36 +982,19 @@
     function renderBooks() {
         let homeHtml = '', recHtml = '', favHtml = '';
         let q = document.getElementById('search-box').value.toLowerCase();
-        
         let userTags = new Set();
         if(userData && userData.library) {
-            Object.keys(userData.library).forEach(bookId => {
-                let b = allBooks.find(x => x.id === bookId);
-                if(b && b.hashtags) { b.hashtags.forEach(t => userTags.add(t.toLowerCase())); }
-            });
+            Object.keys(userData.library).forEach(bookId => { let b = allBooks.find(x => x.id === bookId); if(b && b.hashtags) { b.hashtags.forEach(t => userTags.add(t.toLowerCase())); } });
         }
-
         let hasRecommendations = false;
 
         allBooks.forEach(book => {
-            let title = book.title || "Unknown Book";
-            let authorName = book.author || book.writerName || "Unknown Author";
-            let category = book.category || "General";
-            let bookPrice = Number(book.price) || 0;
-            let bookCover = book.coverUrl || book.cover || 'https://via.placeholder.com/150x200?text=Cover';
-            
+            let title = book.title || "Unknown Book"; let authorName = book.author || book.writerName || "Unknown Author"; let category = book.category || "General"; let bookPrice = Number(book.price) || 0; let bookCover = book.coverUrl || book.cover || 'https://via.placeholder.com/150x200?text=Cover';
             if(!title.toLowerCase().includes(q)) return;
+            if (currentCategory === '_FREE_') { if (bookPrice > 0) return; } else if (currentCategory && category !== currentCategory) { return; }
 
-            if (currentCategory === '_FREE_') {
-                if (bookPrice > 0) return; 
-            } else if (currentCategory && category !== currentCategory) {
-                return; 
-            }
-
-            let isFav = userData && userData.favorites && userData.favorites[book.id];
-            let favClass = isFav ? 'active' : '';
+            let isFav = userData && userData.favorites && userData.favorites[book.id]; let favClass = isFav ? 'active' : '';
             let priceDisplay = (bookPrice > 0) ? `<i class="fas fa-coins"></i> ${bookPrice}` : `<span style="color:#2ecc71;">FREE</span>`;
-            
             let ratingInfo = getBookRatingInfo(book);
             let ratingHtml = ratingInfo.count > 0 ? `<div style="font-size: 13px; color: #f39c12; margin-top: 5px;"><i class="fas fa-star"></i> ${ratingInfo.avg} <span style="color:var(--text-muted); font-size:11px;">(${ratingInfo.count})</span></div>` : `<div style="font-size: 12px; color: var(--text-muted); margin-top: 5px;"><i class="far fa-star"></i> No rating</div>`;
 
@@ -1202,18 +1002,15 @@
             <div class="card book-card" onclick="openBookDetail('${book.id}')">
                 <div class="cover-wrapper"><img src="${bookCover}" class="book-cover" onerror="this.src='https://via.placeholder.com/150x200?text=Cover'"></div>
                 <div class="book-info">
-                    <h3>${title}</h3>
-                    <div class="book-author"><i class="fas fa-feather-alt"></i> ${authorName}</div>
+                    <h3>${title}</h3><div class="book-author"><i class="fas fa-feather-alt"></i> ${authorName}</div>
                     <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: 5px;">
                         <div class="book-price">${priceDisplay}</div>
                         <div class="fav-btn ${favClass}" onclick="toggleFav(event, '${book.id}')"><i class="fas fa-heart"></i></div>
-                    </div>
-                    ${ratingHtml}
+                    </div>${ratingHtml}
                 </div>
             </div>`;
             
             homeHtml += cardHtml; if(isFav) favHtml += cardHtml;
-
             let isRecommended = false; let alreadyOwned = userData && userData.library && userData.library[book.id];
             if(!alreadyOwned && book.hashtags) { book.hashtags.forEach(tag => { if(userTags.has(tag.toLowerCase())) isRecommended = true; }); }
             if(isRecommended) { recHtml += cardHtml; hasRecommendations = true; }
@@ -1223,9 +1020,7 @@
         document.getElementById('fav-list').innerHTML = (favHtml === '') ? '<p style="text-align:center; grid-column:span 2; color:var(--text-muted); margin-top:20px;">No favorite books found.</p>' : favHtml;
 
         let recSection = document.getElementById('recommended-section');
-        if(hasRecommendations && q === '' && currentCategory === '') {
-            recSection.style.display = 'block'; document.getElementById('recommended-list').innerHTML = recHtml;
-        } else { recSection.style.display = 'none'; }
+        if(hasRecommendations && q === '' && currentCategory === '') { recSection.style.display = 'block'; document.getElementById('recommended-list').innerHTML = recHtml; } else { recSection.style.display = 'none'; }
     }
 
     function filterBooks() { renderBooks(); }
@@ -1241,7 +1036,6 @@
 
     function openBookDetail(id) {
         if(!currentUser) { showToast("Please login to view details and buy books."); nav('auth-screen'); return; }
-
         currentBookId = id; currentBookData = allBooks.find(b => b.id === id);
         if(!currentBookData) return showToast("Error loading book!");
 
@@ -1255,8 +1049,7 @@
         document.getElementById('det-category').innerText = currentBookData.category || 'General';
         document.getElementById('det-words').innerText = `${currentBookData.wordCount || 0} Words`;
 
-        let tagsHtml = '';
-        if(currentBookData.hashtags && Array.isArray(currentBookData.hashtags)){ currentBookData.hashtags.forEach(tag => { tagsHtml += `<span class="tag-badge">${tag}</span>`; }); }
+        let tagsHtml = ''; if(currentBookData.hashtags && Array.isArray(currentBookData.hashtags)){ currentBookData.hashtags.forEach(tag => { tagsHtml += `<span class="tag-badge">${tag}</span>`; }); }
         document.getElementById('det-tags').innerHTML = tagsHtml;
 
         let ratingInfo = getBookRatingInfo(currentBookData);
@@ -1274,10 +1067,8 @@
         let alreadyOwned = userData && userData.library && userData.library[currentBookId];
         if(alreadyOwned) {
             document.getElementById('buy-btn').style.display = 'none'; document.getElementById('voucher-box').style.display = 'none';
-            document.getElementById('give-rating-box').style.display = 'block'; renderUserRating();
         } else {
-            document.getElementById('buy-btn').style.display = 'block'; document.getElementById('give-rating-box').style.display = 'none';
-            document.getElementById('give-rating-box').style.border = "none";
+            document.getElementById('buy-btn').style.display = 'block'; 
         }
         nav('detail-screen');
     }
@@ -1288,13 +1079,9 @@
         db.ref('vouchers/' + code).once('value', snap => {
             if(snap.exists() && snap.val().status === 'active' && snap.val().bookId === currentBookId) {
                 voucherData = snap.val(); voucherData.code = code; 
-                
                 let discountAmount = currentBookData.price * (sysUserDiscount / 100);
-                finalPrice = Math.floor(currentBookData.price - discountAmount);
-                if(finalPrice < 0) finalPrice = 0;
-                
-                document.getElementById('det-price').innerText = finalPrice + ` (-${sysUserDiscount}%)`; 
-                showToast("Voucher Applied!");
+                finalPrice = Math.floor(currentBookData.price - discountAmount); if(finalPrice < 0) finalPrice = 0;
+                document.getElementById('det-price').innerText = finalPrice + ` (-${sysUserDiscount}%)`; showToast("Voucher Applied!");
             } else { showToast("Invalid or expired voucher for this book!"); }
         });
     }
@@ -1303,101 +1090,52 @@
         if(!currentBookData || !userData) return;
         if(userData.library && userData.library[currentBookId]) return showToast("You already own this book!");
 
-        // --- NEW UPDATE: Check for unrated free books in library before adding any new book ---
-        if(userData.library) {
-            let unratedFreeBook = null;
-            for(let libBookId of Object.keys(userData.library)) {
-                let b = allBooks.find(x => x.id === libBookId);
-                if(b && (Number(b.price) === 0 || !b.price)) {
-                    let hasRated = b.ratings && b.ratings[currentUser.uid];
-                    if(!hasRated) { unratedFreeBook = b; break; }
-                }
-            }
-            if(unratedFreeBook) {
-                showToast(`অনুগ্রহ করে আপনার লাইব্রেরির ফ্রি বই '${unratedFreeBook.title}'-এ রেটিং দিন।`);
-                openBookDetail(unratedFreeBook.id);
-                
-                setTimeout(() => {
-                    const ratingBox = document.getElementById('give-rating-box');
-                    if(ratingBox) {
-                        ratingBox.style.border = "2px solid #e74c3c";
-                        ratingBox.style.borderRadius = "12px";
-                        ratingBox.style.padding = "10px";
-                        ratingBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    }
-                }, 500);
-                return;
-            }
-        }
-        // --- END UPDATE ---
+        // FIX: Removed Forced Rating Block entirely
 
-        // Handle Free Book without adding to Purchase History (Transactions)
+        showLoader(); // Loader setup
         if(finalPrice === 0) {
-            showToast("Adding to library...");
             const updates = {}; 
             updates[`users/${currentUser.uid}/library/${currentBookId}`] = true; 
             updates[`books/${currentBookId}/salesCount`] = firebase.database.ServerValue.increment(1);
-            
-            db.ref().update(updates).then(() => { showToast("Book added to Library! 🎉"); nav('library-screen'); }).catch(e => showToast("Error: " + e.message));
+            db.ref().update(updates).then(() => { hideLoader(); showToast("Book added to Library! 🎉"); nav('library-screen'); }).catch(e => { hideLoader(); showToast("Error: " + e.message);});
             return; 
         }
 
-        if((Number(userData.coins) || 0) < finalPrice) return showToast("Insufficient coins! Please deposit.");
-        showToast("Processing purchase...");
+        if((Number(userData.coins) || 0) < finalPrice) { hideLoader(); return showToast("Insufficient coins! Please deposit.");}
 
         const originalPrice = Number(currentBookData.price); 
         const writerSplit = originalPrice * (sysWriterPercent / 100); 
         let affiliateSplit = 0, adminIncomeSplit = 0, systemReserveSplit = 0;
 
-        if (voucherData) { 
-            affiliateSplit = originalPrice * (sysAffiliatePercent / 100); 
-            adminIncomeSplit = finalPrice - writerSplit - affiliateSplit; 
-        } else { 
-            systemReserveSplit = originalPrice * (sysAffiliatePercent / 100); 
-            adminIncomeSplit = finalPrice - writerSplit - systemReserveSplit; 
-        }
+        if (voucherData) { affiliateSplit = originalPrice * (sysAffiliatePercent / 100); adminIncomeSplit = finalPrice - writerSplit - affiliateSplit; } 
+        else { systemReserveSplit = originalPrice * (sysAffiliatePercent / 100); adminIncomeSplit = finalPrice - writerSplit - systemReserveSplit; }
 
-        const updates = {};
-        let txId = db.ref().push().key;
-
+        const updates = {}; let txId = db.ref().push().key;
         updates[`users/${currentUser.uid}/coins`] = firebase.database.ServerValue.increment(-finalPrice);
         updates[`users/${currentUser.uid}/library/${currentBookId}`] = true; 
         updates[`writers/${currentBookData.writerId}/wallet`] = firebase.database.ServerValue.increment(writerSplit);
-        
         updates[`transactions/${currentUser.uid}/${txId}`] = { bookId: currentBookId, title: currentBookData.title, amount: finalPrice, timestamp: firebase.database.ServerValue.TIMESTAMP };
         
-        if (voucherData) { 
-            updates[`affiliates/${voucherData.affId}/wallet`] = firebase.database.ServerValue.increment(affiliateSplit); 
-            updates[`adminIncome/totalIncome`] = firebase.database.ServerValue.increment(adminIncomeSplit); 
-            updates[`vouchers/${voucherData.code}/status`] = 'used'; 
-        } else { 
-            updates[`adminIncome/totalIncome`] = firebase.database.ServerValue.increment(adminIncomeSplit); 
-            updates[`adminIncome/systemReserve`] = firebase.database.ServerValue.increment(systemReserveSplit); 
-        }
-        
+        if (voucherData) { updates[`affiliates/${voucherData.affId}/wallet`] = firebase.database.ServerValue.increment(affiliateSplit); updates[`adminIncome/totalIncome`] = firebase.database.ServerValue.increment(adminIncomeSplit); updates[`vouchers/${voucherData.code}/status`] = 'used'; } 
+        else { updates[`adminIncome/totalIncome`] = firebase.database.ServerValue.increment(adminIncomeSplit); updates[`adminIncome/systemReserve`] = firebase.database.ServerValue.increment(systemReserveSplit); }
         updates[`adminIncome/totalSales`] = firebase.database.ServerValue.increment(1);
 
-        try { await db.ref().update(updates); showToast("Book purchased successfully!"); nav('library-screen'); } 
-        catch(e) { showToast("Error processing transaction!"); }
+        try { await db.ref().update(updates); hideLoader(); showToast("Book purchased successfully!"); nav('library-screen'); } 
+        catch(e) { hideLoader(); showToast("Error processing transaction!"); }
     }
 
     function submitDepositRequest() {
-        const amount = Number(document.getElementById('pay-amount').value);
-        const trxId = document.getElementById('pay-trxid').value.trim();
-        const method = document.getElementById('pay-method').value;
-
-        if(!method) return showToast("Please select a payment method.");
-        if(amount < 50) return showToast("Minimum deposit is 50.");
-        if(!trxId) return showToast("Please enter the Transaction ID.");
-
+        const amount = Number(document.getElementById('pay-amount').value); const trxId = document.getElementById('pay-trxid').value.trim(); const method = document.getElementById('pay-method').value;
+        if(!method || amount < 50 || !trxId) return showToast("Please fill all fields properly.");
         if(!currentUser) return showToast("Please login first.");
 
+        showLoader();
         db.ref('depositRequests').push({
             uid: currentUser.uid, email: currentUser.email, role: 'user', amount: amount, trxId: trxId, method: method, status: 'pending', timestamp: Date.now()
         }).then(() => {
-            showToast("Request submitted successfully!");
+            hideLoader(); showToast("Request submitted successfully!");
             document.getElementById('pay-amount').value = ''; document.getElementById('pay-trxid').value = ''; nav('wallet-screen');
-        }).catch(e => showToast("Error: " + e.message));
+        }).catch(e => { hideLoader(); showToast("Error: " + e.message);});
     }
 
     function loadLibrary() {
@@ -1418,8 +1156,7 @@
                         <div class="card book-card" onclick="openReadingMode('${b.id}')">
                             <div class="cover-wrapper"><img src="${bCover}" class="book-cover"></div>
                             <div class="book-info">
-                                <h3>${b.title}</h3>
-                                ${ratingHtml}
+                                <h3>${b.title}</h3>${ratingHtml}
                                 <button class="btn btn-primary" style="padding: 8px; font-size:13px; margin-top: 10px; border-radius:10px; width: 100%;"><i class="fas fa-book-reader"></i> ${d.read}</button>
                             </div>
                         </div>`;
@@ -1433,10 +1170,7 @@
     function checkAds() {
         db.ref('adsControl').on('value', snap => {
             let adDiv = document.getElementById('ad-container');
-            if(snap.exists() && snap.val().status === true) { 
-                adDiv.style.display = 'block'; 
-                adDiv.innerHTML = snap.val().script || `<div class="card" style="background:var(--bg-color); border-color:var(--primary); padding:20px; color:var(--primary); font-weight:bold;">[ Ad Space ]</div>`; 
-            } 
+            if(snap.exists() && snap.val().status === true) { adDiv.style.display = 'block'; adDiv.innerHTML = snap.val().script || `<div class="card" style="background:var(--bg-color); border-color:var(--primary); padding:20px; color:var(--primary); font-weight:bold;">[ Ad Space ]</div>`; } 
             else { adDiv.style.display = 'none'; adDiv.innerHTML = ''; }
         });
     }
@@ -1445,40 +1179,48 @@
         const protectedScreens = ['fav-screen', 'library-screen', 'wallet-screen', 'profile-screen', 'detail-screen'];
         if (!currentUser && protectedScreens.includes(screenId)) { showToast("Please login to access this feature."); screenId = 'auth-screen'; }
         document.querySelectorAll('.screen').forEach(el => el.classList.remove('active')); document.getElementById(screenId).classList.add('active');
-        
-        if(screenId === 'auth-screen') { document.getElementById('bottom-nav').style.display = 'none'; } 
-        else if(screenId !== 'reading-screen') { document.getElementById('bottom-nav').style.display = 'flex'; }
-
+        if(screenId === 'auth-screen') { document.getElementById('bottom-nav').style.display = 'none'; } else if(screenId !== 'reading-screen') { document.getElementById('bottom-nav').style.display = 'flex'; }
         document.querySelectorAll('.nav-item').forEach(el => { el.classList.remove('active'); if(el.getAttribute('onclick') && el.getAttribute('onclick').includes(screenId)) { el.classList.add('active'); } });
     }
 
     // ==========================================
-    // READING MODE SYSTEM (Watermark & Text-To-Speech)
+    // READING MODE & DYNAMIC WATERMARK & TTS
     // ==========================================
+
+    // FIX: Canvas-based clean Watermark System
+    function generateCanvasWatermark() {
+        const wmContainer = document.getElementById('watermark-container');
+        const canvas = document.createElement('canvas');
+        canvas.width = 300; canvas.height = 150;
+        const ctx = canvas.getContext('2d');
+        
+        let wEmail = (userData && userData.email) ? userData.email : 'Guest';
+        let wUser = (userData && userData.username) ? userData.username : ((userData && userData.name) ? userData.name : 'Reader');
+        let wmText = `${wEmail} | ${wUser}`;
+
+        ctx.fillStyle = document.body.classList.contains('dark-theme') ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.04)";
+        ctx.font = "bold 16px Montserrat";
+        ctx.translate(50, 80);
+        ctx.rotate(-20 * Math.PI / 180);
+        ctx.fillText(wmText, -50, 0);
+
+        const dataURL = canvas.toDataURL();
+        wmContainer.style.backgroundImage = `url(${dataURL})`;
+        wmContainer.style.backgroundRepeat = 'repeat';
+    }
+
     function openReadingMode(bookId) {
-        // Reset TTS when opening a new book
         isTTSActive = false;
         if(window.speechSynthesis) window.speechSynthesis.cancel();
         const ttsBtnIcon = document.querySelector('#tts-btn i');
-        if(ttsBtnIcon) {
-            ttsBtnIcon.classList.replace('fa-volume-mute', 'fa-volume-up');
-            ttsBtnIcon.style.color = "inherit";
-        }
+        if(ttsBtnIcon) { ttsBtnIcon.classList.replace('fa-volume-mute', 'fa-volume-up'); ttsBtnIcon.style.color = "inherit"; }
 
         db.ref('books/' + bookId).once('value', snap => {
             let book = snap.val();
             if(book.pages && Array.isArray(book.pages)) { currentReadingPages = book.pages; } else if(book.content) { currentReadingPages = [book.content]; } else { currentReadingPages = ["No content available."]; }
             
-            let wmContainer = document.getElementById('watermark-container');
-            wmContainer.innerHTML = '';
-            
-            let wEmail = (userData && userData.email) ? userData.email : 'Guest';
-            let wUser = (userData && userData.username) ? userData.username : ((userData && userData.name) ? userData.name : 'Reader');
-            let wmText = wEmail + " | " + wUser;
-            
-            for(let i=0; i<35; i++) {
-                wmContainer.innerHTML += `<div class="watermark-text">${wmText}</div>`;
-            }
+            // Apply Dynamic Canvas Watermark
+            generateCanvasWatermark();
 
             currentReadingIndex = 0; renderReadingPage(); document.getElementById('reading-screen').style.display = 'flex';
         });
@@ -1488,56 +1230,66 @@
         document.getElementById('read-content').innerText = currentReadingPages[currentReadingIndex] || "Empty Page";
         document.getElementById('read-page-indicator').innerText = `Page ${currentReadingIndex + 1} / ${currentReadingPages.length}`;
         document.getElementById('read-content').scrollTop = 0; 
-        
-        // Auto Speak on page change if TTS is active
         if(isTTSActive) { speakCurrentPage(); }
     }
 
-    // --- Google Text-To-Speech (TTS) Logic ---
+    // FIX: Enhanced TTS System for clearer voices
+    let availableVoices = [];
+    if ('speechSynthesis' in window) {
+        window.speechSynthesis.onvoiceschanged = () => { availableVoices = window.speechSynthesis.getVoices(); };
+    }
+
     function toggleTTS() {
-        if (!('speechSynthesis' in window)) {
-            return showToast("Your browser does not support text-to-speech.");
-        }
+        if (!('speechSynthesis' in window)) return showToast("Your browser does not support text-to-speech.");
         isTTSActive = !isTTSActive;
         const ttsBtnIcon = document.querySelector('#tts-btn i');
         
         if (isTTSActive) {
-            ttsBtnIcon.classList.replace('fa-volume-up', 'fa-volume-mute');
-            ttsBtnIcon.style.color = "var(--secondary)";
-            showToast("Voice Reading Started");
-            speakCurrentPage();
+            ttsBtnIcon.classList.replace('fa-volume-up', 'fa-volume-mute'); ttsBtnIcon.style.color = "var(--secondary)";
+            showToast("Voice Reading Started"); speakCurrentPage();
         } else {
-            ttsBtnIcon.classList.replace('fa-volume-mute', 'fa-volume-up');
-            ttsBtnIcon.style.color = "inherit";
-            showToast("Voice Reading Stopped");
-            window.speechSynthesis.cancel();
+            ttsBtnIcon.classList.replace('fa-volume-mute', 'fa-volume-up'); ttsBtnIcon.style.color = "inherit";
+            showToast("Voice Reading Stopped"); window.speechSynthesis.cancel();
         }
     }
 
     function speakCurrentPage() {
-        window.speechSynthesis.cancel(); // Stop current speech
+        window.speechSynthesis.cancel(); 
         if (!isTTSActive) return;
-        
         let text = currentReadingPages[currentReadingIndex] || "";
         if (!text) return;
         
         let utterance = new SpeechSynthesisUtterance(text);
-        
-        // Detect Bengali text for proper pronunciation mapping
         const hasBengali = /[\u0980-\u09FF]/.test(text);
         utterance.lang = hasBengali ? 'bn-BD' : 'en-US';
         
+        // Find best Google or Premium voice for clarity
+        if(availableVoices.length === 0) availableVoices = window.speechSynthesis.getVoices();
+        let bestVoice = availableVoices.find(v => v.lang.includes(utterance.lang) && (v.name.includes('Google') || v.name.includes('Premium') || v.name.includes('Natural')));
+        if(!bestVoice) bestVoice = availableVoices.find(v => v.lang.startsWith(hasBengali ? 'bn' : 'en'));
+        if(bestVoice) utterance.voice = bestVoice;
+        
+        utterance.rate = 0.9; // Slightly slower for better clarity
         window.speechSynthesis.speak(utterance);
     }
 
     function prevReadPage() { if(currentReadingIndex > 0) { currentReadingIndex--; renderReadingPage(); } else { showToast("This is the first page!"); } }
-    function nextReadPage() { if(currentReadingIndex < currentReadingPages.length - 1) { currentReadingIndex++; renderReadingPage(); } else { showToast("You have reached the end of the book! 🎉"); } }
     
-    function closeReading() { 
-        document.getElementById('reading-screen').style.display = 'none'; 
-        if(window.speechSynthesis) window.speechSynthesis.cancel(); // Stop reading on close
+    // FIX: Polite Rating Trigger at End of Book
+    function nextReadPage() { 
+        if(currentReadingIndex < currentReadingPages.length - 1) { 
+            currentReadingIndex++; renderReadingPage(); 
+        } else { 
+            showToast("You have reached the end of the book! 🎉");
+            // Check if user already rated this book
+            let hasRated = currentBookData && currentBookData.ratings && currentBookData.ratings[currentUser.uid];
+            if(!hasRated) {
+                setTimeout(() => { openModal('rating-modal'); }, 500); // Trigger polite rating request
+            }
+        } 
     }
     
+    function closeReading() { document.getElementById('reading-screen').style.display = 'none'; if(window.speechSynthesis) window.speechSynthesis.cancel(); }
     function changeFontSize(val) { fontSize += val; document.getElementById('read-content').style.fontSize = fontSize + 'px'; }
 
     let toastTimeout;
@@ -1549,10 +1301,7 @@
     function copyBookLink() {
         if (!currentBookId) return;
         const shareUrl = window.location.origin + window.location.pathname + "?book=" + currentBookId;
-        const tempInput = document.createElement("input");
-        tempInput.value = shareUrl;
-        document.body.appendChild(tempInput);
-        tempInput.select();
+        const tempInput = document.createElement("input"); tempInput.value = shareUrl; document.body.appendChild(tempInput); tempInput.select();
         try { document.execCommand("copy"); showToast("Book link copied! 📋"); } catch (err) { showToast("Failed to copy link."); }
         document.body.removeChild(tempInput);
     }
@@ -1560,12 +1309,7 @@
     // ==========================================
     // INITIALIZE ALL SYSTEM MODULES
     // ==========================================
-    applyLanguage();
-    loadCategories(); 
-    loadBooks();   
-    loadQA();      
-    checkAds();    
-
+    applyLanguage(); loadCategories(); loadBooks(); loadQA(); checkAds();    
 </script>
 
 </body>
