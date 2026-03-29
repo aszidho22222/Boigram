@@ -496,32 +496,49 @@
         <div id="library-list" class="grid-list"></div>
     </div>
 
-    <!-- Profile Screen -->
-    <div id="profile-screen" class="screen" style="padding-top: 15px; overflow: hidden;">
-        <div class="card" style="text-align: center; padding: 20px 15px; margin-bottom: 0;">
-            <div style="background: var(--bg-color); border: 2px solid var(--primary); width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px auto; font-size: 30px; color: var(--primary); box-shadow: var(--glow);"><i class="fas fa-user-circle"></i></div>
+<!-- Profile Screen -->
+    <div id="profile-screen" class="screen" style="padding-top: 20px;">
+        <!-- ডেক্সটপের জন্য মাঝখানে রাখার র‍্যাপার -->
+        <div style="max-width: 550px; margin: 0 auto;"> 
             
-            <p style="color: var(--secondary); font-size: 13px; font-weight: bold; margin-bottom: 15px; text-transform: uppercase; text-shadow: var(--glow);" id="profile-role">USER</p>
-            
-            <div style="text-align: left; background: var(--bg-color); border: 1px solid var(--border-color); padding: 15px; border-radius: 12px; margin-bottom: 0;">
+            <!-- টপ বার এবং ডানপাশে ওয়ালেট বাটন -->
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding: 0 5px;">
+                <h2 style="margin: 0; font-size: 24px; color: var(--text-main);">Profile</h2>
                 
-                <label style="font-size: 12px; color: var(--text-muted); margin-bottom: 3px; display: block; font-weight: bold;"><i class="fas fa-user"></i> Full Name</label>
-                <input type="text" id="edit-profile-name" placeholder="Your Name" style="margin-bottom: 12px; padding: 10px; font-size: 14px;">
-
-                <label style="font-size: 12px; color: var(--text-muted); margin-bottom: 3px; display: block; font-weight: bold;"><i class="fas fa-at"></i> Username</label>
-                <input type="text" id="edit-profile-username" placeholder="Username" style="margin-bottom: 12px; padding: 10px; font-size: 14px;">
-
-                <label style="font-size: 12px; color: var(--text-muted); margin-bottom: 3px; display: block; font-weight: bold;"><i class="fas fa-envelope"></i> Email Address</label>
-                <input type="email" id="edit-profile-email" readonly style="margin-bottom: 12px; padding: 10px; font-size: 14px; opacity: 0.7; cursor: not-allowed; background: var(--card-bg);">
-
-                <label style="font-size: 12px; color: var(--text-muted); margin-bottom: 3px; display: block; font-weight: bold;"><i class="fas fa-phone"></i> Mobile Number (Optional)</label>
-                <input type="tel" id="edit-profile-phone" placeholder="Mobile Number" style="margin-bottom: 12px; padding: 10px; font-size: 14px;">
-
-                <label style="font-size: 12px; color: var(--text-muted); margin-bottom: 3px; display: block; font-weight: bold;"><i class="fas fa-calendar-alt"></i> Age (Min: 12)</label>
-                <input type="number" id="edit-profile-age" placeholder="Your Age" style="margin-bottom: 15px; padding: 10px; font-size: 14px; transition: 0.3s;">
-
-                <button class="btn btn-success" onclick="updateProfile()" style="padding: 10px; font-size: 14px; border-radius: 12px;"><i class="fas fa-save"></i> Save Changes</button>
+                <!-- নতুন ওয়ালেট বাটন -->
+                <button onclick="nav('wallet-screen')" style="background: linear-gradient(135deg, var(--primary), var(--secondary)); border: none; color: white; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 14px; cursor: pointer; box-shadow: var(--glow); transition: 0.3s;">
+                    <i class="fas fa-wallet"></i> <span id="profile-wallet-balance">0</span>
+                </button>
             </div>
+
+            <!-- প্রোফাইল ছবি ও রোল (কার্ড ছাড়া) -->
+            <div style="text-align: center; margin-bottom: 30px;">
+                <div style="background: var(--card-bg); border: 2px solid var(--primary); width: 85px; height: 85px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px auto; font-size: 38px; color: var(--primary); box-shadow: var(--glow);">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <p style="color: var(--secondary); font-size: 14px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;" id="profile-role">USER</p>
+            </div>
+            
+            <!-- ইনপুট ফর্ম (ফুল স্ক্রিন লুক) -->
+            <div style="padding: 0 5px;">
+                <label style="font-size: 13px; color: var(--text-muted); margin-bottom: 6px; display: block; font-weight: bold;"><i class="fas fa-user"></i> Full Name</label>
+                <input type="text" id="edit-profile-name" placeholder="Your Name" style="background: var(--card-bg); margin-bottom: 18px;">
+
+                <label style="font-size: 13px; color: var(--text-muted); margin-bottom: 6px; display: block; font-weight: bold;"><i class="fas fa-at"></i> Username</label>
+                <input type="text" id="edit-profile-username" placeholder="Username" style="background: var(--card-bg); margin-bottom: 18px;">
+
+                <label style="font-size: 13px; color: var(--text-muted); margin-bottom: 6px; display: block; font-weight: bold;"><i class="fas fa-envelope"></i> Email Address</label>
+                <input type="email" id="edit-profile-email" readonly style="opacity: 0.6; cursor: not-allowed; background: transparent; margin-bottom: 18px;">
+
+                <label style="font-size: 13px; color: var(--text-muted); margin-bottom: 6px; display: block; font-weight: bold;"><i class="fas fa-phone"></i> Mobile Number (Optional)</label>
+                <input type="tel" id="edit-profile-phone" placeholder="Mobile Number" style="background: var(--card-bg); margin-bottom: 18px;">
+
+                <label style="font-size: 13px; color: var(--text-muted); margin-bottom: 6px; display: block; font-weight: bold;"><i class="fas fa-calendar-alt"></i> Age (Min: 12)</label>
+                <input type="number" id="edit-profile-age" placeholder="Your Age" style="background: var(--card-bg); margin-bottom: 25px;">
+
+                <button class="btn btn-success" onclick="updateProfile()" style="padding: 15px; border-radius: 25px; font-size: 16px;"><i class="fas fa-save"></i> Save Changes</button>
+            </div>
+            
         </div>
     </div>
 
@@ -553,7 +570,6 @@
         <div class="nav-item active" onclick="nav('home-screen')"><i class="fas fa-home"></i><span class="nav-label" id="nav-home">Home</span></div>
         <div class="nav-item" onclick="nav('fav-screen')"><i class="fas fa-heart"></i><span class="nav-label" id="nav-fav">Favs</span></div>
         <div class="nav-item" onclick="nav('library-screen')"><i class="fas fa-book-open"></i><span class="nav-label" id="nav-lib">Library</span></div>
-        <div class="nav-item" onclick="nav('wallet-screen')"><i class="fas fa-wallet"></i><span class="nav-label" id="nav-wal">Wallet</span></div>
         <div class="nav-item" onclick="nav('profile-screen')"><i class="fas fa-user"></i><span class="nav-label" id="nav-prof">Profile</span></div>
     </div>
 
@@ -703,7 +719,9 @@
         document.getElementById('nav-home').innerText = d.home;
         document.getElementById('nav-fav').innerText = d.favs;
         document.getElementById('nav-lib').innerText = d.lib;
-        document.getElementById('nav-wal').innerText = d.wallet;
+        
+        // nav-wal লাইনটি এখান থেকে রিমুভ করা হয়েছে
+        
         document.getElementById('nav-prof').innerText = d.prof;
         document.querySelectorAll('.lang-free').forEach(el => el.innerText = d.free);
         if(document.getElementById('rec-text')) document.getElementById('rec-text').innerText = d.rec;
@@ -713,10 +731,6 @@
         loadLibrary();
         updateThemeIcons(document.body.classList.contains('dark-theme'));
     }
-
-    document.addEventListener('contextmenu', e => { e.preventDefault(); });
-    document.addEventListener('copy', e => { e.preventDefault(); showToast("Copying content is not allowed!"); });
-    document.addEventListener('keydown', e => { if(e.ctrlKey && (e.key === 'c' || e.key === 'C' || e.key === 'p' || e.key === 'P')) { e.preventDefault(); showToast("Action disabled!"); } });
 
     function loadSystemSettings() {
         db.ref('settings/commissions').on('value', snap => {
@@ -1057,6 +1071,9 @@
             } else { userData = { name: "User", username: "", email: currentUser.email, phone: "", age: "", coins: 0, favorites: {}, library: {} }; }
             
             document.getElementById('user-balance').innerText = userData.coins || 0;
+            if(document.getElementById('profile-wallet-balance')) {
+            document.getElementById('profile-wallet-balance').innerText = userData.coins || 0;
+            }
             document.getElementById('edit-profile-name').value = userData.name || 'User'; 
             document.getElementById('edit-profile-username').value = userData.username || ''; 
             document.getElementById('edit-profile-email').value = userData.email || currentUser.email;
