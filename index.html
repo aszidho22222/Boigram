@@ -303,10 +303,17 @@
 </head>
 <body>
 
+<!-- Theme Glitch Fixer -->
+<script>
+    if(localStorage.getItem('boigram_theme') === 'dark') {
+        document.body.classList.add('dark-theme');
+    }
+</script>
+
 <div id="app-container">
     
     <!-- Global Loader -->
-    <div id="global-loader"><div class="spinner"></div></div>
+    <div id="global-loader" style="display: flex;"><div class="spinner"></div></div>
 
     <!-- Left Drawer Overlay -->
     <div class="drawer-overlay" id="drawer-overlay" onclick="toggleMenu()"></div>
@@ -496,7 +503,7 @@
         <div id="library-list" class="grid-list"></div>
     </div>
 
-<!-- Profile Screen -->
+    <!-- Profile Screen -->
     <div id="profile-screen" class="screen" style="padding-top: 20px;">
         <!-- ডেক্সটপের জন্য মাঝখানে রাখার র‍্যাপার -->
         <div style="max-width: 550px; margin: 0 auto;"> 
@@ -566,7 +573,7 @@
     </div>
 
     <!-- Bottom Navigation -->
-    <div class="bottom-nav" id="bottom-nav" style="display: flex;">
+    <div class="bottom-nav" id="bottom-nav" style="display: none;">
         <div class="nav-item active" onclick="nav('home-screen')"><i class="fas fa-home"></i><span class="nav-label" id="nav-home">Home</span></div>
         <div class="nav-item" onclick="nav('fav-screen')"><i class="fas fa-heart"></i><span class="nav-label" id="nav-fav">Favs</span></div>
         <div class="nav-item" onclick="nav('library-screen')"><i class="fas fa-book-open"></i><span class="nav-label" id="nav-lib">Library</span></div>
@@ -1200,6 +1207,10 @@
                 if(status === 'approved' || status === 'active' || !book.status) { allBooks.push(book); }
             });
             renderBooks(); 
+            
+            // ডাটা লোড হওয়া মাত্রই লোডিং অ্যানিমেশন বন্ধ করে দেবে
+            hideLoader(); 
+            
             if(currentBookId && document.getElementById('detail-screen').classList.contains('active')) { openBookDetail(currentBookId); }
             if (window.pendingBookOpen && allBooks.length > 0) {
                 if (currentUser) {
