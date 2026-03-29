@@ -227,7 +227,78 @@
         #global-loader { display:none; position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9999; justify-content:center; align-items:center; backdrop-filter:blur(3px); border-radius: inherit;}
         .spinner { border:4px solid rgba(255,255,255,0.3); border-top:4px solid var(--primary); border-radius:50%; width:45px; height:45px; animation:spin 1s linear infinite; }
         @keyframes spin { 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
+/* =========================================
+           Desktop View Responsiveness Update
+           ========================================= */
+        @media (min-width: 768px) {
+            /* মূল কনটেইনার বড় করা */
+            #app-container {
+                max-width: 950px; /* ডেক্সটপে কতটা চওড়া হবে */
+                height: 90vh; /* স্ক্রিনের ৯০% জায়গা নিবে */
+                border-radius: 25px;
+            }
 
+            /* হোম পেজ এবং লাইব্রেরির গ্রিড কলাম ২টা থেকে ৪টায় পরিবর্তন */
+            .grid-list {
+                grid-template-columns: repeat(4, 1fr);
+                gap: 20px;
+                padding-bottom: 25px;
+            }
+
+            /* লগইন এবং রেজিস্টার বক্স স্ক্রিনের মাঝে ছোট করে রাখা */
+            #login-box, #register-box {
+                max-width: 450px;
+                margin: 0 auto;
+                padding: 20px;
+                background: var(--card-bg);
+                border-radius: var(--radius);
+                border: 1px solid var(--border-color);
+                box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            }
+
+            /* বই পড়ার স্ক্রিন সুন্দর করা (যেন লেখা পুরো স্ক্রিনে ছড়িয়ে না যায়) */
+            .read-content {
+                max-width: 700px;
+                margin: 0 auto;
+                padding: 40px 20px;
+                font-size: 18px; /* ডেক্সটপে ফন্ট একটু বড় হবে */
+            }
+
+            /* বইয়ের ডিটেইলস পেজ সুন্দর করা */
+            #detail-screen .card {
+                max-width: 550px;
+                margin: 0 auto;
+                padding: 30px;
+            }
+            
+            #det-cover {
+                width: 180px !important; /* ডেক্সটপে কভার ছবি একটু বড় হবে */
+                border-radius: 15px !important;
+            }
+
+            /* প্রোফাইল এবং ওয়ালেট পেজের কার্ডগুলো সেন্টারে আনা */
+            #wallet-screen .card, #wallet-screen .wallet-box, 
+            #profile-screen .card {
+                max-width: 550px;
+                margin: 0 auto 15px auto;
+            }
+
+            /* ডেক্সটপে সাইড মেনু (Drawer) আরেকটু চওড়া করা */
+            #side-menu-drawer {
+                width: 320px;
+            }
+        }
+
+        @media (min-width: 1200px) {
+            /* খুব বড় ল্যাপটপ বা মনিটরের জন্য ৫টা বই একসাথে দেখানো */
+            #app-container {
+                max-width: 1100px;
+            }
+            .grid-list {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 25px;
+            }
+        }
     </style>
 </head>
 <body>
