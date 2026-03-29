@@ -159,7 +159,8 @@
         .modal-content { background: var(--card-bg); border-radius: var(--radius); padding: 20px; width: 100%; max-height: 85vh; display: flex; flex-direction: column; box-shadow: var(--glow); animation: fadeIn 0.3s ease; border: 1px solid var(--border-color); position: relative;}
         .tnc-text-area { overflow-y: auto; font-size: 13.5px; color: var(--text-main); line-height: 1.6; margin: 15px 0; padding-right: 5px; text-align: left; }
 
-        #toast { position: absolute; bottom: 90px; left: 50%; transform: translateX(-50%); background: var(--text-main); color: var(--bg-color); padding: 12px 25px; border-radius: 25px; font-size: 14px; font-weight: bold; display: none; z-index: 500; box-shadow: var(--glow); white-space: nowrap;}
+        #toast { position: fixed; bottom: 100px; left: 50%; transform: translateX(-50%); background: rgba(25, 12, 36, 0.95); color: #ffffff; padding: 14px 20px; border-radius: 12px; font-size: 13.5px; font-weight: 600; display: none; z-index: 9999; box-shadow: 0 10px 30px rgba(0,0,0,0.4); width: max-content; max-width: 85%; text-align: center; line-height: 1.6; border: 1px solid rgba(255,255,255,0.1); backdrop-filter: blur(8px); animation: toastFadeIn 0.4s ease; }
+         @keyframes toastFadeIn { from { opacity: 0; transform: translate(-50%, 20px); } to { opacity: 1; transform: translate(-50%, 0); } }
         
         .tag-badge { background: var(--bg-color); border: 1px solid var(--border-color); color: var(--secondary); padding: 4px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; }
 
@@ -174,12 +175,10 @@
         .drawer-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 299; backdrop-filter: blur(2px); opacity: 0; pointer-events: none; transition: opacity 0.3s ease; border-radius: inherit;}
         .drawer-overlay.open { opacity: 1; pointer-events: auto; }
         
-        .drawer-header { padding: 30px 20px 20px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; display: flex; flex-direction: column; align-items: flex-start; box-shadow: 0 4px 15px rgba(0,0,0,0.1); position: relative; border-top-left-radius: inherit;}
-        .drawer-header .close-btn { position: absolute; top: 20px; right: 20px; cursor: pointer; font-size: 22px; color: rgba(255,255,255,0.8); transition: 0.3s; }
+        .drawer-header { padding: 20px 15px; background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top-left-radius: inherit;}
+        .drawer-header .close-btn { cursor: pointer; font-size: 22px; color: rgba(255,255,255,0.8); transition: 0.3s; }
         .drawer-header .close-btn:active { transform: scale(0.9); }
-        .drawer-user-info { margin-top: 15px; }
-        .drawer-user-info h3 { font-family: 'Montserrat', sans-serif; font-size: 24px; margin-bottom: 0; color: white; }
-        .drawer-avatar { width: 60px; height: 60px; background: white; color: var(--primary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 25px; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
+        .drawer-header h3 { font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: bold; margin: 0; color: white; display: flex; align-items: center; gap: 10px; }
         
         .drawer-menu-list { flex: 1; overflow-y: auto; padding: 20px 15px; }
         .drawer-item { padding: 14px 18px; display: flex; align-items: center; gap: 15px; cursor: pointer; color: var(--text-main); transition: 0.3s; font-size: 15px; font-weight: 600; border-radius: 12px; margin-bottom: 8px; background: transparent; }
@@ -244,13 +243,8 @@
     <!-- Professional Left Drawer Menu -->
     <div id="side-menu-drawer">
         <div class="drawer-header">
+            <h3><i class="fas fa-bars" style="font-size: 16px;"></i> মেনু (Menu)</h3>
             <i class="fas fa-times close-btn" onclick="toggleMenu()"></i>
-            <div class="drawer-avatar">
-                <i class="fas fa-bars"></i>
-            </div>
-            <div class="drawer-user-info">
-                <h3>Menu</h3>
-            </div>
         </div>
         <div class="drawer-menu-list">
             <div class="drawer-item" onclick="toggleLanguage(); toggleMenu();">
@@ -302,7 +296,8 @@
             <input type="text" id="reg-name" placeholder="Full Name">
             <input type="text" id="reg-username" placeholder="Username">
             <input type="email" id="reg-email" placeholder="Email Address">
-            <input type="tel" id="reg-phone" placeholder="Mobile Number (e.g. 017...)">
+            <input type="tel" id="reg-phone" placeholder="Mobile Number (Optional)">
+            <input type="number" id="reg-age" placeholder="Age (Minimum: 12 Years)" min="12">
             <input type="password" id="reg-pass" placeholder="Password">
             
             <div class="tnc-wrapper">
@@ -385,6 +380,7 @@
                 <option value="Nagad">Nagad</option>
                 <option value="Rocket">Rocket</option>
             </select>
+            <input type="tel" id="pay-sender" placeholder="Sender Mobile Number (11 digits)" maxlength="11">
             <input type="number" id="pay-amount" placeholder="Amount Sent (Min: 50)">
             <input type="text" id="pay-trxid" placeholder="Transaction ID (TrxID)">
             <button class="btn btn-primary" onclick="submitDepositRequest()">Submit Request</button>
@@ -447,8 +443,11 @@
                 <label style="font-size: 12px; color: var(--text-muted); margin-bottom: 3px; display: block; font-weight: bold;"><i class="fas fa-envelope"></i> Email Address</label>
                 <input type="email" id="edit-profile-email" readonly style="margin-bottom: 12px; padding: 10px; font-size: 14px; opacity: 0.7; cursor: not-allowed; background: var(--card-bg);">
 
-                <label style="font-size: 12px; color: var(--text-muted); margin-bottom: 3px; display: block; font-weight: bold;"><i class="fas fa-phone"></i> Mobile Number</label>
-                <input type="tel" id="edit-profile-phone" placeholder="Mobile Number" style="margin-bottom: 15px; padding: 10px; font-size: 14px;">
+                <label style="font-size: 12px; color: var(--text-muted); margin-bottom: 3px; display: block; font-weight: bold;"><i class="fas fa-phone"></i> Mobile Number (Optional)</label>
+                <input type="tel" id="edit-profile-phone" placeholder="Mobile Number" style="margin-bottom: 12px; padding: 10px; font-size: 14px;">
+
+                <label style="font-size: 12px; color: var(--text-muted); margin-bottom: 3px; display: block; font-weight: bold;"><i class="fas fa-calendar-alt"></i> Age (Min: 12)</label>
+                <input type="number" id="edit-profile-age" placeholder="Your Age" style="margin-bottom: 15px; padding: 10px; font-size: 14px; transition: 0.3s;">
 
                 <button class="btn btn-success" onclick="updateProfile()" style="padding: 10px; font-size: 14px; border-radius: 12px;"><i class="fas fa-save"></i> Save Changes</button>
             </div>
@@ -613,8 +612,8 @@
 
     let currentLang = localStorage.getItem('boigram_lang') || 'en';
     const langDict = {
-        'en': { langName: "বাংলা (BN)", search_ph: "Search books...", menu_dark: "Dark Mode", menu_light: "Light Mode", menu_lang: "বাংলা (BN)", menu_qa: "Support Q&A", menu_rep: "Report Issue", menu_com: "Community", auth_login: "Login to your account", auth_reg: "Create a new account", home: "Home", favs: "Favs", lib: "Library", wallet: "Wallet", prof: "Profile", rec: "For You", all: "All Books", free: "Free Books", buy: "Buy Now", get_free: "Get Free", read: "Read" },
-        'bn': { langName: "English (EN)", search_ph: "বই খুঁজুন...", menu_dark: "ডার্ক মোড", menu_light: "লাইট মোড", menu_lang: "English (EN)", menu_qa: "সাপোর্ট প্রশ্ন", menu_rep: "সমস্যা জানান", menu_com: "কমিউনিটি", auth_login: "আপনার অ্যাকাউন্টে লগইন করুন", auth_reg: "নতুন অ্যাকাউন্ট তৈরি করুন", home: "হোম", favs: "পছন্দ", lib: "লাইব্রেরি", wallet: "ওয়ালেট", prof: "প্রোফাইল", rec: "ফর ইউ", all: "সকল বই", free: "ফ্রি বই", buy: "কিনুন", get_free: "ফ্রি নিন", read: "পড়ুন" }
+        'en': { langName: "বাংলা (BN)", search_ph: "Search books...", menu_dark: "Dark Mode", menu_light: "Light Mode", menu_lang: "বাংলা (BN)", menu_qa: "Support Q&A", menu_rep: "Report Issue", menu_com: "Community", auth_login: "Login to your account", auth_reg: "Create a new account", home: "Home", favs: "Favs", lib: "Library", wallet: "Wallet", prof: "Profile", rec: "For You", all: "All", free: "Free", buy: "Buy Now", get_free: "Get Free", read: "Read" },
+        'bn': { langName: "English (EN)", search_ph: "বই খুঁজুন...", menu_dark: "ডার্ক মোড", menu_light: "লাইট মোড", menu_lang: "English (EN)", menu_qa: "সাপোর্ট প্রশ্ন", menu_rep: "সমস্যা জানান", menu_com: "কমিউনিটি", auth_login: "আপনার অ্যাকাউন্টে লগইন করুন", auth_reg: "নতুন অ্যাকাউন্ট তৈরি করুন", home: "হোম", favs: "পছন্দ", lib: "লাইব্রেরি", wallet: "ওয়ালেট", prof: "প্রোফাইল", rec: "ফর ইউ", all: "সকল", free: "ফ্রি", buy: "কিনুন", get_free: "ফ্রি নিন", read: "পড়ুন" }
     };
 
     function toggleLanguage() {
@@ -664,7 +663,27 @@
     }
     loadSystemSettings();
 
-    function openCommunityLink(platform) { window.open(communityLinks[platform], '_blank'); }
+    function openCommunityLink(platform) {
+    let url = communityLinks[platform];
+
+    // টেলিগ্রামের ক্ষেত্রে ডিরেক্ট অ্যাপ লিংক (Deep Link) তৈরি করা
+    if (platform === 'telegram' && url.includes('t.me/')) {
+        let username = url.split('t.me/')[1].split('/')[0].split('?')[0];
+        url = 'tg://resolve?domain=' + username;
+    }
+
+    // Facebook এর জন্য মোবাইল OS-কে ফোর্স করার জন্য <a> ট্যাগ ট্রিক
+    let a = document.createElement('a');
+    a.href = url;
+    
+    // ব্রাউজারকে অ্যাপ ইন্টারসেপ্ট করার সুযোগ দিতে _blank ব্যবহার
+    a.target = '_blank'; 
+    a.rel = 'noopener noreferrer';
+    
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
 
     function applySavedTheme() {
         const isDark = localStorage.getItem('boigram_theme') === 'dark';
@@ -784,21 +803,33 @@
     // ============================================
 
     function submitReport() {
-        const text = document.getElementById('report-text').value.trim();
-        if(!text) return showToast("Report text cannot be empty!");
-        if(!currentUser) return showToast("Please login to submit reports.");
-        let lowerText = text.toLowerCase();
-        let hasBlockedWord = blockedWords.some(word => lowerText.includes(word));
-        if(hasBlockedWord) return showToast("Warning: Please avoid using inappropriate words.");
-
-        showLoader();
-        db.ref('reports').push({
-            uid: currentUser.uid, email: currentUser.email, role: 'user', message: text, timestamp: Date.now(), status: 'pending'
-        }).then(() => {
-            hideLoader(); showToast("Report submitted! Admin will review.");
-            document.getElementById('report-text').value = ''; closeModal('report-modal');
-        }).catch(e => { hideLoader(); showToast("Error: " + e.message); });
+    const text = document.getElementById('report-text').value.trim();
+    if(!text) return showToast("রিপোর্টের ঘরে কিছু লিখতে হবে!");
+    
+    // ওয়ার্ড লিমিট চেক করা (Word count validation)
+    const words = text.split(/\s+/).filter(word => word.length > 0);
+    const wordCount = words.length;
+    
+    if (wordCount < 5) {
+        return showToast("দয়া করে বিস্তারিত লিখুন (কমপক্ষে ৫ টি শব্দ হতে হবে)।");
     }
+    if (wordCount > 100) {
+        return showToast("আপনার রিপোর্টটি অনেক বড়! সর্বোচ্চ ১০০ শব্দের মধ্যে লিখুন।");
+    }
+
+    if(!currentUser) return showToast("রিপোর্ট করতে দয়া করে লগইন করুন।");
+    let lowerText = text.toLowerCase();
+    let hasBlockedWord = blockedWords.some(word => lowerText.includes(word));
+    if(hasBlockedWord) return showToast("সতর্কতা: দয়া করে খারাপ বা অশালীন শব্দ ব্যবহার থেকে বিরত থাকুন।");
+
+    showLoader();
+    db.ref('reports').push({
+        uid: currentUser.uid, email: currentUser.email, role: 'user', message: text, timestamp: Date.now(), status: 'pending'
+    }).then(() => {
+        hideLoader(); showToast("আপনার রিপোর্ট সফলভাবে জমা হয়েছে!");
+        document.getElementById('report-text').value = ''; closeModal('report-modal');
+    }).catch(e => { hideLoader(); showToast("Error: " + e.message); });
+}
 
     function toggleSearch() {
         const searchBox = document.getElementById('search-box');
@@ -916,12 +947,24 @@
     });
 
     function register() {
-        const name = document.getElementById('reg-name').value.trim(); const username = document.getElementById('reg-username').value.trim(); const email = document.getElementById('reg-email').value.trim(); const phone = document.getElementById('reg-phone').value.trim(); const pass = document.getElementById('reg-pass').value; const isAgreed = document.getElementById('agree-tnc').checked;
-        if(!name || !username || !email || !pass || !phone || phone.length < 11 || !isAgreed) return showToast("Please fill all fields and agree to T&C!");
+        const name = document.getElementById('reg-name').value.trim(); 
+        const username = document.getElementById('reg-username').value.trim(); 
+        const email = document.getElementById('reg-email').value.trim(); 
+        const phone = document.getElementById('reg-phone').value.trim(); 
+        const age = document.getElementById('reg-age').value.trim();
+        const pass = document.getElementById('reg-pass').value; 
+        const isAgreed = document.getElementById('agree-tnc').checked;
+        
+        if(!name || !username || !email || !pass || !age || !isAgreed) return showToast("Please fill all required fields and agree to T&C!");
+        if(Number(age) < 12) return showToast("Age must be at least 12 years!");
+        if(phone && phone.length < 11) return showToast("If provided, phone must be at least 11 digits!");
         
         showLoader();
         auth.createUserWithEmailAndPassword(email, pass).then(res => {
-            db.ref('users/' + res.user.uid).set({ name: name, username: username, email: email, phone: phone, coins: 0, role: 'user', joinedAt: Date.now(), status: 'active' }); 
+            db.ref('users/' + res.user.uid).set({ 
+                name: name, username: username, email: email, phone: phone, age: Number(age), 
+                coins: 0, role: 'user', joinedAt: Date.now(), status: 'active' 
+            }); 
             hideLoader(); showToast("Registration Successful!");
         }).catch(err => { hideLoader(); showToast(err.message); });
     }
@@ -940,7 +983,7 @@
             if(snap.exists()){ 
                 userData = snap.val(); 
                 if(userData.status === 'blocked') { showToast("Your account has been BLOCKED."); auth.signOut(); return; }
-            } else { userData = { name: "User", username: "", email: currentUser.email, phone: "", coins: 0, favorites: {}, library: {} }; }
+            } else { userData = { name: "User", username: "", email: currentUser.email, phone: "", age: "", coins: 0, favorites: {}, library: {} }; }
             
             document.getElementById('user-balance').innerText = userData.coins || 0;
             document.getElementById('edit-profile-name').value = userData.name || 'User'; 
@@ -949,32 +992,77 @@
             document.getElementById('edit-profile-phone').value = userData.phone || '';
             document.getElementById('profile-role').innerText = userData.role || 'user';
             
+            const ageInput = document.getElementById('edit-profile-age');
+            ageInput.value = userData.age || '';
+
+            // বয়স না থাকলে লাল বর্ডার করে দেওয়া
+            if (!userData.age || Number(userData.age) < 12) {
+                ageInput.style.border = "2px solid red";
+                ageInput.style.boxShadow = "0 0 10px rgba(255, 0, 0, 0.3)";
+                if(document.getElementById('profile-screen').classList.contains('active')) {
+                    showToast("আপনার প্রোফাইলে বয়স আপডেট করা নেই। দয়া করে বয়স যুক্ত করুন!");
+                }
+            } else {
+                ageInput.style.border = "1.5px solid var(--border-color)";
+                ageInput.style.boxShadow = "none";
+            }
+            
             renderBooks();
         });
         
+        // ১. ডিপোজিট রিকোয়েস্ট লোড করা (আপডেট লজিক সহ)
         db.ref('depositRequests').orderByChild('uid').equalTo(currentUser.uid).on('value', snap => {
             let html = ''; let reqs = []; snap.forEach(child => { reqs.push(child.val()); });
+            
+            let currentTime = Date.now();
+            let thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000; // ৩০ দিনের হিসাব মিলিসেকেন্ডে
+
             reqs.reverse().forEach(d => {
+                // শর্ত ১: ৩০ দিনের বেশি পুরনো হিস্ট্রি হাইড করা
+                if (currentTime - (d.timestamp || 0) > thirtyDaysInMs) return;
+
+                // শর্ত ২: আপডেটের আগের ভুল বা রিজেক্ট হওয়া রিকোয়েস্ট হাইড করা
+                if (d.status === 'rejected') {
+                    // আগের আপডেটে senderNumber ছিল না, তাই সেটি না থাকলে হাইড হবে
+                    if (!d.senderNumber) return;
+
+                    // ট্রানজেকশন আইডির ফরম্যাট ভুল হলেও হাইড হবে
+                    if (d.method === 'bKash' && !/^(?=.*[A-Z])(?=.*[0-9])[A-Z0-9]{10}$/.test(d.trxId)) return;
+                    if (d.method === 'Nagad' && !/^(?=.*[A-Z])(?=.*[0-9])[A-Z0-9]{8,10}$/.test(d.trxId)) return;
+                    if (d.method === 'Rocket' && !/^[0-9]{10}$/.test(d.trxId)) return;
+                }
+
                 let color = d.status === 'pending' ? '#f39c12' : (d.status === 'approved' ? '#2ecc71' : '#e74c3c');
                 html += `<div class="card" style="padding:12px; display:flex; justify-content:space-between; align-items:center;">
-                    <div><span style="font-weight:bold; color:var(--text-main);"><i class="fas fa-coins text-warning" style="color:#f39c12;"></i> ${d.amount}</span>${d.method ? `<br><small style="color: var(--text-muted);">${d.method} - TrxID: ${d.trxId}</small>` : ''}</div>
+                    <div><span style="font-weight:bold; color:var(--text-main);"><i class="fas fa-coins text-warning" style="color:#f39c12;"></i> ${d.amount}</span>${d.method ? `<br><small style="color: var(--text-muted);">${d.method} - TrxID: ${d.trxId}<br>Sender: ${d.senderNumber || 'N/A'}</small>` : ''}</div>
                     <span style="color:${color}; font-weight:bold; font-size:12px; background:var(--bg-color); padding: 4px 10px; border-radius:12px; border:1px solid var(--border-color);">${d.status.toUpperCase()}</span>
                 </div>`;
             });
+            
+            if (html === '') html = '<p style="color:var(--text-muted); font-size: 13px;">No recent deposit requests.</p>';
             document.getElementById('deposit-history').innerHTML = html;
         });
 
+        // ২. বই কেনার হিস্ট্রি লোড করা (এখানেও ৩০ দিনের লিমিট দেওয়া হলো)
         db.ref(`transactions/${currentUser.uid}`).on('value', snap => {
             let html = ''; let txs = []; snap.forEach(child => { txs.push(child.val()); });
+            
+            let currentTime = Date.now();
+            let thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;
+
             txs.reverse().forEach(tx => {
                 if (Number(tx.amount) <= 0) return; 
+                
+                // ৩০ দিনের বেশি পুরনো কেনার হিস্ট্রিও হাইড করা হলো
+                if (currentTime - (tx.timestamp || 0) > thirtyDaysInMs) return;
+
                 let d = new Date(tx.timestamp).toLocaleDateString();
                 html += `<div class="card" style="padding:12px; margin-bottom: 10px; display:flex; justify-content:space-between; align-items:center;">
                     <div><strong style="color:var(--text-main);">${tx.title}</strong><br><small style="color:var(--text-muted);">${d}</small></div>
                     <span style="color:#e74c3c; font-weight:bold;">- <i class="fas fa-coins"></i> ${tx.amount}</span>
                 </div>`;
             });
-            if(html === '') html = '<p style="color:var(--text-muted); font-size: 13px;">No purchases yet.</p>';
+            if(html === '') html = '<p style="color:var(--text-muted); font-size: 13px;">No recent purchases.</p>';
             document.getElementById('purchase-history').innerHTML = html;
         });
     }
@@ -983,10 +1071,19 @@
         const newName = document.getElementById('edit-profile-name').value.trim(); 
         const newUsername = document.getElementById('edit-profile-username').value.trim(); 
         const newPhone = document.getElementById('edit-profile-phone').value.trim();
-        if(!newName || !newUsername || !newPhone) return showToast("Fields cannot be empty!");
+        const newAge = document.getElementById('edit-profile-age').value.trim();
+
+        if(!newName || !newUsername || !newAge) return showToast("Name, Username, and Age cannot be empty!");
+        if(Number(newAge) < 12) return showToast("Age must be at least 12!");
+        if(newPhone && newPhone.length < 11) return showToast("Phone number must be at least 11 digits!");
+        
         showLoader();
-        db.ref('users/' + currentUser.uid).update({ name: newName, username: newUsername, phone: newPhone }).then(() => { 
+        db.ref('users/' + currentUser.uid).update({ 
+            name: newName, username: newUsername, phone: newPhone, age: Number(newAge) 
+        }).then(() => { 
             hideLoader(); showToast("Profile updated!"); 
+            document.getElementById('edit-profile-age').style.border = "1.5px solid var(--border-color)";
+            document.getElementById('edit-profile-age').style.boxShadow = "none";
         }).catch(err => { hideLoader(); showToast("Error: " + err.message); });
     }
 
@@ -1034,7 +1131,7 @@
         if(userData && userData.library) {
             Object.keys(userData.library).forEach(bookId => { 
                 let b = allBooks.find(x => x.id === bookId); 
-                if(b && b.hashtags) { b.hashtags.forEach(t => userTags.add(t.toLowerCase())); } 
+                if(b && b.hashtags && Array.isArray(b.hashtags)) { b.hashtags.forEach(t => userTags.add(t.toLowerCase())); } 
             });
         }
         
@@ -1075,7 +1172,8 @@
             let isRecommended = false; 
             let alreadyOwned = userData && userData.library && userData.library[book.id];
             
-            if(book.hashtags) { 
+            // Array verification added to prevent silent crash
+            if(book.hashtags && Array.isArray(book.hashtags)) { 
                 book.hashtags.forEach(tag => { 
                     if(userTags.has(tag.toLowerCase())) isRecommended = true; 
                 }); 
@@ -1089,7 +1187,13 @@
             }
         });
 
-        document.getElementById('books-list').innerHTML = homeHtml;
+        // Empty state UI added
+        if (allBooks.length === 0 || homeHtml === '') {
+            document.getElementById('books-list').innerHTML = '<div style="text-align:center; grid-column:span 2; color:var(--text-muted); padding:40px 10px;"><i class="fas fa-book-open" style="font-size:40px; margin-bottom:15px; opacity:0.3; display:block;"></i><p>No books found.</p></div>';
+        } else {
+            document.getElementById('books-list').innerHTML = homeHtml;
+        }
+
         document.getElementById('fav-list').innerHTML = (favHtml === '') ? '<p style="text-align:center; grid-column:span 2; color:var(--text-muted); margin-top:20px;">No favorite books found.</p>' : favHtml;
 
         let recSection = document.getElementById('recommended-section');
@@ -1112,8 +1216,8 @@
         else { db.ref(`users/${currentUser.uid}/favorites/${bookId}`).set(true).then(() => showToast("Added to Favorites ❤️")); }
     }
 
+    // Guest Explore Fixed Here! Removed strict checking so guests can view details.
     function openBookDetail(id) {
-        if(!currentUser) { showToast("Please login to view details and buy books."); nav('auth-screen'); return; }
         currentBookId = id; currentBookData = allBooks.find(b => b.id === id);
         if(!currentBookData) return showToast("Error loading book!");
 
@@ -1152,6 +1256,7 @@
     }
 
     function applyVoucher() {
+        if(!currentUser) return showToast("Please login to apply vouchers.");
         const code = document.getElementById('voucher-code').value.trim();
         if(!code) return showToast("Enter voucher code");
         db.ref('vouchers/' + code).once('value', snap => {
@@ -1165,6 +1270,7 @@
     }
 
     async function buyBook() {
+        if(!currentUser) { showToast("Please login to buy books."); nav('auth-screen'); return; }
         if(!currentBookData || !userData) return;
         if(userData.library && userData.library[currentBookId]) return showToast("You already own this book!");
 
@@ -1200,17 +1306,54 @@
         catch(e) { hideLoader(); showToast("Error processing transaction!"); }
     }
 
+    // UPDATE: Deposit validation logic
     function submitDepositRequest() {
-        const amount = Number(document.getElementById('pay-amount').value); const trxId = document.getElementById('pay-trxid').value.trim(); const method = document.getElementById('pay-method').value;
-        if(!method || amount < 50 || !trxId) return showToast("Please fill all fields properly.");
+        const amount = Number(document.getElementById('pay-amount').value); 
+        const trxId = document.getElementById('pay-trxid').value.trim(); 
+        const method = document.getElementById('pay-method').value;
+        const sender = document.getElementById('pay-sender').value.trim();
+
+        if(!method || amount < 50 || !trxId || !sender) return showToast("Please fill all fields properly.");
+        
+        // Sender Number Validation (11 digits required)
+        if(!/^01[3-9]\d{8}$/.test(sender)) {
+            return showToast("Sender number must be exactly 11 digits (e.g. 017...).");
+        }
+
+        // Method Specific TrxID Validation
+        if(method === 'bKash') {
+            if(!/^[a-zA-Z0-9]{10}$/.test(trxId)) {
+                return showToast("bKash TrxID must be exactly 10 alphanumeric characters.");
+            }
+        } else if(method === 'Nagad') {
+            if(!/^[a-zA-Z0-9]{8,10}$/.test(trxId)) {
+                return showToast("Nagad TrxID must be 8 to 10 alphanumeric characters.");
+            }
+        } else if(method === 'Rocket') {
+            if(!/^[0-9]{10}$/.test(trxId)) {
+                return showToast("Rocket TrxID must be exactly 10 digits.");
+            }
+        }
+
         if(!currentUser) return showToast("Please login first.");
 
         showLoader();
         db.ref('depositRequests').push({
-            uid: currentUser.uid, email: currentUser.email, role: 'user', amount: amount, trxId: trxId, method: method, status: 'pending', timestamp: Date.now()
+            uid: currentUser.uid, 
+            email: currentUser.email, 
+            role: 'user', 
+            amount: amount, 
+            trxId: trxId, 
+            method: method, 
+            senderNumber: sender,
+            status: 'pending', 
+            timestamp: Date.now()
         }).then(() => {
             hideLoader(); showToast("Request submitted successfully!");
-            document.getElementById('pay-amount').value = ''; document.getElementById('pay-trxid').value = ''; nav('wallet-screen');
+            document.getElementById('pay-amount').value = ''; 
+            document.getElementById('pay-trxid').value = ''; 
+            document.getElementById('pay-sender').value = '';
+            nav('wallet-screen');
         }).catch(e => { hideLoader(); showToast("Error: " + e.message);});
     }
 
@@ -1233,7 +1376,6 @@
                             <div class="cover-wrapper"><img src="${bCover}" class="book-cover"></div>
                             <div class="book-info">
                                 <h3>${b.title}</h3>${ratingHtml}
-                                <button class="btn btn-primary" style="padding: 8px; font-size:13px; margin-top: 10px; border-radius:10px; width: 100%;"><i class="fas fa-book-reader"></i> ${d.read}</button>
                             </div>
                         </div>`;
                     }
@@ -1252,7 +1394,8 @@
     }
 
     function nav(screenId) {
-        const protectedScreens = ['fav-screen', 'library-screen', 'wallet-screen', 'profile-screen', 'detail-screen'];
+        // 'detail-screen' Removed from protected Screens! So Guests can read details now.
+        const protectedScreens = ['fav-screen', 'library-screen', 'wallet-screen', 'profile-screen'];
         if (!currentUser && protectedScreens.includes(screenId)) { showToast("Please login to access this feature."); screenId = 'auth-screen'; }
         
         document.querySelectorAll('.screen').forEach(el => el.classList.remove('active')); 
@@ -1263,6 +1406,11 @@
 
         if(screenId === 'auth-screen') { document.getElementById('bottom-nav').style.display = 'none'; } else if(screenId !== 'reading-screen') { document.getElementById('bottom-nav').style.display = 'flex'; }
         document.querySelectorAll('.nav-item').forEach(el => { el.classList.remove('active'); if(el.getAttribute('onclick') && el.getAttribute('onclick').includes(screenId)) { el.classList.add('active'); } });
+
+        // বয়সের নোটিফিকেশন যখন প্রোফাইল স্ক্রিন ওপেন করবে
+        if(screenId === 'profile-screen' && userData && (!userData.age || Number(userData.age) < 12)) {
+            setTimeout(() => { showToast("আপনার প্রোফাইলে বয়স আপডেট করা নেই। দয়া করে বয়স যুক্ত করুন!"); }, 300);
+        }
     }
 
     function generateCanvasWatermark() {
@@ -1302,7 +1450,7 @@
     // ============================================
     function stopAutoScroll() {
         if (isAutoScrolling) {
-            clearInterval(autoScrollInterval);
+            cancelAnimationFrame(autoScrollInterval); // clearInterval এর বদলে এটি বসবে
             isAutoScrolling = false;
             let btn = document.getElementById('auto-scroll-btn');
             if(btn) btn.innerHTML = '<i class="fas fa-play"></i>';
@@ -1321,14 +1469,31 @@
             btn.innerHTML = '<i class="fas fa-pause"></i>';
             showToast("অটো-স্ক্রল চালু হয়েছে");
             
-            autoScrollInterval = setInterval(() => {
+            let lastTime = performance.now();
+            let accumulatedScroll = 0;
+            const scrollSpeed = 0.03; // এই সংখ্যাটি বাড়িয়ে/কমিয়ে স্ক্রল স্পিড কন্ট্রোল করতে পারবেন (যেমন: 0.02 বা 0.05)
+
+            function step(currentTime) {
+                if (!isAutoScrolling) return;
+                
+                let deltaTime = currentTime - lastTime;
+                lastTime = currentTime;
+                
+                accumulatedScroll += deltaTime * scrollSpeed;
+                
+                if (accumulatedScroll >= 1) {
+                    content.scrollTop += Math.floor(accumulatedScroll);
+                    accumulatedScroll -= Math.floor(accumulatedScroll);
+                }
+
                 if (content.scrollTop + content.clientHeight >= content.scrollHeight - 1) {
                     stopAutoScroll(); 
                     showToast("পেইজের শেষে পৌঁছে গেছেন");
                 } else {
-                    content.scrollTop += 1; 
+                    autoScrollInterval = requestAnimationFrame(step);
                 }
-            }, 40); // 40ms Speed
+            }
+            autoScrollInterval = requestAnimationFrame(step);
         }
     }
 
