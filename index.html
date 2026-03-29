@@ -1546,9 +1546,30 @@
     function copyBookLink() {
         if (!currentBookId) return;
         const shareUrl = window.location.origin + window.location.pathname + "?book=" + currentBookId;
-        const tempInput = document.createElement("input"); tempInput.value = shareUrl; document.body.appendChild(tempInput); tempInput.select();
-        try { document.execCommand("copy"); showToast("Book link copied! 📋"); } catch (err) { showToast("Failed to copy link."); }
-        document.body.removeChild(tempInput);
+        
+        // আধুনিক Clipboard API (CSS user-select দ্বারা বাধাপ্রাপ্ত হয় না)
+        if (navigator.clipboard && window.isSecureContext) {
+            navigator.clipboard.writeText(shareUrl).then(() => {
+                showToast("Book link copied! 📋");
+            }).catch(err => {
+                showToast("Failed to copy link.");
+            });
+        } else {
+            // পুরনো ব্রাউজারের জন্য Fallback
+            const tempInput = document.createElement("input"); 
+            tempInput.value = shareUrl; 
+            tempInput.style.userSelect = "text"; // CSS ব্লক বাইপাস করার জন্য
+            tempInput.style.webkitUserSelect = "text";
+            document.body.appendChild(tempInput); 
+            tempInput.select();
+            try { 
+                document.execCommand("copy"); 
+                showToast("Book link copied! 📋"); 
+            } catch (err) { 
+                showToast("Failed to copy link."); 
+            }
+            document.body.removeChild(tempInput);
+        }
     }
 
     applyLanguage(); loadCategories(); loadBooks(); loadQA(); checkAds();    
