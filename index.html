@@ -9,9 +9,9 @@
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js" defer></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js" defer></script>
 
     <style>
         :root {
@@ -89,7 +89,6 @@
         .horizontal-scroll { display: flex; overflow-x: auto; gap: 10px; padding-bottom: 15px; scroll-snap-type: x mandatory; margin-bottom: 5px; scroll-behavior: smooth; }
         .horizontal-scroll .book-card { min-width: 150px; scroll-snap-align: start; flex: 0 0 auto; }
 
-        /* For You সেকশনের কার্ডগুলোর সাইজ ছোট করার কোড */
         #recommended-list .book-card { 
             min-width: 100px !important; 
             max-width: 100px !important; 
@@ -224,28 +223,23 @@
         .social-fb { background: #1877F2; } .social-tg { background: #2AABEE; }
         .social-btn:active { transform: scale(0.98); opacity: 0.9;}
 
-        #global-loader { display:none; position:absolute; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index:9999; justify-content:center; align-items:center; backdrop-filter:blur(3px); border-radius: inherit;}
-        .spinner { border:4px solid rgba(255,255,255,0.3); border-top:4px solid var(--primary); border-radius:50%; width:45px; height:45px; animation:spin 1s linear infinite; }
+        /* Spinner CSS */
+        .spinner { border:4px solid rgba(255,255,255,0.3); border-top:4px solid var(--primary); border-radius:50%; width:45px; height:45px; animation:spin 1s linear infinite; margin: 0 auto; }
         @keyframes spin { 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
-/* =========================================
-           Desktop View Responsiveness Update
-           ========================================= */
+
         @media (min-width: 768px) {
-            /* মূল কনটেইনার বড় করা */
             #app-container {
-                max-width: 950px; /* ডেক্সটপে কতটা চওড়া হবে */
-                height: 90vh; /* স্ক্রিনের ৯০% জায়গা নিবে */
+                max-width: 950px; 
+                height: 90vh; 
                 border-radius: 25px;
             }
 
-            /* হোম পেজ এবং লাইব্রেরির গ্রিড কলাম ২টা থেকে ৪টায় পরিবর্তন */
             .grid-list {
                 grid-template-columns: repeat(4, 1fr);
                 gap: 20px;
                 padding-bottom: 25px;
             }
 
-            /* লগইন এবং রেজিস্টার বক্স স্ক্রিনের মাঝে ছোট করে রাখা */
             #login-box, #register-box {
                 max-width: 450px;
                 margin: 0 auto;
@@ -256,15 +250,13 @@
                 box-shadow: 0 4px 15px rgba(0,0,0,0.05);
             }
 
-            /* বই পড়ার স্ক্রিন সুন্দর করা (যেন লেখা পুরো স্ক্রিনে ছড়িয়ে না যায়) */
             .read-content {
                 max-width: 700px;
                 margin: 0 auto;
                 padding: 40px 20px;
-                font-size: 18px; /* ডেক্সটপে ফন্ট একটু বড় হবে */
+                font-size: 18px; 
             }
 
-            /* বইয়ের ডিটেইলস পেজ সুন্দর করা */
             #detail-screen .card {
                 max-width: 550px;
                 margin: 0 auto;
@@ -272,25 +264,23 @@
             }
             
             #det-cover {
-                width: 180px !important; /* ডেক্সটপে কভার ছবি একটু বড় হবে */
+                width: 180px !important; 
                 border-radius: 15px !important;
             }
 
-            /* প্রোফাইল এবং ওয়ালেট পেজের কার্ডগুলো সেন্টারে আনা */
             #wallet-screen .card, #wallet-screen .wallet-box, 
             #profile-screen .card {
                 max-width: 550px;
                 margin: 0 auto 15px auto;
             }
 
-            /* ডেক্সটপে সাইড মেনু (Drawer) আরেকটু চওড়া করা এবং পুরোপুরি লুকানো */
             #side-menu-drawer {
                   width: 320px;
-                  left: -330px; /* এই লাইনটি মেনুকে পুরোপুরি স্ক্রিনের বাইরে রাখবে */
+                  left: -330px; 
             }
+        }
 
         @media (min-width: 1200px) {
-            /* খুব বড় ল্যাপটপ বা মনিটরের জন্য ৫টা বই একসাথে দেখানো */
             #app-container {
                 max-width: 1100px;
             }
@@ -303,8 +293,8 @@
 </head>
 <body>
 
-<!-- Theme Glitch Fixer -->
 <script>
+    // Theme Glitch Fixer
     if(localStorage.getItem('boigram_theme') === 'dark') {
         document.body.classList.add('dark-theme');
     }
@@ -312,8 +302,10 @@
 
 <div id="app-container">
     
-    <!-- Global Loader -->
-    <div id="global-loader" style="display: flex;"><div class="spinner"></div></div>
+    <!-- Updated Global Loader: Hidden by Default so it never blocks randomly -->
+    <div id="global-loader" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 9999; justify-content: center; align-items: center; backdrop-filter: blur(3px); border-radius: inherit;">
+        <div class="spinner"></div>
+    </div>
 
     <!-- Left Drawer Overlay -->
     <div class="drawer-overlay" id="drawer-overlay" onclick="toggleMenu()"></div>
@@ -414,7 +406,13 @@
             <div id="recommended-list" class="horizontal-scroll"></div>
         </div>
         
-        <div id="books-list" class="grid-list"></div>
+        <div id="books-list" class="grid-list">
+            <!-- Awesome CSS Loading Placeholder -->
+            <div style="text-align:center; grid-column:span 2; color:var(--text-muted); padding:40px 10px;">
+                <div class="spinner" style="border-top-color: var(--primary); margin: 0 auto 15px auto;"></div>
+                <p>বই লোড হচ্ছে... (Loading...)</p>
+            </div>
+        </div>
     </div>
 
     <!-- Favorites Screen -->
@@ -505,20 +503,15 @@
 
     <!-- Profile Screen -->
     <div id="profile-screen" class="screen" style="padding-top: 20px;">
-        <!-- ডেক্সটপের জন্য মাঝখানে রাখার র‍্যাপার -->
         <div style="max-width: 550px; margin: 0 auto;"> 
-            
-            <!-- টপ বার এবং ডানপাশে ওয়ালেট বাটন -->
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; padding: 0 5px;">
                 <h2 style="margin: 0; font-size: 24px; color: var(--text-main);">Profile</h2>
                 
-                <!-- নতুন ওয়ালেট বাটন -->
                 <button onclick="nav('wallet-screen')" style="background: linear-gradient(135deg, var(--primary), var(--secondary)); border: none; color: white; padding: 8px 16px; border-radius: 20px; font-weight: bold; font-size: 14px; cursor: pointer; box-shadow: var(--glow); transition: 0.3s;">
                     <i class="fas fa-wallet"></i> <span id="profile-wallet-balance">0</span>
                 </button>
             </div>
 
-            <!-- প্রোফাইল ছবি ও রোল (কার্ড ছাড়া) -->
             <div style="text-align: center; margin-bottom: 30px;">
                 <div style="background: var(--card-bg); border: 2px solid var(--primary); width: 85px; height: 85px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 10px auto; font-size: 38px; color: var(--primary); box-shadow: var(--glow);">
                     <i class="fas fa-user-circle"></i>
@@ -526,7 +519,6 @@
                 <p style="color: var(--secondary); font-size: 14px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;" id="profile-role">USER</p>
             </div>
             
-            <!-- ইনপুট ফর্ম (ফুল স্ক্রিন লুক) -->
             <div style="padding: 0 5px;">
                 <label style="font-size: 13px; color: var(--text-muted); margin-bottom: 6px; display: block; font-weight: bold;"><i class="fas fa-user"></i> Full Name</label>
                 <input type="text" id="edit-profile-name" placeholder="Your Name" style="background: var(--card-bg); margin-bottom: 18px;">
@@ -555,7 +547,6 @@
             <button onclick="closeReading()" style="background:none;border:none;font-size:20px;color:inherit;cursor:pointer;"><i class="fas fa-arrow-left"></i></button>
             <div id="read-page-indicator" style="font-size:14px; font-weight:bold; color:var(--secondary); text-shadow: var(--glow);">Page 1/1</div>
             <div>
-                <!-- Auto Scroll Button Added Here -->
                 <button onclick="toggleAutoScroll()" id="auto-scroll-btn" style="background:none;border:none;font-size:18px;margin-right:15px;color:inherit;cursor:pointer;" title="Auto Scroll"><i class="fas fa-play"></i></button>
                 <button onclick="changeFontSize(-2)" style="background:none;border:none;font-size:18px;margin-right:10px;color:inherit;cursor:pointer;">A-</button>
                 <button onclick="changeFontSize(2)" style="background:none;border:none;font-size:18px;margin-right:15px;color:inherit;cursor:pointer;">A+</button>
@@ -672,544 +663,502 @@
 </div>
 
 <script>
-    const firebaseConfig = {
-        apiKey: "AIzaSyA0bpUzrk_umoC1MymKfhV2_x_qd7WfDwk",
-        authDomain: "e-book-bd-41a42.firebaseapp.com",
-        databaseURL: "https://e-book-bd-41a42-default-rtdb.asia-southeast1.firebasedatabase.app",
-        projectId: "e-book-bd-41a42",
-        storageBucket: "e-book-bd-41a42.firebasestorage.app",
-        messagingSenderId: "782336259676",
-        appId: "1:782336259676:web:116cc61b304ac31b885899"
-    };
-    
-    if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
-    const db = firebase.database();
-    const auth = firebase.auth();
-
-    let currentUser = null, userData = null, currentBookId = null, currentBookData = null;
-    let voucherData = null, finalPrice = 0, fontSize = 16, allBooks = [], adminPaymentSettings = null; 
-    let currentCategory = ""; 
-    
-    let currentReadingPages = [];
-    let currentReadingIndex = 0;
-
-    // Auto Scroll Variables Added Here
-    let autoScrollInterval = null;
-    let isAutoScrolling = false;
-
-    let sysWriterPercent = 50, sysAffiliatePercent = 20, sysUserDiscount = 10;
-    let blockedWords = [];
-    let communityLinks = { facebook: "https://facebook.com", telegram: "https://t.me" };
-
-    function showLoader() { document.getElementById('global-loader').style.display = 'flex'; }
-    function hideLoader() { document.getElementById('global-loader').style.display = 'none'; }
-
-    let currentLang = localStorage.getItem('boigram_lang') || 'en';
-    const langDict = {
-        'en': { langName: "বাংলা (BN)", search_ph: "Search books...", menu_dark: "Dark Mode", menu_light: "Light Mode", menu_lang: "বাংলা (BN)", menu_qa: "Support Q&A", menu_rep: "Report Issue", menu_com: "Community", auth_login: "Login to your account", auth_reg: "Create a new account", home: "Home", favs: "Favs", lib: "Library", wallet: "Wallet", prof: "Profile", rec: "For You", all: "All", free: "Free", buy: "Buy Now", get_free: "Get Free", read: "Read" },
-        'bn': { langName: "English (EN)", search_ph: "বই খুঁজুন...", menu_dark: "ডার্ক মোড", menu_light: "লাইট মোড", menu_lang: "English (EN)", menu_qa: "সাপোর্ট প্রশ্ন", menu_rep: "সমস্যা জানান", menu_com: "কমিউনিটি", auth_login: "আপনার অ্যাকাউন্টে লগইন করুন", auth_reg: "নতুন অ্যাকাউন্ট তৈরি করুন", home: "হোম", favs: "পছন্দ", lib: "লাইব্রেরি", wallet: "ওয়ালেট", prof: "প্রোফাইল", rec: "ফর ইউ", all: "সকল", free: "ফ্রি", buy: "কিনুন", get_free: "ফ্রি নিন", read: "পড়ুন" }
-    };
-
-    function toggleLanguage() {
-        currentLang = currentLang === 'en' ? 'bn' : 'en';
-        localStorage.setItem('boigram_lang', currentLang);
-        applyLanguage();
-    }
-
-    function applyLanguage() {
-        let d = langDict[currentLang];
-        document.getElementById('search-box').placeholder = d.search_ph;
-        document.getElementById('menu-lang-text').innerText = d.menu_lang;
-        document.getElementById('menu-qa-text').innerText = d.menu_qa;
-        document.getElementById('menu-rep-text').innerText = d.menu_rep;
-        document.getElementById('menu-com-text').innerText = d.menu_com;
-        document.getElementById('nav-home').innerText = d.home;
-        document.getElementById('nav-fav').innerText = d.favs;
-        document.getElementById('nav-lib').innerText = d.lib;
-        
-        // nav-wal লাইনটি এখান থেকে রিমুভ করা হয়েছে
-        
-        document.getElementById('nav-prof').innerText = d.prof;
-        document.querySelectorAll('.lang-free').forEach(el => el.innerText = d.free);
-        if(document.getElementById('rec-text')) document.getElementById('rec-text').innerText = d.rec;
-        let authTitle = document.getElementById('auth-title');
-        if(document.getElementById('register-box').style.display === 'none') { authTitle.innerText = d.auth_login; } else { authTitle.innerText = d.auth_reg; }
-        if (allBooks.length > 0) renderBooks();
-        loadLibrary();
-        updateThemeIcons(document.body.classList.contains('dark-theme'));
-    }
-
-    function loadSystemSettings() {
-        db.ref('settings/commissions').on('value', snap => {
-            if(snap.exists()) {
-                let data = snap.val();
-                sysWriterPercent = data.writerPercent || 50; sysAffiliatePercent = data.affiliatePercent || 20; sysUserDiscount = data.userDiscountPercent || 10;
-            }
-        });
-        db.ref('settings/blockedWords').on('value', snap => {
-            blockedWords = []; if(snap.exists()) { snap.forEach(child => blockedWords.push(child.val().toLowerCase())); }
-        });
-        db.ref('settings/community_user').on('value', snap => {
-            if(snap.exists()) { let data = snap.val(); communityLinks.facebook = data.facebook || "https://facebook.com"; communityLinks.telegram = data.telegram || "https://t.me"; }
-        });
-    }
-    loadSystemSettings();
-
-    function openCommunityLink(platform) {
-    let url = communityLinks[platform];
-
-    // টেলিগ্রামের ক্ষেত্রে ডিরেক্ট অ্যাপ লিংক (Deep Link) তৈরি করা
-    if (platform === 'telegram' && url.includes('t.me/')) {
-        let username = url.split('t.me/')[1].split('/')[0].split('?')[0];
-        url = 'tg://resolve?domain=' + username;
-    }
-
-    // Facebook এর জন্য মোবাইল OS-কে ফোর্স করার জন্য <a> ট্যাগ ট্রিক
-    let a = document.createElement('a');
-    a.href = url;
-    
-    // ব্রাউজারকে অ্যাপ ইন্টারসেপ্ট করার সুযোগ দিতে _blank ব্যবহার
-    a.target = '_blank'; 
-    a.rel = 'noopener noreferrer';
-    
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-}
-
-    function applySavedTheme() {
-        const isDark = localStorage.getItem('boigram_theme') === 'dark';
-        if(isDark) document.body.classList.add('dark-theme');
-        updateThemeIcons(isDark);
-    }
-
-    function toggleGlobalDarkMode() {
-        document.body.classList.toggle('dark-theme');
-        const isDark = document.body.classList.contains('dark-theme');
-        localStorage.setItem('boigram_theme', isDark ? 'dark' : 'light');
-        updateThemeIcons(isDark);
-        if(document.getElementById('reading-screen').style.display === 'flex') { generateCanvasWatermark(); }
-    }
-
-    function updateThemeIcons(isDark) {
-        let d = langDict[currentLang];
-        const menuIcon = document.getElementById('menu-dark-icon'); const menuText = document.getElementById('menu-dark-text'); const readIcon = document.getElementById('read-dark-icon');
-        if(isDark) {
-            if(menuIcon) { menuIcon.className = 'fas fa-sun'; menuText.innerText = d.menu_light; }
-            if(readIcon) readIcon.className = 'fas fa-sun';
-        } else {
-            if(menuIcon) { menuIcon.className = 'fas fa-moon'; menuText.innerText = d.menu_dark; }
-            if(readIcon) readIcon.className = 'fas fa-moon';
+    // ==========================================
+    // CRITICAL FIX: Safe Execution Wrapper
+    // This prevents all script crashes by ensuring
+    // Firebase is fully loaded before ANY code runs.
+    // ==========================================
+    function startApp() {
+        if (typeof firebase === 'undefined' || !firebase.apps) {
+            setTimeout(startApp, 100); // Wait 100ms and try again
+            return;
         }
-    }
 
-    function toggleMenu() {
-        const drawer = document.getElementById('side-menu-drawer');
-        const overlay = document.getElementById('drawer-overlay');
-        drawer.classList.toggle('open'); overlay.classList.toggle('open');
-    }
-    applySavedTheme();
-
-    function openModal(id) { document.getElementById(id).style.display = 'flex'; }
-    function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-    
-    // ============================================
-    // Professional Chatting System Logic
-    // ============================================
-    let chatTimer = null;
-    let isBotTyping = false;
-    const defaultQA = [
-        { q: "How to buy a book?", a: "To buy a book, go to the book detail page, deposit coins if needed, and click 'Buy Now'." },
-        { q: "How to deposit coins?", a: "Go to the Wallet screen, copy the admin payment number, send money, and submit your TrxID." }
-    ];
-
-    function loadQA() {
-        db.ref('settings/qa/user').on('value', snap => {
-            let qaData = snap.exists() ? snap.val() : defaultQA;
-            let btnHtml = ''; let qaList = Array.isArray(qaData) ? qaData : Object.values(qaData);
-            qaList.forEach(item => {
-                let safeQ = item.q.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-                let safeA = item.a.replace(/'/g, "\\'").replace(/"/g, '&quot;');
-                btnHtml += `<button class="qa-btn-slide" onclick="sendQA(this, '${safeQ}', '${safeA}')">${item.q}</button>`;
-            });
-            document.getElementById('qa-buttons').innerHTML = btnHtml;
-        });
-    }
-
-    function sendQA(btnNode, q, a) {
-        if(isBotTyping) return; 
-        isBotTyping = true;
-        btnNode.disabled = true;
-
-        const chatBox = document.getElementById('chat-history');
+        const firebaseConfig = {
+            apiKey: "AIzaSyA0bpUzrk_umoC1MymKfhV2_x_qd7WfDwk",
+            authDomain: "e-book-bd-41a42.firebaseapp.com",
+            databaseURL: "https://e-book-bd-41a42-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "e-book-bd-41a42",
+            storageBucket: "e-book-bd-41a42.firebasestorage.app",
+            messagingSenderId: "782336259676",
+            appId: "1:782336259676:web:116cc61b304ac31b885899"
+        };
         
-        // Add User Message
-        chatBox.insertAdjacentHTML('beforeend', `
-            <div class="chat-message-wrapper user">
-                <div class="chat-bubble chat-user">${q}</div>
-            </div>
-        `);
-        setTimeout(() => chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' }), 50);
+        if (!firebase.apps.length) { firebase.initializeApp(firebaseConfig); }
+        const db = firebase.database();
+        const auth = firebase.auth();
 
-        // Add Bot Typing Indicator
-        const typingId = 'typing-' + Date.now();
-        chatBox.insertAdjacentHTML('beforeend', `
-            <div id="${typingId}" class="chat-message-wrapper bot">
-                <div class="chat-avatar bot"><i class="fas fa-robot"></i></div>
-                <div class="chat-bubble chat-bot">
-                    <div class="typing-indicator"><span></span><span></span><span></span></div>
-                </div>
-            </div>
-        `);
-        setTimeout(() => chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' }), 50);
+        let currentUser = null, userData = null, currentBookId = null, currentBookData = null;
+        let voucherData = null, finalPrice = 0, fontSize = 16, allBooks = [], adminPaymentSettings = null; 
+        let currentCategory = ""; 
+        let isBooksLoaded = false; 
 
-        // Replace Typing with Actual Message after 1.5s
-        setTimeout(() => {
-            const typingEl = document.getElementById(typingId);
-            if(typingEl) typingEl.remove();
-            
-            chatBox.insertAdjacentHTML('beforeend', `
-                <div class="chat-message-wrapper bot">
-                    <div class="chat-avatar bot"><i class="fas fa-robot"></i></div>
-                    <div class="chat-bubble chat-bot">${a}</div>
-                </div>
-            `);
-            setTimeout(() => chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' }), 50);
-            
-            isBotTyping = false;
-            btnNode.disabled = false;
-        }, 1500);
+        let currentReadingPages = [];
+        let currentReadingIndex = 0;
+        let autoScrollInterval = null;
+        let isAutoScrolling = false;
 
-        // Auto Clear Chat History Logic
-        clearTimeout(chatTimer);
-        chatTimer = setTimeout(() => {
-            chatBox.innerHTML = `
-                <div class="chat-message-wrapper bot">
-                    <div class="chat-avatar bot"><i class="fas fa-robot"></i></div>
-                    <div class="chat-bubble chat-bot">Hello! How can I help you today? Please swipe and tap a question below.</div>
-                </div>
-            `;
-            if(document.getElementById('qa-modal').style.display === 'flex') showToast("Chat history auto-cleared.");
-        }, 5 * 60 * 1000);
-    }
-    // ============================================
+        let sysWriterPercent = 50, sysAffiliatePercent = 20, sysUserDiscount = 10;
+        let blockedWords = [];
+        let communityLinks = { facebook: "https://facebook.com", telegram: "https://t.me" };
 
-    function submitReport() {
-    const text = document.getElementById('report-text').value.trim();
-    if(!text) return showToast("রিপোর্টের ঘরে কিছু লিখতে হবে!");
-    
-    // ওয়ার্ড লিমিট চেক করা (Word count validation)
-    const words = text.split(/\s+/).filter(word => word.length > 0);
-    const wordCount = words.length;
-    
-    if (wordCount < 5) {
-        return showToast("দয়া করে বিস্তারিত লিখুন (কমপক্ষে ৫ টি শব্দ হতে হবে)।");
-    }
-    if (wordCount > 100) {
-        return showToast("আপনার রিপোর্টটি অনেক বড়! সর্বোচ্চ ১০০ শব্দের মধ্যে লিখুন।");
-    }
+        // Modified Global Loader: Only blocks manually via showLoader (Not on startup)
+        let globalLoaderTimeoutHandle;
+        window.showLoader = function() { 
+            let loader = document.getElementById('global-loader');
+            if(loader) loader.style.display = 'flex';
+            clearTimeout(globalLoaderTimeoutHandle);
+            globalLoaderTimeoutHandle = setTimeout(window.hideLoader, 10000); // Fail-safe auto hide
+        };
+        window.hideLoader = function() { 
+            let loader = document.getElementById('global-loader');
+            if(loader) loader.style.display = 'none';
+        };
 
-    if(!currentUser) return showToast("রিপোর্ট করতে দয়া করে লগইন করুন।");
-    let lowerText = text.toLowerCase();
-    let hasBlockedWord = blockedWords.some(word => lowerText.includes(word));
-    if(hasBlockedWord) return showToast("সতর্কতা: দয়া করে খারাপ বা অশালীন শব্দ ব্যবহার থেকে বিরত থাকুন।");
+        let currentLang = localStorage.getItem('boigram_lang') || 'en';
+        const langDict = {
+            'en': { langName: "বাংলা (BN)", search_ph: "Search books...", menu_dark: "Dark Mode", menu_light: "Light Mode", menu_lang: "বাংলা (BN)", menu_qa: "Support Q&A", menu_rep: "Report Issue", menu_com: "Community", auth_login: "Login to your account", auth_reg: "Create a new account", home: "Home", favs: "Favs", lib: "Library", wallet: "Wallet", prof: "Profile", rec: "For You", all: "All", free: "Free", buy: "Buy Now", get_free: "Get Free", read: "Read" },
+            'bn': { langName: "English (EN)", search_ph: "বই খুঁজুন...", menu_dark: "ডার্ক মোড", menu_light: "লাইট মোড", menu_lang: "English (EN)", menu_qa: "সাপোর্ট প্রশ্ন", menu_rep: "সমস্যা জানান", menu_com: "কমিউনিটি", auth_login: "আপনার অ্যাকাউন্টে লগইন করুন", auth_reg: "নতুন অ্যাকাউন্ট তৈরি করুন", home: "হোম", favs: "পছন্দ", lib: "লাইব্রেরি", wallet: "ওয়ালেট", prof: "প্রোফাইল", rec: "ফর ইউ", all: "সকল", free: "ফ্রি", buy: "কিনুন", get_free: "ফ্রি নিন", read: "পড়ুন" }
+        };
 
-    showLoader();
-    db.ref('reports').push({
-        uid: currentUser.uid, email: currentUser.email, role: 'user', message: text, timestamp: Date.now(), status: 'pending'
-    }).then(() => {
-        hideLoader(); showToast("আপনার রিপোর্ট সফলভাবে জমা হয়েছে!");
-        document.getElementById('report-text').value = ''; closeModal('report-modal');
-    }).catch(e => { hideLoader(); showToast("Error: " + e.message); });
-}
+        window.toggleLanguage = function() {
+            currentLang = currentLang === 'en' ? 'bn' : 'en';
+            localStorage.setItem('boigram_lang', currentLang);
+            applyLanguage();
+        };
 
-    function toggleSearch() {
-        const searchBox = document.getElementById('search-box');
-        const iconBtn = document.getElementById('search-toggle-btn');
-        if(!searchBox.classList.contains('active')) {
-            searchBox.classList.add('active'); searchBox.focus();
-            iconBtn.innerHTML = '<i class="fas fa-times"></i>'; iconBtn.style.color = 'var(--secondary)'; iconBtn.style.borderColor = 'var(--primary)';
-        } else {
-            searchBox.classList.remove('active'); searchBox.value = ''; filterBooks(); 
-            iconBtn.innerHTML = '<i class="fas fa-search"></i>'; iconBtn.style.color = 'var(--primary)'; iconBtn.style.borderColor = 'var(--border-color)';
-        }
-    }
-
-    function loadCategories() {
-        db.ref('settings/categories').on('value', snap => {
-            let menu = document.getElementById('category-scroll');
+        function applyLanguage() {
             let d = langDict[currentLang];
-            let html = `<div class="cat-pill active" id="cat-all" onclick="selectCategory('', 'cat-all')"><span class="lang-all">${d.all}</span></div>
-                        <div class="cat-pill" id="cat-free" onclick="selectCategory('_FREE_', 'cat-free')">🎁 <span class="lang-free">${d.free}</span></div>`;
-            if(snap.exists()) {
-                let i = 0; snap.forEach(child => { 
-                    let catName = child.val().name; html += `<div class="cat-pill" id="cat-i-${i}" onclick="selectCategory('${catName}', 'cat-i-${i}')">${catName}</div>`; i++;
-                });
-            }
-            menu.innerHTML = html; applyLanguage();
-        });
-    }
-
-    function selectCategory(val, pillId) {
-        currentCategory = val;
-        document.querySelectorAll('.cat-pill').forEach(el => el.classList.remove('active'));
-        if(document.getElementById(pillId)) document.getElementById(pillId).classList.add('active');
-        filterBooks();
-    }
-
-    function getBookRatingInfo(book) {
-        if (!book.ratings) return { avg: 0, count: 0 };
-        let total = 0, count = 0;
-        for (let uid in book.ratings) { total += book.ratings[uid]; count++; }
-        return { avg: (total / count).toFixed(1), count: count };
-    }
-
-    function submitRating(rating, isFromModal = false) {
-        if(!currentUser || !currentBookId) return;
-        
-        let stars = isFromModal ? document.getElementById('modal-star-rating').children : document.getElementById('star-rating').children;
-        if(stars) {
-            for(let i = 0; i < 5; i++) {
-                if(i < rating) { stars[i].className = 'fas fa-star'; stars[i].style.color = '#f39c12'; } 
-                else { stars[i].className = 'far fa-star text-muted'; stars[i].style.color = 'var(--text-muted)'; }
-            }
+            document.getElementById('search-box').placeholder = d.search_ph;
+            document.getElementById('menu-lang-text').innerText = d.menu_lang;
+            document.getElementById('menu-qa-text').innerText = d.menu_qa;
+            document.getElementById('menu-rep-text').innerText = d.menu_rep;
+            document.getElementById('menu-com-text').innerText = d.menu_com;
+            document.getElementById('nav-home').innerText = d.home;
+            document.getElementById('nav-fav').innerText = d.favs;
+            document.getElementById('nav-lib').innerText = d.lib;
+            document.getElementById('nav-prof').innerText = d.prof;
+            
+            document.querySelectorAll('.lang-free').forEach(el => el.innerText = d.free);
+            if(document.getElementById('rec-text')) document.getElementById('rec-text').innerText = d.rec;
+            
+            let authTitle = document.getElementById('auth-title');
+            if(document.getElementById('register-box').style.display === 'none') { authTitle.innerText = d.auth_login; } else { authTitle.innerText = d.auth_reg; }
+            
+            if (isBooksLoaded) renderBooks();
+            loadLibrary();
+            updateThemeIcons(document.body.classList.contains('dark-theme'));
         }
 
-        db.ref(`books/${currentBookId}/ratings/${currentUser.uid}`).set(rating).then(() => { 
-            showToast("ধন্যবাদ! আপনার রেটিং সেভ হয়েছে। ⭐"); 
-            if(isFromModal) { setTimeout(() => { closeModal('rating-modal'); }, 1000); }
-        }).catch(err => showToast("Error saving rating: " + err.message));
-    }
-
-    function showTerms() { openModal('tnc-modal'); }
-    function acceptTerms() { document.getElementById('agree-tnc').checked = true; closeModal('tnc-modal'); }
-
-    function toggleAuth(mode) {
-        let d = langDict[currentLang];
-        if(mode === 'register') {
-            document.getElementById('login-box').style.display = 'none'; document.getElementById('register-box').style.display = 'block'; document.getElementById('auth-title').innerText = d.auth_reg;
-        } else {
-            document.getElementById('register-box').style.display = 'none'; document.getElementById('login-box').style.display = 'block'; document.getElementById('auth-title').innerText = d.auth_login;
-        }
-    }
-
-    auth.onAuthStateChanged(async user => {
-        if (user) {
-            try {
-                let writerSnap = await db.ref('writers/' + user.uid).once('value');
-                if (writerSnap.exists()) { auth.signOut(); alert("Access Denied! Use Writer App."); nav('auth-screen'); return; }
-
-                let affSnap = await db.ref('affiliates/' + user.uid).once('value');
-                if (affSnap.exists()) { auth.signOut(); alert("Access Denied! Use Affiliate App."); nav('auth-screen'); return; }
-
-                let userSnap = await db.ref('users/' + user.uid).once('value');
-                if (userSnap.exists()) {
-                    let uData = userSnap.val();
-                    if(uData && (uData.role === 'writer' || uData.role === 'affiliate' || uData.role === 'marketer')) { auth.signOut(); alert("Access Denied! Invalid Role."); nav('auth-screen'); return; }
-                } else if (!document.getElementById('register-box').style.display === 'block') {
-                    auth.signOut(); alert("Account not found. Please register."); nav('auth-screen'); return;
+        function loadSystemSettings() {
+            db.ref('settings/commissions').on('value', snap => {
+                if(snap.exists()) {
+                    let data = snap.val();
+                    sysWriterPercent = data.writerPercent || 50; sysAffiliatePercent = data.affiliatePercent || 20; sysUserDiscount = data.userDiscountPercent || 10;
                 }
+            });
+            db.ref('settings/blockedWords').on('value', snap => {
+                blockedWords = []; if(snap.exists()) { snap.forEach(child => blockedWords.push(String(child.val()).toLowerCase())); }
+            });
+            db.ref('settings/community_user').on('value', snap => {
+                if(snap.exists()) { let data = snap.val(); communityLinks.facebook = data.facebook || "https://facebook.com"; communityLinks.telegram = data.telegram || "https://t.me"; }
+            });
+        }
+        loadSystemSettings();
+
+        window.openCommunityLink = function(platform) {
+            let url = communityLinks[platform];
+            if (platform === 'telegram' && url.includes('t.me/')) {
+                let username = url.split('t.me/')[1].split('/')[0].split('?')[0];
+                url = 'tg://resolve?domain=' + username;
+            }
+            let a = document.createElement('a'); a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
+            document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        };
+
+        function applySavedTheme() {
+            const isDark = localStorage.getItem('boigram_theme') === 'dark';
+            if(isDark) document.body.classList.add('dark-theme');
+            updateThemeIcons(isDark);
+        }
+
+        window.toggleGlobalDarkMode = function() {
+            document.body.classList.toggle('dark-theme');
+            const isDark = document.body.classList.contains('dark-theme');
+            localStorage.setItem('boigram_theme', isDark ? 'dark' : 'light');
+            updateThemeIcons(isDark);
+            if(document.getElementById('reading-screen').style.display === 'flex') { generateCanvasWatermark(); }
+        };
+
+        function updateThemeIcons(isDark) {
+            let d = langDict[currentLang];
+            const menuIcon = document.getElementById('menu-dark-icon'); const menuText = document.getElementById('menu-dark-text'); const readIcon = document.getElementById('read-dark-icon');
+            if(isDark) {
+                if(menuIcon) { menuIcon.className = 'fas fa-sun'; menuText.innerText = d.menu_light; }
+                if(readIcon) readIcon.className = 'fas fa-sun';
+            } else {
+                if(menuIcon) { menuIcon.className = 'fas fa-moon'; menuText.innerText = d.menu_dark; }
+                if(readIcon) readIcon.className = 'fas fa-moon';
+            }
+        }
+
+        window.toggleMenu = function() {
+            const drawer = document.getElementById('side-menu-drawer');
+            const overlay = document.getElementById('drawer-overlay');
+            drawer.classList.toggle('open'); overlay.classList.toggle('open');
+        };
+        applySavedTheme();
+
+        window.openModal = function(id) { document.getElementById(id).style.display = 'flex'; };
+        window.closeModal = function(id) { document.getElementById(id).style.display = 'none'; };
+        
+        let chatTimer = null; let isBotTyping = false;
+        const defaultQA = [
+            { q: "How to buy a book?", a: "To buy a book, go to the book detail page, deposit coins if needed, and click 'Buy Now'." },
+            { q: "How to deposit coins?", a: "Go to the Wallet screen, copy the admin payment number, send money, and submit your TrxID." }
+        ];
+
+        function loadQA() {
+            db.ref('settings/qa/user').on('value', snap => {
+                let qaData = snap.exists() ? snap.val() : defaultQA;
+                let btnHtml = ''; let qaList = Array.isArray(qaData) ? qaData : Object.values(qaData);
+                qaList.forEach(item => {
+                    let safeQ = String(item.q).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                    let safeA = String(item.a).replace(/'/g, "\\'").replace(/"/g, '&quot;');
+                    btnHtml += `<button class="qa-btn-slide" onclick="sendQA(this, '${safeQ}', '${safeA}')">${item.q}</button>`;
+                });
+                document.getElementById('qa-buttons').innerHTML = btnHtml;
+            });
+        }
+
+        window.sendQA = function(btnNode, q, a) {
+            if(isBotTyping) return; 
+            isBotTyping = true; btnNode.disabled = true;
+            const chatBox = document.getElementById('chat-history');
+            
+            chatBox.insertAdjacentHTML('beforeend', `<div class="chat-message-wrapper user"><div class="chat-bubble chat-user">${q}</div></div>`);
+            setTimeout(() => chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' }), 50);
+
+            const typingId = 'typing-' + Date.now();
+            chatBox.insertAdjacentHTML('beforeend', `<div id="${typingId}" class="chat-message-wrapper bot"><div class="chat-avatar bot"><i class="fas fa-robot"></i></div><div class="chat-bubble chat-bot"><div class="typing-indicator"><span></span><span></span><span></span></div></div></div>`);
+            setTimeout(() => chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' }), 50);
+
+            setTimeout(() => {
+                const typingEl = document.getElementById(typingId);
+                if(typingEl) typingEl.remove();
                 
-                currentUser = user; loadUserData(); loadLibrary(); loadAdminPaymentSettings(); 
-                document.getElementById('bottom-nav').style.display = 'flex';
-                document.getElementById('drawer-logout-btn').style.display = 'flex';
-                document.getElementById('logout-divider').style.display = 'block';
+                chatBox.insertAdjacentHTML('beforeend', `<div class="chat-message-wrapper bot"><div class="chat-avatar bot"><i class="fas fa-robot"></i></div><div class="chat-bubble chat-bot">${a}</div></div>`);
+                setTimeout(() => chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' }), 50);
+                
+                isBotTyping = false; btnNode.disabled = false;
+            }, 1500);
+
+            clearTimeout(chatTimer);
+            chatTimer = setTimeout(() => {
+                chatBox.innerHTML = `<div class="chat-message-wrapper bot"><div class="chat-avatar bot"><i class="fas fa-robot"></i></div><div class="chat-bubble chat-bot">Hello! How can I help you today? Please swipe and tap a question below.</div></div>`;
+                if(document.getElementById('qa-modal').style.display === 'flex') showToast("Chat history auto-cleared.");
+            }, 5 * 60 * 1000);
+        };
+
+        window.submitReport = function() {
+            const text = document.getElementById('report-text').value.trim();
+            if(!text) return showToast("রিপোর্টের ঘরে কিছু লিখতে হবে!");
+            
+            const words = text.split(/\s+/).filter(word => word.length > 0);
+            if (words.length < 5) return showToast("দয়া করে বিস্তারিত লিখুন (কমপক্ষে ৫ টি শব্দ হতে হবে)।");
+            if (words.length > 100) return showToast("আপনার রিপোর্টটি অনেক বড়! সর্বোচ্চ ১০০ শব্দের মধ্যে লিখুন।");
+
+            if(!currentUser) return showToast("রিপোর্ট করতে দয়া করে লগইন করুন।");
+            let lowerText = text.toLowerCase();
+            if(blockedWords.some(word => lowerText.includes(word))) return showToast("সতর্কতা: দয়া করে খারাপ বা অশালীন শব্দ ব্যবহার থেকে বিরত থাকুন।");
+
+            window.showLoader();
+            db.ref('reports').push({
+                uid: currentUser.uid, email: currentUser.email, role: 'user', message: text, timestamp: Date.now(), status: 'pending'
+            }).then(() => {
+                window.hideLoader(); showToast("আপনার রিপোর্ট সফলভাবে জমা হয়েছে!");
+                document.getElementById('report-text').value = ''; closeModal('report-modal');
+            }).catch(e => { window.hideLoader(); showToast("Error: " + e.message); });
+        };
+
+        window.toggleSearch = function() {
+            const searchBox = document.getElementById('search-box');
+            const iconBtn = document.getElementById('search-toggle-btn');
+            if(!searchBox.classList.contains('active')) {
+                searchBox.classList.add('active'); searchBox.focus();
+                iconBtn.innerHTML = '<i class="fas fa-times"></i>'; iconBtn.style.color = 'var(--secondary)'; iconBtn.style.borderColor = 'var(--primary)';
+            } else {
+                searchBox.classList.remove('active'); searchBox.value = ''; window.filterBooks(); 
+                iconBtn.innerHTML = '<i class="fas fa-search"></i>'; iconBtn.style.color = 'var(--primary)'; iconBtn.style.borderColor = 'var(--border-color)';
+            }
+        };
+
+        function loadCategories() {
+            db.ref('settings/categories').on('value', snap => {
+                let menu = document.getElementById('category-scroll');
+                if(!menu) return;
+                let d = langDict[currentLang];
+                let html = `<div class="cat-pill active" id="cat-all" onclick="selectCategory('', 'cat-all')"><span class="lang-all">${d.all}</span></div>
+                            <div class="cat-pill" id="cat-free" onclick="selectCategory('_FREE_', 'cat-free')">🎁 <span class="lang-free">${d.free}</span></div>`;
+                if(snap.exists()) {
+                    let i = 0; snap.forEach(child => { 
+                        let catVal = child.val(); 
+                        if(catVal && typeof catVal === 'object' && catVal.name) {
+                            let catName = String(catVal.name);
+                            html += `<div class="cat-pill" id="cat-i-${i}" onclick="selectCategory('${catName.replace(/'/g, "\\'")}', 'cat-i-${i}')">${catName}</div>`; 
+                            i++;
+                        }
+                    });
+                }
+                menu.innerHTML = html; applyLanguage();
+            }, err => console.error("Categories error", err));
+        }
+
+        window.selectCategory = function(val, pillId) {
+            currentCategory = val;
+            document.querySelectorAll('.cat-pill').forEach(el => el.classList.remove('active'));
+            if(document.getElementById(pillId)) document.getElementById(pillId).classList.add('active');
+            window.filterBooks();
+        };
+
+        function getBookRatingInfo(book) {
+            if (!book.ratings || typeof book.ratings !== 'object') return { avg: 0, count: 0 };
+            let total = 0, count = 0;
+            for (let uid in book.ratings) { 
+                let r = Number(book.ratings[uid]);
+                if (!isNaN(r)) { total += r; count++; }
+            }
+            if(count === 0) return { avg: 0, count: 0 };
+            return { avg: (total / count).toFixed(1), count: count };
+        }
+
+        window.submitRating = function(rating, isFromModal = false) {
+            if(!currentUser || !currentBookId) return;
+            let stars = isFromModal ? document.getElementById('modal-star-rating').children : document.getElementById('star-rating').children;
+            if(stars) {
+                for(let i = 0; i < 5; i++) {
+                    if(i < rating) { stars[i].className = 'fas fa-star'; stars[i].style.color = '#f39c12'; } 
+                    else { stars[i].className = 'far fa-star text-muted'; stars[i].style.color = 'var(--text-muted)'; }
+                }
+            }
+            db.ref(`books/${currentBookId}/ratings/${currentUser.uid}`).set(rating).then(() => { 
+                showToast("ধন্যবাদ! আপনার রেটিং সেভ হয়েছে। ⭐"); 
+                if(isFromModal) { setTimeout(() => { closeModal('rating-modal'); }, 1000); }
+            }).catch(err => showToast("Error saving rating: " + err.message));
+        };
+
+        window.showTerms = function() { openModal('tnc-modal'); };
+        window.acceptTerms = function() { document.getElementById('agree-tnc').checked = true; closeModal('tnc-modal'); };
+
+        window.toggleAuth = function(mode) {
+            let d = langDict[currentLang];
+            if(mode === 'register') {
+                document.getElementById('login-box').style.display = 'none'; document.getElementById('register-box').style.display = 'block'; document.getElementById('auth-title').innerText = d.auth_reg;
+            } else {
+                document.getElementById('register-box').style.display = 'none'; document.getElementById('login-box').style.display = 'block'; document.getElementById('auth-title').innerText = d.auth_login;
+            }
+        };
+
+        auth.onAuthStateChanged(async user => {
+            if (user) {
+                try {
+                    let writerSnap = await db.ref('writers/' + user.uid).once('value');
+                    if (writerSnap.exists()) { auth.signOut(); alert("Access Denied! Use Writer App."); nav('auth-screen'); return; }
+
+                    let affSnap = await db.ref('affiliates/' + user.uid).once('value');
+                    if (affSnap.exists()) { auth.signOut(); alert("Access Denied! Use Affiliate App."); nav('auth-screen'); return; }
+
+                    let userSnap = await db.ref('users/' + user.uid).once('value');
+                    if (userSnap.exists()) {
+                        let uData = userSnap.val();
+                        if(uData && (uData.role === 'writer' || uData.role === 'affiliate' || uData.role === 'marketer')) { auth.signOut(); alert("Access Denied! Invalid Role."); nav('auth-screen'); return; }
+                    } else if (document.getElementById('register-box').style.display !== 'block') {
+                        auth.signOut(); alert("Account not found. Please register."); nav('auth-screen'); return;
+                    }
+                    
+                    currentUser = user; loadUserData(); loadLibrary(); loadAdminPaymentSettings(); 
+                    document.getElementById('bottom-nav').style.display = 'flex';
+                    document.getElementById('drawer-logout-btn').style.display = 'flex';
+                    document.getElementById('logout-divider').style.display = 'block';
+
+                    const params = new URLSearchParams(window.location.search);
+                    const bookParam = params.get('book');
+                    if (bookParam) { window.pendingBookOpen = bookParam; } 
+                    else if(document.getElementById('auth-screen').classList.contains('active')){ nav('home-screen'); }
+
+                } catch(error) { console.error("Login Error: ", error); window.hideLoader(); }
+            } else {
+                currentUser = null; userData = null; renderBooks(); 
+                document.getElementById('bottom-nav').style.display = 'flex'; 
+                document.getElementById('drawer-logout-btn').style.display = 'none'; 
+                document.getElementById('logout-divider').style.display = 'none';
 
                 const params = new URLSearchParams(window.location.search);
                 const bookParam = params.get('book');
-                if (bookParam) { window.pendingBookOpen = bookParam; } 
-                else if(document.getElementById('auth-screen').classList.contains('active')){ nav('home-screen'); }
-
-            } catch(error) { console.error("Login Error: ", error); }
-        } else {
-            currentUser = null; userData = null; renderBooks(); 
-            document.getElementById('bottom-nav').style.display = 'flex'; 
-            document.getElementById('drawer-logout-btn').style.display = 'none'; 
-            document.getElementById('logout-divider').style.display = 'none';
-
-            const params = new URLSearchParams(window.location.search);
-            const bookParam = params.get('book');
-            if (bookParam) {
-                window.pendingBookOpen = bookParam; showToast("Please login to view this book."); nav('auth-screen');
-            } else {
-                if(document.getElementById('auth-screen').classList.contains('active')) { document.getElementById('bottom-nav').style.display = 'none'; } 
-                else { nav('home-screen'); }
-            }
-        }
-    });
-
-    function register() {
-        const name = document.getElementById('reg-name').value.trim(); 
-        const username = document.getElementById('reg-username').value.trim(); 
-        const email = document.getElementById('reg-email').value.trim(); 
-        const phone = document.getElementById('reg-phone').value.trim(); 
-        const age = document.getElementById('reg-age').value.trim();
-        const pass = document.getElementById('reg-pass').value; 
-        const isAgreed = document.getElementById('agree-tnc').checked;
-        
-        if(!name || !username || !email || !pass || !age || !isAgreed) return showToast("Please fill all required fields and agree to T&C!");
-        if(Number(age) < 12) return showToast("Age must be at least 12 years!");
-        if(phone && phone.length < 11) return showToast("If provided, phone must be at least 11 digits!");
-        
-        showLoader();
-        auth.createUserWithEmailAndPassword(email, pass).then(res => {
-            db.ref('users/' + res.user.uid).set({ 
-                name: name, username: username, email: email, phone: phone, age: Number(age), 
-                coins: 0, role: 'user', joinedAt: Date.now(), status: 'active' 
-            }); 
-            hideLoader(); showToast("Registration Successful!");
-        }).catch(err => { hideLoader(); showToast(err.message); });
-    }
-
-    function login() {
-        const email = document.getElementById('login-email').value.trim(); const pass = document.getElementById('login-pass').value;
-        if(!email || !pass) return showToast("Enter email and password!");
-        showLoader();
-        auth.signInWithEmailAndPassword(email, pass).then(()=> hideLoader()).catch(err => { hideLoader(); showToast(err.message); });
-    }
-    
-    function logout() { if(confirm("Are you sure you want to logout?")) { auth.signOut(); } }
-
-    function loadUserData() {
-        db.ref('users/' + currentUser.uid).on('value', snap => {
-            if(snap.exists()){ 
-                userData = snap.val(); 
-                if(userData.status === 'blocked') { showToast("Your account has been BLOCKED."); auth.signOut(); return; }
-            } else { userData = { name: "User", username: "", email: currentUser.email, phone: "", age: "", coins: 0, favorites: {}, library: {} }; }
-            
-            document.getElementById('user-balance').innerText = userData.coins || 0;
-            if(document.getElementById('profile-wallet-balance')) {
-            document.getElementById('profile-wallet-balance').innerText = userData.coins || 0;
-            }
-            document.getElementById('edit-profile-name').value = userData.name || 'User'; 
-            document.getElementById('edit-profile-username').value = userData.username || ''; 
-            document.getElementById('edit-profile-email').value = userData.email || currentUser.email;
-            document.getElementById('edit-profile-phone').value = userData.phone || '';
-            document.getElementById('profile-role').innerText = userData.role || 'user';
-            
-            const ageInput = document.getElementById('edit-profile-age');
-            ageInput.value = userData.age || '';
-
-            // বয়স না থাকলে লাল বর্ডার করে দেওয়া
-            if (!userData.age || Number(userData.age) < 12) {
-                ageInput.style.border = "2px solid red";
-                ageInput.style.boxShadow = "0 0 10px rgba(255, 0, 0, 0.3)";
-                if(document.getElementById('profile-screen').classList.contains('active')) {
-                    showToast("আপনার প্রোফাইলে বয়স আপডেট করা নেই। দয়া করে বয়স যুক্ত করুন!");
+                if (bookParam) {
+                    window.pendingBookOpen = bookParam; showToast("Please login to view this book."); nav('auth-screen');
+                } else {
+                    if(document.getElementById('auth-screen').classList.contains('active')) { document.getElementById('bottom-nav').style.display = 'none'; } 
+                    else { nav('home-screen'); }
                 }
-            } else {
-                ageInput.style.border = "1.5px solid var(--border-color)";
-                ageInput.style.boxShadow = "none";
             }
-            
-            renderBooks();
-        });
-        
-        // ১. ডিপোজিট রিকোয়েস্ট লোড করা (আপডেট লজিক সহ)
-        db.ref('depositRequests').orderByChild('uid').equalTo(currentUser.uid).on('value', snap => {
-            let html = ''; let reqs = []; snap.forEach(child => { reqs.push(child.val()); });
-            
-            let currentTime = Date.now();
-            let thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000; // ৩০ দিনের হিসাব মিলিসেকেন্ডে
-
-            reqs.reverse().forEach(d => {
-                // শর্ত ১: ৩০ দিনের বেশি পুরনো হিস্ট্রি হাইড করা
-                if (currentTime - (d.timestamp || 0) > thirtyDaysInMs) return;
-
-                // শর্ত ২: আপডেটের আগের ভুল বা রিজেক্ট হওয়া রিকোয়েস্ট হাইড করা
-                if (d.status === 'rejected') {
-                    // আগের আপডেটে senderNumber ছিল না, তাই সেটি না থাকলে হাইড হবে
-                    if (!d.senderNumber) return;
-
-                    // ট্রানজেকশন আইডির ফরম্যাট ভুল হলেও হাইড হবে
-                    if (d.method === 'bKash' && !/^(?=.*[A-Z])(?=.*[0-9])[A-Z0-9]{10}$/.test(d.trxId)) return;
-                    if (d.method === 'Nagad' && !/^(?=.*[A-Z])(?=.*[0-9])[A-Z0-9]{8,10}$/.test(d.trxId)) return;
-                    if (d.method === 'Rocket' && !/^[0-9]{10}$/.test(d.trxId)) return;
-                }
-
-                let color = d.status === 'pending' ? '#f39c12' : (d.status === 'approved' ? '#2ecc71' : '#e74c3c');
-                html += `<div class="card" style="padding:12px; display:flex; justify-content:space-between; align-items:center;">
-                    <div><span style="font-weight:bold; color:var(--text-main);"><i class="fas fa-coins text-warning" style="color:#f39c12;"></i> ${d.amount}</span>${d.method ? `<br><small style="color: var(--text-muted);">${d.method} - TrxID: ${d.trxId}<br>Sender: ${d.senderNumber || 'N/A'}</small>` : ''}</div>
-                    <span style="color:${color}; font-weight:bold; font-size:12px; background:var(--bg-color); padding: 4px 10px; border-radius:12px; border:1px solid var(--border-color);">${d.status.toUpperCase()}</span>
-                </div>`;
-            });
-            
-            if (html === '') html = '<p style="color:var(--text-muted); font-size: 13px;">No recent deposit requests.</p>';
-            document.getElementById('deposit-history').innerHTML = html;
         });
 
-        // ২. বই কেনার হিস্ট্রি লোড করা (এখানেও ৩০ দিনের লিমিট দেওয়া হলো)
-        db.ref(`transactions/${currentUser.uid}`).on('value', snap => {
-            let html = ''; let txs = []; snap.forEach(child => { txs.push(child.val()); });
+        window.register = function() {
+            const name = document.getElementById('reg-name').value.trim(); 
+            const username = document.getElementById('reg-username').value.trim(); 
+            const email = document.getElementById('reg-email').value.trim(); 
+            const phone = document.getElementById('reg-phone').value.trim(); 
+            const age = document.getElementById('reg-age').value.trim();
+            const pass = document.getElementById('reg-pass').value; 
+            const isAgreed = document.getElementById('agree-tnc').checked;
             
-            let currentTime = Date.now();
-            let thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;
+            if(!name || !username || !email || !pass || !age || !isAgreed) return showToast("Please fill all required fields and agree to T&C!");
+            if(Number(age) < 12) return showToast("Age must be at least 12 years!");
+            if(phone && phone.length < 11) return showToast("If provided, phone must be at least 11 digits!");
+            
+            window.showLoader();
+            auth.createUserWithEmailAndPassword(email, pass).then(res => {
+                db.ref('users/' + res.user.uid).set({ 
+                    name: name, username: username, email: email, phone: phone, age: Number(age), 
+                    coins: 0, role: 'user', joinedAt: Date.now(), status: 'active' 
+                }); 
+                window.hideLoader(); showToast("Registration Successful!");
+            }).catch(err => { window.hideLoader(); showToast(err.message); });
+        };
 
-            txs.reverse().forEach(tx => {
-                if (Number(tx.amount) <= 0) return; 
+        window.login = function() {
+            const email = document.getElementById('login-email').value.trim(); const pass = document.getElementById('login-pass').value;
+            if(!email || !pass) return showToast("Enter email and password!");
+            window.showLoader();
+            auth.signInWithEmailAndPassword(email, pass).then(()=> window.hideLoader()).catch(err => { window.hideLoader(); showToast(err.message); });
+        };
+        
+        window.logout = function() { if(confirm("Are you sure you want to logout?")) { auth.signOut(); } };
+
+        function loadUserData() {
+            db.ref('users/' + currentUser.uid).on('value', snap => {
+                if(snap.exists()){ 
+                    userData = snap.val(); 
+                    if(userData.status === 'blocked') { showToast("Your account has been BLOCKED."); auth.signOut(); return; }
+                } else { userData = { name: "User", username: "", email: currentUser.email, phone: "", age: "", coins: 0, favorites: {}, library: {} }; }
                 
-                // ৩০ দিনের বেশি পুরনো কেনার হিস্ট্রিও হাইড করা হলো
-                if (currentTime - (tx.timestamp || 0) > thirtyDaysInMs) return;
+                document.getElementById('user-balance').innerText = userData.coins || 0;
+                if(document.getElementById('profile-wallet-balance')) { document.getElementById('profile-wallet-balance').innerText = userData.coins || 0; }
+                document.getElementById('edit-profile-name').value = userData.name || 'User'; 
+                document.getElementById('edit-profile-username').value = userData.username || ''; 
+                document.getElementById('edit-profile-email').value = userData.email || currentUser.email;
+                document.getElementById('edit-profile-phone').value = userData.phone || '';
+                document.getElementById('profile-role').innerText = userData.role || 'user';
+                
+                const ageInput = document.getElementById('edit-profile-age');
+                ageInput.value = userData.age || '';
 
-                let d = new Date(tx.timestamp).toLocaleDateString();
-                html += `<div class="card" style="padding:12px; margin-bottom: 10px; display:flex; justify-content:space-between; align-items:center;">
-                    <div><strong style="color:var(--text-main);">${tx.title}</strong><br><small style="color:var(--text-muted);">${d}</small></div>
-                    <span style="color:#e74c3c; font-weight:bold;">- <i class="fas fa-coins"></i> ${tx.amount}</span>
-                </div>`;
+                if (!userData.age || Number(userData.age) < 12) {
+                    ageInput.style.border = "2px solid red";
+                    if(document.getElementById('profile-screen').classList.contains('active')) showToast("আপনার প্রোফাইলে বয়স আপডেট করা নেই। দয়া করে বয়স যুক্ত করুন!");
+                } else { ageInput.style.border = "1.5px solid var(--border-color)"; }
+                
+                renderBooks();
             });
-            if(html === '') html = '<p style="color:var(--text-muted); font-size: 13px;">No recent purchases.</p>';
-            document.getElementById('purchase-history').innerHTML = html;
-        });
-    }
-
-    function updateProfile() {
-        const newName = document.getElementById('edit-profile-name').value.trim(); 
-        const newUsername = document.getElementById('edit-profile-username').value.trim(); 
-        const newPhone = document.getElementById('edit-profile-phone').value.trim();
-        const newAge = document.getElementById('edit-profile-age').value.trim();
-
-        if(!newName || !newUsername || !newAge) return showToast("Name, Username, and Age cannot be empty!");
-        if(Number(newAge) < 12) return showToast("Age must be at least 12!");
-        if(newPhone && newPhone.length < 11) return showToast("Phone number must be at least 11 digits!");
-        
-        showLoader();
-        db.ref('users/' + currentUser.uid).update({ 
-            name: newName, username: newUsername, phone: newPhone, age: Number(newAge) 
-        }).then(() => { 
-            hideLoader(); showToast("Profile updated!"); 
-            document.getElementById('edit-profile-age').style.border = "1.5px solid var(--border-color)";
-            document.getElementById('edit-profile-age').style.boxShadow = "none";
-        }).catch(err => { hideLoader(); showToast("Error: " + err.message); });
-    }
-
-    function loadAdminPaymentSettings() {
-        db.ref('settings/payment').on('value', snap => {
-            if(snap.exists()) { adminPaymentSettings = snap.val(); } else { adminPaymentSettings = { bkash: "Not Set", nagad: "Not Set", rocket: "Not Set", instruction: "Send Money" }; }
-        });
-    }
-
-    function openPaymentScreen() {
-        if(!adminPaymentSettings) return showToast("Loading payment settings...");
-        document.getElementById('admin-payment-info').innerHTML = `
-            <div style="margin-bottom:8px;"><img src="https://i.imgur.com/vH1NxyZ.png" width="20" style="vertical-align:middle; border-radius:3px;"> <strong style="color:#e2136e;">bKash:</strong> ${adminPaymentSettings.bkash}</div>
-            <div style="margin-bottom:8px;"><img src="https://i.imgur.com/rN5nO7i.png" width="20" style="vertical-align:middle; border-radius:3px;"> <strong style="color:#f7931e;">Nagad:</strong> ${adminPaymentSettings.nagad}</div>
-            <div style="margin-bottom:8px;"><img src="https://i.imgur.com/f79k32V.png" width="20" style="vertical-align:middle; border-radius:3px;"> <strong style="color:#8c3494;">Rocket:</strong> ${adminPaymentSettings.rocket}</div>
-            <hr style="border:0; border-top:1px solid var(--border-color); margin: 10px 0;"><p style="color: var(--secondary); font-weight:bold; font-size:15px;"><i class="fas fa-info-circle"></i> Instruction: Make "${adminPaymentSettings.instruction}"</p>`;
-        nav('payment-screen');
-    }
-
-    function loadBooks() {
-        db.ref('books').on('value', snap => {
-            allBooks = []; 
-            snap.forEach(child => { 
-                let book = child.val(); book.id = child.key; 
-                let status = book.status ? book.status.toLowerCase() : 'approved';
-                if(status === 'approved' || status === 'active' || !book.status) { allBooks.push(book); }
-            });
-            renderBooks(); 
             
-            // ডাটা লোড হওয়া মাত্রই লোডিং অ্যানিমেশন বন্ধ করে দেবে
-            hideLoader(); 
+            db.ref('depositRequests').orderByChild('uid').equalTo(currentUser.uid).on('value', snap => {
+                let html = ''; let reqs = []; snap.forEach(child => { reqs.push(child.val()); });
+                let currentTime = Date.now(); let thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;
+
+                reqs.reverse().forEach(d => {
+                    if (currentTime - (d.timestamp || 0) > thirtyDaysInMs) return;
+                    if (d.status === 'rejected') {
+                        if (!d.senderNumber) return;
+                        if (d.method === 'bKash' && !/^(?=.*[A-Z])(?=.*[0-9])[A-Z0-9]{10}$/.test(d.trxId)) return;
+                        if (d.method === 'Nagad' && !/^(?=.*[A-Z])(?=.*[0-9])[A-Z0-9]{8,10}$/.test(d.trxId)) return;
+                        if (d.method === 'Rocket' && !/^[0-9]{10}$/.test(d.trxId)) return;
+                    }
+                    let color = d.status === 'pending' ? '#f39c12' : (d.status === 'approved' ? '#2ecc71' : '#e74c3c');
+                    html += `<div class="card" style="padding:12px; display:flex; justify-content:space-between; align-items:center;">
+                        <div><span style="font-weight:bold; color:var(--text-main);"><i class="fas fa-coins text-warning" style="color:#f39c12;"></i> ${d.amount}</span>${d.method ? `<br><small style="color: var(--text-muted);">${d.method} - TrxID: ${d.trxId}<br>Sender: ${d.senderNumber || 'N/A'}</small>` : ''}</div>
+                        <span style="color:${color}; font-weight:bold; font-size:12px; background:var(--bg-color); padding: 4px 10px; border-radius:12px; border:1px solid var(--border-color);">${d.status.toUpperCase()}</span>
+                    </div>`;
+                });
+                document.getElementById('deposit-history').innerHTML = html === '' ? '<p style="color:var(--text-muted); font-size: 13px;">No recent deposit requests.</p>' : html;
+            });
+
+            db.ref(`transactions/${currentUser.uid}`).on('value', snap => {
+                let html = ''; let txs = []; snap.forEach(child => { txs.push(child.val()); });
+                let currentTime = Date.now(); let thirtyDaysInMs = 30 * 24 * 60 * 60 * 1000;
+
+                txs.reverse().forEach(tx => {
+                    if (Number(tx.amount) <= 0 || (currentTime - (tx.timestamp || 0) > thirtyDaysInMs)) return; 
+                    let d = new Date(tx.timestamp).toLocaleDateString();
+                    html += `<div class="card" style="padding:12px; margin-bottom: 10px; display:flex; justify-content:space-between; align-items:center;">
+                        <div><strong style="color:var(--text-main);">${tx.title}</strong><br><small style="color:var(--text-muted);">${d}</small></div>
+                        <span style="color:#e74c3c; font-weight:bold;">- <i class="fas fa-coins"></i> ${tx.amount}</span>
+                    </div>`;
+                });
+                document.getElementById('purchase-history').innerHTML = html === '' ? '<p style="color:var(--text-muted); font-size: 13px;">No recent purchases.</p>' : html;
+            });
+        }
+
+        window.updateProfile = function() {
+            const newName = document.getElementById('edit-profile-name').value.trim(); 
+            const newUsername = document.getElementById('edit-profile-username').value.trim(); 
+            const newPhone = document.getElementById('edit-profile-phone').value.trim();
+            const newAge = document.getElementById('edit-profile-age').value.trim();
+
+            if(!newName || !newUsername || !newAge) return showToast("Name, Username, and Age cannot be empty!");
+            if(Number(newAge) < 12) return showToast("Age must be at least 12!");
+            if(newPhone && newPhone.length < 11) return showToast("Phone number must be at least 11 digits!");
+            
+            window.showLoader();
+            db.ref('users/' + currentUser.uid).update({ 
+                name: newName, username: newUsername, phone: newPhone, age: Number(newAge) 
+            }).then(() => { 
+                window.hideLoader(); showToast("Profile updated!"); 
+                document.getElementById('edit-profile-age').style.border = "1.5px solid var(--border-color)";
+            }).catch(err => { window.hideLoader(); showToast("Error: " + err.message); });
+        };
+
+        function loadAdminPaymentSettings() {
+            db.ref('settings/payment').on('value', snap => {
+                if(snap.exists()) { adminPaymentSettings = snap.val(); } else { adminPaymentSettings = { bkash: "Not Set", nagad: "Not Set", rocket: "Not Set", instruction: "Send Money" }; }
+            });
+        }
+
+        window.openPaymentScreen = function() {
+            if(!adminPaymentSettings) return showToast("Loading payment settings...");
+            document.getElementById('admin-payment-info').innerHTML = `
+                <div style="margin-bottom:8px;"><img src="https://i.imgur.com/vH1NxyZ.png" width="20" style="vertical-align:middle; border-radius:3px;"> <strong style="color:#e2136e;">bKash:</strong> ${adminPaymentSettings.bkash}</div>
+                <div style="margin-bottom:8px;"><img src="https://i.imgur.com/rN5nO7i.png" width="20" style="vertical-align:middle; border-radius:3px;"> <strong style="color:#f7931e;">Nagad:</strong> ${adminPaymentSettings.nagad}</div>
+                <div style="margin-bottom:8px;"><img src="https://i.imgur.com/f79k32V.png" width="20" style="vertical-align:middle; border-radius:3px;"> <strong style="color:#8c3494;">Rocket:</strong> ${adminPaymentSettings.rocket}</div>
+                <hr style="border:0; border-top:1px solid var(--border-color); margin: 10px 0;"><p style="color: var(--secondary); font-weight:bold; font-size:15px;"><i class="fas fa-info-circle"></i> Instruction: Make "${adminPaymentSettings.instruction}"</p>`;
+            nav('payment-screen');
+        };
+
+        function loadBooks() {
+            db.ref('books').on('value', snap => {
+                processBooksData(snap);
+            }, err => {
+                isBooksLoaded = true; 
+                document.getElementById('books-list').innerHTML = '<div style="text-align:center; grid-column:span 2; color:#e74c3c; padding:40px 10px;"><i class="fas fa-wifi" style="font-size:30px; margin-bottom:15px;"></i><p>ইন্টারনেট সংযোগ চেক করুন বা রিফ্রেশ দিন।</p></div>';
+            });
+        }
+
+        function processBooksData(snap) {
+            let tempBooks = []; 
+            snap.forEach(child => { 
+                let book = child.val(); 
+                if(!book || typeof book !== 'object') return;
+                book.id = child.key; 
+                let status = book.status ? String(book.status).toLowerCase() : 'approved';
+                if(status === 'approved' || status === 'active' || !book.status) { 
+                    tempBooks.push(book); 
+                }
+            });
+            allBooks = tempBooks;
+            isBooksLoaded = true; 
+            renderBooks();    
+            
+            if (currentUser) { loadLibrary(); } 
             
             if(currentBookId && document.getElementById('detail-screen').classList.contains('active')) { openBookDetail(currentBookId); }
             if (window.pendingBookOpen && allBooks.length > 0) {
@@ -1219,459 +1168,359 @@
                     window.pendingBookOpen = null; window.history.replaceState({}, document.title, window.location.pathname);
                 }
             }
-        });
-    }
-
-    function renderBooks() {
-        let homeHtml = '', recHtml = '', favHtml = '';
-        let q = document.getElementById('search-box').value.toLowerCase();
-        let userTags = new Set();
-        
-        if(userData && userData.library) {
-            Object.keys(userData.library).forEach(bookId => { 
-                let b = allBooks.find(x => x.id === bookId); 
-                if(b && b.hashtags && Array.isArray(b.hashtags)) { b.hashtags.forEach(t => userTags.add(t.toLowerCase())); } 
-            });
         }
-        
-        let hasRecommendations = false;
-        let newBookIds = new Set(allBooks.slice(-10).map(b => b.id));
 
-        allBooks.forEach(book => {
-            let title = book.title || "Unknown Book"; 
-            let authorName = book.author || book.writerName || "Unknown Author"; 
-            let category = book.category || "General"; 
-            let bookPrice = Number(book.price) || 0; 
-            let bookCover = book.coverUrl || book.cover || 'https://via.placeholder.com/150x200?text=Cover';
+        window.filterBooks = function() { renderBooks(); };
+
+        function renderBooks() {
+            if (!isBooksLoaded) return;
+
+            let homeHtml = '', recHtml = '', favHtml = '';
+            let searchInput = document.getElementById('search-box');
+            let q = searchInput ? searchInput.value.toLowerCase() : '';
+            let userTags = new Set();
             
-            if(!title.toLowerCase().includes(q)) return;
-            if (currentCategory === '_FREE_') { if (bookPrice > 0) return; } else if (currentCategory && category !== currentCategory) { return; }
-
-            let isFav = userData && userData.favorites && userData.favorites[book.id]; 
-            let favClass = isFav ? 'active' : '';
-            let priceDisplay = (bookPrice > 0) ? `<i class="fas fa-coins"></i> ${bookPrice}` : `<span style="color:#2ecc71;">FREE</span>`;
-            let ratingInfo = getBookRatingInfo(book);
-            let ratingHtml = ratingInfo.count > 0 ? `<div style="font-size: 13px; color: #f39c12; margin-top: 5px;"><i class="fas fa-star"></i> ${ratingInfo.avg} <span style="color:var(--text-muted); font-size:11px;">(${ratingInfo.count})</span></div>` : `<div style="font-size: 12px; color: var(--text-muted); margin-top: 5px;"><i class="far fa-star"></i> No rating</div>`;
-
-            let cardHtml = `
-            <div class="card book-card" onclick="openBookDetail('${book.id}')">
-                <div class="cover-wrapper"><img src="${bookCover}" class="book-cover" onerror="this.src='https://via.placeholder.com/150x200?text=Cover'"></div>
-                <div class="book-info">
-                    <h3>${title}</h3><div class="book-author"><i class="fas fa-feather-alt"></i> ${authorName}</div>
-                    <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: 5px;">
-                        <div class="book-price">${priceDisplay}</div>
-                        <div class="fav-btn ${favClass}" onclick="toggleFav(event, '${book.id}')"><i class="fas fa-heart"></i></div>
-                    </div>${ratingHtml}
-                </div>
-            </div>`;
-            
-            homeHtml += cardHtml; 
-            if(isFav) favHtml += cardHtml;
-            
-            let isRecommended = false; 
-            let alreadyOwned = userData && userData.library && userData.library[book.id];
-            
-            // Array verification added to prevent silent crash
-            if(book.hashtags && Array.isArray(book.hashtags)) { 
-                book.hashtags.forEach(tag => { 
-                    if(userTags.has(tag.toLowerCase())) isRecommended = true; 
-                }); 
-            }
-            if(ratingInfo.count > 0 && parseFloat(ratingInfo.avg) >= 4.0) { isRecommended = true; }
-            if(newBookIds.has(book.id)) { isRecommended = true; }
-
-            if(isRecommended && !alreadyOwned) { 
-                recHtml += cardHtml; 
-                hasRecommendations = true; 
-            }
-        });
-
-        // Empty state UI added
-        if (allBooks.length === 0 || homeHtml === '') {
-            document.getElementById('books-list').innerHTML = '<div style="text-align:center; grid-column:span 2; color:var(--text-muted); padding:40px 10px;"><i class="fas fa-book-open" style="font-size:40px; margin-bottom:15px; opacity:0.3; display:block;"></i><p>No books found.</p></div>';
-        } else {
-            document.getElementById('books-list').innerHTML = homeHtml;
-        }
-
-        document.getElementById('fav-list').innerHTML = (favHtml === '') ? '<p style="text-align:center; grid-column:span 2; color:var(--text-muted); margin-top:20px;">No favorite books found.</p>' : favHtml;
-
-        let recSection = document.getElementById('recommended-section');
-        if(hasRecommendations && q === '' && currentCategory === '') { 
-            recSection.style.display = 'block'; 
-            document.getElementById('recommended-list').innerHTML = recHtml; 
-        } else { 
-            recSection.style.display = 'none'; 
-        }
-    }
-
-    function filterBooks() { renderBooks(); }
-
-    function toggleFav(e, bookId) {
-        if(e) e.stopPropagation();
-        if(!currentUser) { showToast("Please login to add favorites."); nav('auth-screen'); return; }
-        if(!userData) { userData = { favorites: {} }; } 
-        let isFav = userData.favorites && userData.favorites[bookId];
-        if(isFav) { db.ref(`users/${currentUser.uid}/favorites/${bookId}`).remove().then(() => showToast("Removed from Favorites")); } 
-        else { db.ref(`users/${currentUser.uid}/favorites/${bookId}`).set(true).then(() => showToast("Added to Favorites ❤️")); }
-    }
-
-    // Guest Explore Fixed Here! Removed strict checking so guests can view details.
-    function openBookDetail(id) {
-        currentBookId = id; currentBookData = allBooks.find(b => b.id === id);
-        if(!currentBookData) return showToast("Error loading book!");
-
-        finalPrice = Number(currentBookData.price) || 0; voucherData = null;
-        let d = langDict[currentLang];
-        document.getElementById('det-cover').src = currentBookData.coverUrl || currentBookData.cover || 'https://via.placeholder.com/150x200?text=Cover';
-        document.getElementById('det-title').innerText = currentBookData.title || 'Unknown';
-        document.getElementById('det-author').innerText = currentBookData.author || currentBookData.writerName || 'Unknown Author';
-        document.getElementById('det-desc').innerText = currentBookData.desc || currentBookData.description || 'No description available.';
-        document.getElementById('voucher-code').value = '';
-        document.getElementById('det-category').innerText = currentBookData.category || 'General';
-        document.getElementById('det-words').innerText = `${currentBookData.wordCount || 0} Words`;
-
-        let tagsHtml = ''; if(currentBookData.hashtags && Array.isArray(currentBookData.hashtags)){ currentBookData.hashtags.forEach(tag => { tagsHtml += `<span class="tag-badge">${tag}</span>`; }); }
-        document.getElementById('det-tags').innerHTML = tagsHtml;
-
-        let ratingInfo = getBookRatingInfo(currentBookData);
-        document.getElementById('det-rating-display').innerHTML = ratingInfo.count > 0 ? `<i class="fas fa-star"></i> ${ratingInfo.avg} out of 5 <span style="font-size: 13px; color:var(--text-muted);">(${ratingInfo.count} reviews)</span>` : `<i class="far fa-star"></i> No ratings yet`;
-        
-        if(finalPrice === 0) {
-            document.getElementById('det-price').innerHTML = "<span style='color:#2ecc71;'>FREE BOOK</span>";
-            document.getElementById('coin-icon').style.display = 'none'; document.getElementById('voucher-box').style.display = 'none';
-            document.getElementById('buy-btn').innerHTML = `<span class="lang-get-free">${d.get_free}</span>`; document.getElementById('buy-btn').classList.replace('btn-primary', 'btn-success');
-        } else {
-            document.getElementById('det-price').innerText = finalPrice; document.getElementById('coin-icon').style.display = 'inline-block';
-            document.getElementById('voucher-box').style.display = 'block'; document.getElementById('buy-btn').innerHTML = `<span class="lang-buy">${d.buy}</span>`; document.getElementById('buy-btn').classList.replace('btn-success', 'btn-primary');
-        }
-
-        let alreadyOwned = userData && userData.library && userData.library[currentBookId];
-        if(alreadyOwned) {
-            document.getElementById('buy-btn').style.display = 'none'; document.getElementById('voucher-box').style.display = 'none';
-        } else {
-            document.getElementById('buy-btn').style.display = 'block'; 
-        }
-        nav('detail-screen');
-    }
-
-    function applyVoucher() {
-        if(!currentUser) return showToast("Please login to apply vouchers.");
-        const code = document.getElementById('voucher-code').value.trim();
-        if(!code) return showToast("Enter voucher code");
-        db.ref('vouchers/' + code).once('value', snap => {
-            if(snap.exists() && snap.val().status === 'active' && snap.val().bookId === currentBookId) {
-                voucherData = snap.val(); voucherData.code = code; 
-                let discountAmount = currentBookData.price * (sysUserDiscount / 100);
-                finalPrice = Math.floor(currentBookData.price - discountAmount); if(finalPrice < 0) finalPrice = 0;
-                document.getElementById('det-price').innerText = finalPrice + ` (-${sysUserDiscount}%)`; showToast("Voucher Applied!");
-            } else { showToast("Invalid or expired voucher for this book!"); }
-        });
-    }
-
-    async function buyBook() {
-        if(!currentUser) { showToast("Please login to buy books."); nav('auth-screen'); return; }
-        if(!currentBookData || !userData) return;
-        if(userData.library && userData.library[currentBookId]) return showToast("You already own this book!");
-
-        showLoader(); 
-        if(finalPrice === 0) {
-            const updates = {}; 
-            updates[`users/${currentUser.uid}/library/${currentBookId}`] = true; 
-            updates[`books/${currentBookId}/salesCount`] = firebase.database.ServerValue.increment(1);
-            db.ref().update(updates).then(() => { hideLoader(); showToast("Book added to Library! 🎉"); nav('library-screen'); }).catch(e => { hideLoader(); showToast("Error: " + e.message);});
-            return; 
-        }
-
-        if((Number(userData.coins) || 0) < finalPrice) { hideLoader(); return showToast("Insufficient coins! Please deposit.");}
-
-        const originalPrice = Number(currentBookData.price); 
-        const writerSplit = originalPrice * (sysWriterPercent / 100); 
-        let affiliateSplit = 0, adminIncomeSplit = 0, systemReserveSplit = 0;
-
-        if (voucherData) { affiliateSplit = originalPrice * (sysAffiliatePercent / 100); adminIncomeSplit = finalPrice - writerSplit - affiliateSplit; } 
-        else { systemReserveSplit = originalPrice * (sysAffiliatePercent / 100); adminIncomeSplit = finalPrice - writerSplit - systemReserveSplit; }
-
-        const updates = {}; let txId = db.ref().push().key;
-        updates[`users/${currentUser.uid}/coins`] = firebase.database.ServerValue.increment(-finalPrice);
-        updates[`users/${currentUser.uid}/library/${currentBookId}`] = true; 
-        updates[`writers/${currentBookData.writerId}/wallet`] = firebase.database.ServerValue.increment(writerSplit);
-        updates[`transactions/${currentUser.uid}/${txId}`] = { bookId: currentBookId, title: currentBookData.title, amount: finalPrice, timestamp: firebase.database.ServerValue.TIMESTAMP };
-        
-        if (voucherData) { updates[`affiliates/${voucherData.affId}/wallet`] = firebase.database.ServerValue.increment(affiliateSplit); updates[`adminIncome/totalIncome`] = firebase.database.ServerValue.increment(adminIncomeSplit); updates[`vouchers/${voucherData.code}/status`] = 'used'; } 
-        else { updates[`adminIncome/totalIncome`] = firebase.database.ServerValue.increment(adminIncomeSplit); updates[`adminIncome/systemReserve`] = firebase.database.ServerValue.increment(systemReserveSplit); }
-        updates[`adminIncome/totalSales`] = firebase.database.ServerValue.increment(1);
-
-        try { await db.ref().update(updates); hideLoader(); showToast("Book purchased successfully!"); nav('library-screen'); } 
-        catch(e) { hideLoader(); showToast("Error processing transaction!"); }
-    }
-
-    // UPDATE: Deposit validation logic
-    function submitDepositRequest() {
-        const amount = Number(document.getElementById('pay-amount').value); 
-        const trxId = document.getElementById('pay-trxid').value.trim(); 
-        const method = document.getElementById('pay-method').value;
-        const sender = document.getElementById('pay-sender').value.trim();
-
-        if(!method || amount < 50 || !trxId || !sender) return showToast("Please fill all fields properly.");
-        
-        // Sender Number Validation (11 digits required)
-        if(!/^01[3-9]\d{8}$/.test(sender)) {
-            return showToast("Sender number must be exactly 11 digits (e.g. 017...).");
-        }
-
-        // Method Specific TrxID Validation
-        if(method === 'bKash') {
-            if(!/^[a-zA-Z0-9]{10}$/.test(trxId)) {
-                return showToast("bKash TrxID must be exactly 10 alphanumeric characters.");
-            }
-        } else if(method === 'Nagad') {
-            if(!/^[a-zA-Z0-9]{8,10}$/.test(trxId)) {
-                return showToast("Nagad TrxID must be 8 to 10 alphanumeric characters.");
-            }
-        } else if(method === 'Rocket') {
-            if(!/^[0-9]{10}$/.test(trxId)) {
-                return showToast("Rocket TrxID must be exactly 10 digits.");
-            }
-        }
-
-        if(!currentUser) return showToast("Please login first.");
-
-        showLoader();
-        db.ref('depositRequests').push({
-            uid: currentUser.uid, 
-            email: currentUser.email, 
-            role: 'user', 
-            amount: amount, 
-            trxId: trxId, 
-            method: method, 
-            senderNumber: sender,
-            status: 'pending', 
-            timestamp: Date.now()
-        }).then(() => {
-            hideLoader(); showToast("Request submitted successfully!");
-            document.getElementById('pay-amount').value = ''; 
-            document.getElementById('pay-trxid').value = ''; 
-            document.getElementById('pay-sender').value = '';
-            nav('wallet-screen');
-        }).catch(e => { hideLoader(); showToast("Error: " + e.message);});
-    }
-
-    function loadLibrary() {
-        if(!currentUser) return;
-        let d = langDict[currentLang];
-        db.ref(`users/${currentUser.uid}/library`).on('value', snap => {
-            let html = '';
-            if(snap.exists()) {
-                const libObj = snap.val();
-                Object.keys(libObj).forEach(bookId => {
-                    let b = allBooks.find(book => book.id === bookId);
-                    if(b) {
-                        let bCover = b.coverUrl || b.cover || 'https://via.placeholder.com/150x200?text=Cover';
-                        let ratingInfo = getBookRatingInfo(b);
-                        let ratingHtml = ratingInfo.count > 0 ? `<div style="font-size: 13px; color: #f39c12; margin-top: 5px;"><i class="fas fa-star"></i> ${ratingInfo.avg} <span style="color:var(--text-muted); font-size:11px;">(${ratingInfo.count})</span></div>` : `<div style="font-size: 12px; color: var(--text-muted); margin-top: 5px;"><i class="far fa-star"></i> No rating</div>`;
-
-                        html += `
-                        <div class="card book-card" onclick="openReadingMode('${b.id}')">
-                            <div class="cover-wrapper"><img src="${bCover}" class="book-cover"></div>
-                            <div class="book-info">
-                                <h3>${b.title}</h3>${ratingHtml}
-                            </div>
-                        </div>`;
-                    }
+            if(userData && userData.library) {
+                Object.keys(userData.library).forEach(bookId => { 
+                    let b = allBooks.find(x => x.id === bookId); 
+                    if(b && b.hashtags && Array.isArray(b.hashtags)) { b.hashtags.forEach(t => userTags.add(String(t).toLowerCase())); } 
                 });
-                document.getElementById('library-list').innerHTML = html;
-            } else { document.getElementById('library-list').innerHTML = '<p style="text-align:center; grid-column:span 2; color:var(--text-muted); margin-top:20px;">Your library is empty.</p>'; }
-        });
-    }
-
-    function checkAds() {
-        db.ref('adsControl').on('value', snap => {
-            let adDiv = document.getElementById('ad-container');
-            if(snap.exists() && snap.val().status === true) { adDiv.style.display = 'block'; adDiv.innerHTML = snap.val().script || `<div class="card" style="background:var(--bg-color); border-color:var(--primary); padding:20px; color:var(--primary); font-weight:bold;">[ Ad Space ]</div>`; } 
-            else { adDiv.style.display = 'none'; adDiv.innerHTML = ''; }
-        });
-    }
-
-    function nav(screenId) {
-        // 'detail-screen' Removed from protected Screens! So Guests can read details now.
-        const protectedScreens = ['fav-screen', 'library-screen', 'wallet-screen', 'profile-screen'];
-        if (!currentUser && protectedScreens.includes(screenId)) { showToast("Please login to access this feature."); screenId = 'auth-screen'; }
-        
-        document.querySelectorAll('.screen').forEach(el => el.classList.remove('active')); 
-        let targetScreen = document.getElementById(screenId);
-        targetScreen.classList.add('active');
-        
-        targetScreen.scrollTop = 0;
-
-        if(screenId === 'auth-screen') { document.getElementById('bottom-nav').style.display = 'none'; } else if(screenId !== 'reading-screen') { document.getElementById('bottom-nav').style.display = 'flex'; }
-        document.querySelectorAll('.nav-item').forEach(el => { el.classList.remove('active'); if(el.getAttribute('onclick') && el.getAttribute('onclick').includes(screenId)) { el.classList.add('active'); } });
-
-        // বয়সের নোটিফিকেশন যখন প্রোফাইল স্ক্রিন ওপেন করবে
-        if(screenId === 'profile-screen' && userData && (!userData.age || Number(userData.age) < 12)) {
-            setTimeout(() => { showToast("আপনার প্রোফাইলে বয়স আপডেট করা নেই। দয়া করে বয়স যুক্ত করুন!"); }, 300);
-        }
-    }
-
-    function generateCanvasWatermark() {
-        const wmContainer = document.getElementById('watermark-container');
-        const canvas = document.createElement('canvas');
-        canvas.width = 300; canvas.height = 150;
-        const ctx = canvas.getContext('2d');
-        
-        let wEmail = (userData && userData.email) ? userData.email : 'Guest';
-        let wUser = (userData && userData.username) ? userData.username : ((userData && userData.name) ? userData.name : 'Reader');
-        let wmText = `${wEmail} | ${wUser}`;
-
-        ctx.fillStyle = document.body.classList.contains('dark-theme') ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.04)";
-        ctx.font = "bold 16px Montserrat";
-        ctx.translate(50, 80);
-        ctx.rotate(-20 * Math.PI / 180);
-        ctx.fillText(wmText, -50, 0);
-
-        const dataURL = canvas.toDataURL();
-        wmContainer.style.backgroundImage = `url(${dataURL})`;
-        wmContainer.style.backgroundRepeat = 'repeat';
-    }
-
-    function openReadingMode(bookId) {
-        db.ref('books/' + bookId).once('value', snap => {
-            let book = snap.val();
-            if(book.pages && Array.isArray(book.pages)) { currentReadingPages = book.pages; } else if(book.content) { currentReadingPages = [book.content]; } else { currentReadingPages = ["No content available."]; }
-            
-            generateCanvasWatermark();
-
-            currentReadingIndex = 0; renderReadingPage(); document.getElementById('reading-screen').style.display = 'flex';
-        });
-    }
-
-    // ============================================
-    // Auto Scroll & Read Logic Added Below
-    // ============================================
-    function stopAutoScroll() {
-        if (isAutoScrolling) {
-            cancelAnimationFrame(autoScrollInterval); // clearInterval এর বদলে এটি বসবে
-            isAutoScrolling = false;
-            let btn = document.getElementById('auto-scroll-btn');
-            if(btn) btn.innerHTML = '<i class="fas fa-play"></i>';
-        }
-    }
-
-    function toggleAutoScroll() {
-        const btn = document.getElementById('auto-scroll-btn');
-        const content = document.getElementById('read-content');
-        
-        if (isAutoScrolling) {
-            stopAutoScroll();
-            showToast("অটো-স্ক্রল বন্ধ হয়েছে");
-        } else {
-            isAutoScrolling = true;
-            btn.innerHTML = '<i class="fas fa-pause"></i>';
-            showToast("অটো-স্ক্রল চালু হয়েছে");
-            
-            let lastTime = performance.now();
-            let accumulatedScroll = 0;
-            const scrollSpeed = 0.03; // এই সংখ্যাটি বাড়িয়ে/কমিয়ে স্ক্রল স্পিড কন্ট্রোল করতে পারবেন (যেমন: 0.02 বা 0.05)
-
-            function step(currentTime) {
-                if (!isAutoScrolling) return;
-                
-                let deltaTime = currentTime - lastTime;
-                lastTime = currentTime;
-                
-                accumulatedScroll += deltaTime * scrollSpeed;
-                
-                if (accumulatedScroll >= 1) {
-                    content.scrollTop += Math.floor(accumulatedScroll);
-                    accumulatedScroll -= Math.floor(accumulatedScroll);
-                }
-
-                if (content.scrollTop + content.clientHeight >= content.scrollHeight - 1) {
-                    stopAutoScroll(); 
-                    showToast("পেইজের শেষে পৌঁছে গেছেন");
-                } else {
-                    autoScrollInterval = requestAnimationFrame(step);
-                }
             }
-            autoScrollInterval = requestAnimationFrame(step);
-        }
-    }
+            
+            let hasRecommendations = false;
+            let newBookIds = new Set(allBooks.slice(-10).map(b => b.id));
 
-    function renderReadingPage() {
-        stopAutoScroll(); // Stop auto scroll on new page
-        document.getElementById('read-content').innerText = currentReadingPages[currentReadingIndex] || "Empty Page";
-        document.getElementById('read-page-indicator').innerText = `Page ${currentReadingIndex + 1} / ${currentReadingPages.length}`;
-        document.getElementById('read-content').scrollTop = 0; 
-    }
+            allBooks.forEach(book => {
+                if (!book || typeof book !== 'object') return;
+                try {
+                    let title = String(book.title || "Unknown Book"); 
+                    let authorName = String(book.author || book.writerName || "Unknown Author"); 
+                    let category = String(book.category || "General"); 
+                    let bookPrice = Number(book.price) || 0; 
+                    let bookCover = book.coverUrl || book.cover || 'https://via.placeholder.com/150x200?text=Cover';
+                    
+                    if(q !== '' && !title.toLowerCase().includes(q)) return;
+                    if (currentCategory === '_FREE_') { if (bookPrice > 0) return; } 
+                    else if (currentCategory && category !== currentCategory) { return; }
 
-    function prevReadPage() { if(currentReadingIndex > 0) { currentReadingIndex--; renderReadingPage(); } else { showToast("This is the first page!"); } }
-    
-    function nextReadPage() { 
-        if(currentReadingIndex < currentReadingPages.length - 1) { 
-            currentReadingIndex++; renderReadingPage(); 
-        } else { 
-            showToast("You have reached the end of the book! 🎉");
-            if (currentUser && currentBookData) {
-                let hasRated = currentBookData.ratings && currentBookData.ratings[currentUser.uid];
-                if(!hasRated) {
-                    setTimeout(() => { openModal('rating-modal'); }, 500);
-                }
-            }
-        } 
-    }
-    
-    function closeReading() { 
-        stopAutoScroll(); // Stop auto scroll when closed
-        document.getElementById('reading-screen').style.display = 'none'; 
-    }
+                    let isFav = userData && userData.favorites && userData.favorites[book.id]; 
+                    let favClass = isFav ? 'active' : '';
+                    let priceDisplay = (bookPrice > 0) ? `<i class="fas fa-coins"></i> ${bookPrice}` : `<span style="color:#2ecc71;">FREE</span>`;
+                    let ratingInfo = getBookRatingInfo(book);
+                    let ratingHtml = ratingInfo.count > 0 ? `<div style="font-size: 13px; color: #f39c12; margin-top: 5px;"><i class="fas fa-star"></i> ${ratingInfo.avg} <span style="color:var(--text-muted); font-size:11px;">(${ratingInfo.count})</span></div>` : `<div style="font-size: 12px; color: var(--text-muted); margin-top: 5px;"><i class="far fa-star"></i> No rating</div>`;
 
-    function changeFontSize(val) { 
-        let newSize = fontSize + val;
-        // Font Size Limit: Min 12px, Max 28px
-        if(newSize >= 12 && newSize <= 28) { 
-            fontSize = newSize; 
-            document.getElementById('read-content').style.fontSize = fontSize + 'px'; 
-        } else {
-            showToast("ফন্ট সাইজ আর পরিবর্তন করা যাবে না!");
-        }
-    }
-    // ============================================
+                    let cardHtml = `
+                    <div class="card book-card" onclick="openBookDetail('${book.id}')">
+                        <div class="cover-wrapper"><img src="${bookCover}" class="book-cover" onerror="this.src='https://via.placeholder.com/150x200?text=Cover'"></div>
+                        <div class="book-info">
+                            <h3>${title}</h3><div class="book-author"><i class="fas fa-feather-alt"></i> ${authorName}</div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; width: 100%; margin-top: 5px;">
+                                <div class="book-price">${priceDisplay}</div>
+                                <div class="fav-btn ${favClass}" onclick="toggleFav(event, '${book.id}')"><i class="fas fa-heart"></i></div>
+                            </div>${ratingHtml}
+                        </div>
+                    </div>`;
+                    
+                    homeHtml += cardHtml; 
+                    if(isFav) favHtml += cardHtml;
+                    
+                    let isRecommended = false; 
+                    let alreadyOwned = userData && userData.library && userData.library[book.id];
+                    
+                    if(book.hashtags && Array.isArray(book.hashtags)) { book.hashtags.forEach(tag => { if(userTags.has(String(tag).toLowerCase())) isRecommended = true; }); }
+                    if(ratingInfo.count > 0 && parseFloat(ratingInfo.avg) >= 4.0) { isRecommended = true; }
+                    if(newBookIds.has(book.id)) { isRecommended = true; }
 
-    let toastTimeout;
-    function showToast(msg) {
-        const toast = document.getElementById('toast'); toast.innerText = msg; toast.style.display = 'block';
-        clearTimeout(toastTimeout); toastTimeout = setTimeout(() => toast.style.display = 'none', 3000);
-    }
-
-    function copyBookLink() {
-        if (!currentBookId) return;
-        const shareUrl = window.location.origin + window.location.pathname + "?book=" + currentBookId;
-        
-        // আধুনিক Clipboard API (CSS user-select দ্বারা বাধাপ্রাপ্ত হয় না)
-        if (navigator.clipboard && window.isSecureContext) {
-            navigator.clipboard.writeText(shareUrl).then(() => {
-                showToast("Book link copied! 📋");
-            }).catch(err => {
-                showToast("Failed to copy link.");
+                    if(isRecommended && !alreadyOwned) { recHtml += cardHtml; hasRecommendations = true; }
+                } catch (err) { console.error("Book skipped due to error:", err); }
             });
-        } else {
-            // পুরনো ব্রাউজারের জন্য Fallback
-            const tempInput = document.createElement("input"); 
-            tempInput.value = shareUrl; 
-            tempInput.style.userSelect = "text"; // CSS ব্লক বাইপাস করার জন্য
-            tempInput.style.webkitUserSelect = "text";
-            document.body.appendChild(tempInput); 
-            tempInput.select();
-            try { 
-                document.execCommand("copy"); 
-                showToast("Book link copied! 📋"); 
-            } catch (err) { 
-                showToast("Failed to copy link."); 
-            }
-            document.body.removeChild(tempInput);
+
+            if (allBooks.length === 0 || homeHtml === '') {
+                document.getElementById('books-list').innerHTML = '<div style="text-align:center; grid-column:span 2; color:var(--text-muted); padding:40px 10px;"><i class="fas fa-book-open" style="font-size:40px; margin-bottom:15px; opacity:0.3; display:block;"></i><p>No books found.</p></div>';
+            } else { document.getElementById('books-list').innerHTML = homeHtml; }
+
+            document.getElementById('fav-list').innerHTML = (favHtml === '') ? '<p style="text-align:center; grid-column:span 2; color:var(--text-muted); margin-top:20px;">No favorite books found.</p>' : favHtml;
+
+            let recSection = document.getElementById('recommended-section');
+            if(hasRecommendations && q === '' && currentCategory === '') { 
+                recSection.style.display = 'block'; document.getElementById('recommended-list').innerHTML = recHtml; 
+            } else { recSection.style.display = 'none'; }
         }
+
+        window.toggleFav = function(e, bookId) {
+            if(e) e.stopPropagation();
+            if(!currentUser) { showToast("Please login to add favorites."); nav('auth-screen'); return; }
+            if(!userData) { userData = { favorites: {} }; } 
+            let isFav = userData.favorites && userData.favorites[bookId];
+            if(isFav) { db.ref(`users/${currentUser.uid}/favorites/${bookId}`).remove().then(() => showToast("Removed from Favorites")); } 
+            else { db.ref(`users/${currentUser.uid}/favorites/${bookId}`).set(true).then(() => showToast("Added to Favorites ❤️")); }
+        };
+
+        window.openBookDetail = function(id) {
+            currentBookId = id; currentBookData = allBooks.find(b => b.id === id);
+            if(!currentBookData) return showToast("Error loading book!");
+
+            finalPrice = Number(currentBookData.price) || 0; voucherData = null;
+            let d = langDict[currentLang];
+            document.getElementById('det-cover').src = currentBookData.coverUrl || currentBookData.cover || 'https://via.placeholder.com/150x200?text=Cover';
+            document.getElementById('det-title').innerText = currentBookData.title || 'Unknown';
+            document.getElementById('det-author').innerText = currentBookData.author || currentBookData.writerName || 'Unknown Author';
+            document.getElementById('det-desc').innerText = currentBookData.desc || currentBookData.description || 'No description available.';
+            document.getElementById('voucher-code').value = '';
+            document.getElementById('det-category').innerText = currentBookData.category || 'General';
+            document.getElementById('det-words').innerText = `${currentBookData.wordCount || 0} Words`;
+
+            let tagsHtml = ''; if(currentBookData.hashtags && Array.isArray(currentBookData.hashtags)){ currentBookData.hashtags.forEach(tag => { tagsHtml += `<span class="tag-badge">${tag}</span>`; }); }
+            document.getElementById('det-tags').innerHTML = tagsHtml;
+
+            let ratingInfo = getBookRatingInfo(currentBookData);
+            document.getElementById('det-rating-display').innerHTML = ratingInfo.count > 0 ? `<i class="fas fa-star"></i> ${ratingInfo.avg} out of 5 <span style="font-size: 13px; color:var(--text-muted);">(${ratingInfo.count} reviews)</span>` : `<i class="far fa-star"></i> No ratings yet`;
+            
+            if(finalPrice === 0) {
+                document.getElementById('det-price').innerHTML = "<span style='color:#2ecc71;'>FREE BOOK</span>";
+                document.getElementById('coin-icon').style.display = 'none'; document.getElementById('voucher-box').style.display = 'none';
+                document.getElementById('buy-btn').innerHTML = `<span class="lang-get-free">${d.get_free}</span>`; document.getElementById('buy-btn').classList.replace('btn-primary', 'btn-success');
+            } else {
+                document.getElementById('det-price').innerText = finalPrice; document.getElementById('coin-icon').style.display = 'inline-block';
+                document.getElementById('voucher-box').style.display = 'block'; document.getElementById('buy-btn').innerHTML = `<span class="lang-buy">${d.buy}</span>`; document.getElementById('buy-btn').classList.replace('btn-success', 'btn-primary');
+            }
+
+            let alreadyOwned = userData && userData.library && userData.library[currentBookId];
+            if(alreadyOwned) { document.getElementById('buy-btn').style.display = 'none'; document.getElementById('voucher-box').style.display = 'none'; } 
+            else { document.getElementById('buy-btn').style.display = 'block'; }
+            
+            nav('detail-screen');
+        };
+
+        window.applyVoucher = function() {
+            if(!currentUser) return showToast("Please login to apply vouchers.");
+            const code = document.getElementById('voucher-code').value.trim();
+            if(!code) return showToast("Enter voucher code");
+            db.ref('vouchers/' + code).once('value', snap => {
+                if(snap.exists() && snap.val().status === 'active' && snap.val().bookId === currentBookId) {
+                    voucherData = snap.val(); voucherData.code = code; 
+                    let discountAmount = currentBookData.price * (sysUserDiscount / 100);
+                    finalPrice = Math.floor(currentBookData.price - discountAmount); if(finalPrice < 0) finalPrice = 0;
+                    document.getElementById('det-price').innerText = finalPrice + ` (-${sysUserDiscount}%)`; showToast("Voucher Applied!");
+                } else { showToast("Invalid or expired voucher for this book!"); }
+            });
+        };
+
+        window.buyBook = async function() {
+            if(!currentUser) { showToast("Please login to buy books."); nav('auth-screen'); return; }
+            if(!currentBookData || !userData) return;
+            if(userData.library && userData.library[currentBookId]) return showToast("You already own this book!");
+
+            window.showLoader(); 
+            if(finalPrice === 0) {
+                const updates = {}; 
+                updates[`users/${currentUser.uid}/library/${currentBookId}`] = true; 
+                updates[`books/${currentBookId}/salesCount`] = firebase.database.ServerValue.increment(1);
+                db.ref().update(updates).then(() => { window.hideLoader(); showToast("Book added to Library! 🎉"); nav('library-screen'); }).catch(e => { window.hideLoader(); showToast("Error: " + e.message);});
+                return; 
+            }
+
+            if((Number(userData.coins) || 0) < finalPrice) { window.hideLoader(); return showToast("Insufficient coins! Please deposit.");}
+
+            const originalPrice = Number(currentBookData.price); 
+            const writerSplit = originalPrice * (sysWriterPercent / 100); 
+            let affiliateSplit = 0, adminIncomeSplit = 0, systemReserveSplit = 0;
+
+            if (voucherData) { affiliateSplit = originalPrice * (sysAffiliatePercent / 100); adminIncomeSplit = finalPrice - writerSplit - affiliateSplit; } 
+            else { systemReserveSplit = originalPrice * (sysAffiliatePercent / 100); adminIncomeSplit = finalPrice - writerSplit - systemReserveSplit; }
+
+            const updates = {}; let txId = db.ref().push().key;
+            updates[`users/${currentUser.uid}/coins`] = firebase.database.ServerValue.increment(-finalPrice);
+            updates[`users/${currentUser.uid}/library/${currentBookId}`] = true; 
+            updates[`writers/${currentBookData.writerId}/wallet`] = firebase.database.ServerValue.increment(writerSplit);
+            updates[`transactions/${currentUser.uid}/${txId}`] = { bookId: currentBookId, title: currentBookData.title, amount: finalPrice, timestamp: firebase.database.ServerValue.TIMESTAMP };
+            
+            if (voucherData) { updates[`affiliates/${voucherData.affId}/wallet`] = firebase.database.ServerValue.increment(affiliateSplit); updates[`adminIncome/totalIncome`] = firebase.database.ServerValue.increment(adminIncomeSplit); updates[`vouchers/${voucherData.code}/status`] = 'used'; } 
+            else { updates[`adminIncome/totalIncome`] = firebase.database.ServerValue.increment(adminIncomeSplit); updates[`adminIncome/systemReserve`] = firebase.database.ServerValue.increment(systemReserveSplit); }
+            updates[`adminIncome/totalSales`] = firebase.database.ServerValue.increment(1);
+
+            try { await db.ref().update(updates); window.hideLoader(); showToast("Book purchased successfully!"); nav('library-screen'); } 
+            catch(e) { window.hideLoader(); showToast("Error processing transaction!"); }
+        };
+
+        window.submitDepositRequest = function() {
+            const amount = Number(document.getElementById('pay-amount').value); 
+            const trxId = document.getElementById('pay-trxid').value.trim(); 
+            const method = document.getElementById('pay-method').value;
+            const sender = document.getElementById('pay-sender').value.trim();
+
+            if(!method || amount < 50 || !trxId || !sender) return showToast("Please fill all fields properly.");
+            if(!/^01[3-9]\d{8}$/.test(sender)) return showToast("Sender number must be exactly 11 digits (e.g. 017...).");
+            if(method === 'bKash' && !/^[a-zA-Z0-9]{10}$/.test(trxId)) return showToast("bKash TrxID must be exactly 10 alphanumeric characters.");
+            if(method === 'Nagad' && !/^[a-zA-Z0-9]{8,10}$/.test(trxId)) return showToast("Nagad TrxID must be 8 to 10 alphanumeric characters.");
+            if(method === 'Rocket' && !/^[0-9]{10}$/.test(trxId)) return showToast("Rocket TrxID must be exactly 10 digits.");
+            if(!currentUser) return showToast("Please login first.");
+
+            window.showLoader();
+            db.ref('depositRequests').push({
+                uid: currentUser.uid, email: currentUser.email, role: 'user', amount: amount, trxId: trxId, method: method, senderNumber: sender, status: 'pending', timestamp: Date.now()
+            }).then(() => {
+                window.hideLoader(); showToast("Request submitted successfully!");
+                document.getElementById('pay-amount').value = ''; document.getElementById('pay-trxid').value = ''; document.getElementById('pay-sender').value = '';
+                nav('wallet-screen');
+            }).catch(e => { window.hideLoader(); showToast("Error: " + e.message);});
+        };
+
+        function loadLibrary() {
+            if(!currentUser) return;
+            db.ref(`users/${currentUser.uid}/library`).on('value', snap => {
+                let libList = document.getElementById('library-list');
+                if(!libList) return;
+                let html = '';
+                if(snap.exists()) {
+                    const libObj = snap.val();
+                    if(typeof libObj === 'object') {
+                        Object.keys(libObj).forEach(bookId => {
+                            let b = allBooks.find(book => book.id === bookId);
+                            if(b) {
+                                let bCover = b.coverUrl || b.cover || 'https://via.placeholder.com/150x200?text=Cover';
+                                let ratingInfo = getBookRatingInfo(b);
+                                let ratingHtml = ratingInfo.count > 0 ? `<div style="font-size: 13px; color: #f39c12; margin-top: 5px;"><i class="fas fa-star"></i> ${ratingInfo.avg} <span style="color:var(--text-muted); font-size:11px;">(${ratingInfo.count})</span></div>` : `<div style="font-size: 12px; color: var(--text-muted); margin-top: 5px;"><i class="far fa-star"></i> No rating</div>`;
+
+                                html += `
+                                <div class="card book-card" onclick="openReadingMode('${b.id}')">
+                                    <div class="cover-wrapper"><img src="${bCover}" class="book-cover" onerror="this.src='https://via.placeholder.com/150x200?text=Cover'"></div>
+                                    <div class="book-info"><h3>${b.title || 'Unknown'}</h3>${ratingHtml}</div>
+                                </div>`;
+                            }
+                        });
+                    }
+                    libList.innerHTML = html !== '' ? html : '<p style="text-align:center; grid-column:span 2; color:var(--text-muted); margin-top:20px;">No downloaded books found.</p>';
+                } else { libList.innerHTML = '<p style="text-align:center; grid-column:span 2; color:var(--text-muted); margin-top:20px;">Your library is empty.</p>'; }
+            });
+        }
+
+        function checkAds() {
+            db.ref('adsControl').on('value', snap => {
+                let adDiv = document.getElementById('ad-container');
+                if(!adDiv) return;
+                if(snap.exists() && snap.val() && snap.val().status === true) { 
+                    adDiv.style.display = 'block'; 
+                    adDiv.innerHTML = snap.val().script || `<div class="card" style="background:var(--bg-color); border-color:var(--primary); padding:20px; color:var(--primary); font-weight:bold;">[ Ad Space ]</div>`; 
+                } else { adDiv.style.display = 'none'; adDiv.innerHTML = ''; }
+            });
+        }
+
+        window.nav = function(screenId) {
+            const protectedScreens = ['fav-screen', 'library-screen', 'wallet-screen', 'profile-screen'];
+            if (!currentUser && protectedScreens.includes(screenId)) { showToast("Please login to access this feature."); screenId = 'auth-screen'; }
+            
+            document.querySelectorAll('.screen').forEach(el => el.classList.remove('active')); 
+            let targetScreen = document.getElementById(screenId);
+            targetScreen.classList.add('active'); targetScreen.scrollTop = 0;
+
+            if(screenId === 'auth-screen') { document.getElementById('bottom-nav').style.display = 'none'; } else if(screenId !== 'reading-screen') { document.getElementById('bottom-nav').style.display = 'flex'; }
+            document.querySelectorAll('.nav-item').forEach(el => { el.classList.remove('active'); if(el.getAttribute('onclick') && el.getAttribute('onclick').includes(screenId)) { el.classList.add('active'); } });
+
+            if(screenId === 'profile-screen' && userData && (!userData.age || Number(userData.age) < 12)) {
+                setTimeout(() => { showToast("আপনার প্রোফাইলে বয়স আপডেট করা নেই। দয়া করে বয়স যুক্ত করুন!"); }, 300);
+            }
+        };
+
+        function generateCanvasWatermark() {
+            const wmContainer = document.getElementById('watermark-container');
+            const canvas = document.createElement('canvas'); canvas.width = 300; canvas.height = 150;
+            const ctx = canvas.getContext('2d');
+            
+            let wEmail = (userData && userData.email) ? userData.email : 'Guest';
+            let wUser = (userData && userData.username) ? userData.username : ((userData && userData.name) ? userData.name : 'Reader');
+            
+            ctx.fillStyle = document.body.classList.contains('dark-theme') ? "rgba(255,255,255,0.03)" : "rgba(0,0,0,0.04)";
+            ctx.font = "bold 16px Montserrat"; ctx.translate(50, 80); ctx.rotate(-20 * Math.PI / 180);
+            ctx.fillText(`${wEmail} | ${wUser}`, -50, 0);
+
+            wmContainer.style.backgroundImage = `url(${canvas.toDataURL()})`; wmContainer.style.backgroundRepeat = 'repeat';
+        }
+
+        window.openReadingMode = function(bookId) {
+            db.ref('books/' + bookId).once('value', snap => {
+                let book = snap.val();
+                if(book && book.pages && Array.isArray(book.pages)) { currentReadingPages = book.pages; } else if(book && book.content) { currentReadingPages = [book.content]; } else { currentReadingPages = ["No content available."]; }
+                generateCanvasWatermark(); currentReadingIndex = 0; renderReadingPage(); document.getElementById('reading-screen').style.display = 'flex';
+            });
+        };
+
+        function stopAutoScroll() {
+            if (isAutoScrolling) {
+                cancelAnimationFrame(autoScrollInterval); isAutoScrolling = false;
+                let btn = document.getElementById('auto-scroll-btn'); if(btn) btn.innerHTML = '<i class="fas fa-play"></i>';
+            }
+        }
+
+        window.toggleAutoScroll = function() {
+            const btn = document.getElementById('auto-scroll-btn'); const content = document.getElementById('read-content');
+            if (isAutoScrolling) { stopAutoScroll(); showToast("অটো-স্ক্রল বন্ধ হয়েছে"); } 
+            else {
+                isAutoScrolling = true; btn.innerHTML = '<i class="fas fa-pause"></i>'; showToast("অটো-স্ক্রল চালু হয়েছে");
+                let lastTime = performance.now(); let accumulatedScroll = 0; const scrollSpeed = 0.03; 
+
+                function step(currentTime) {
+                    if (!isAutoScrolling) return;
+                    let deltaTime = currentTime - lastTime; lastTime = currentTime;
+                    accumulatedScroll += deltaTime * scrollSpeed;
+                    if (accumulatedScroll >= 1) { content.scrollTop += Math.floor(accumulatedScroll); accumulatedScroll -= Math.floor(accumulatedScroll); }
+
+                    if (content.scrollTop + content.clientHeight >= content.scrollHeight - 1) { stopAutoScroll(); showToast("পেইজের শেষে পৌঁছে গেছেন"); } 
+                    else { autoScrollInterval = requestAnimationFrame(step); }
+                }
+                autoScrollInterval = requestAnimationFrame(step);
+            }
+        };
+
+        function renderReadingPage() {
+            stopAutoScroll(); 
+            document.getElementById('read-content').innerText = currentReadingPages[currentReadingIndex] || "Empty Page";
+            document.getElementById('read-page-indicator').innerText = `Page ${currentReadingIndex + 1} / ${currentReadingPages.length}`;
+            document.getElementById('read-content').scrollTop = 0; 
+        }
+
+        window.prevReadPage = function() { if(currentReadingIndex > 0) { currentReadingIndex--; renderReadingPage(); } else { showToast("This is the first page!"); } };
+        window.nextReadPage = function() { 
+            if(currentReadingIndex < currentReadingPages.length - 1) { currentReadingIndex++; renderReadingPage(); } 
+            else { 
+                showToast("You have reached the end of the book! 🎉");
+                if (currentUser && currentBookData && (!currentBookData.ratings || !currentBookData.ratings[currentUser.uid])) { setTimeout(() => { openModal('rating-modal'); }, 500); }
+            } 
+        };
+        
+        window.closeReading = function() { stopAutoScroll(); document.getElementById('reading-screen').style.display = 'none'; };
+
+        window.changeFontSize = function(val) { 
+            let newSize = fontSize + val;
+            if(newSize >= 12 && newSize <= 28) { fontSize = newSize; document.getElementById('read-content').style.fontSize = fontSize + 'px'; } 
+            else { showToast("ফন্ট সাইজ আর পরিবর্তন করা যাবে না!"); }
+        };
+
+        let toastTimeout;
+        window.showToast = function(msg) {
+            const toast = document.getElementById('toast'); toast.innerText = msg; toast.style.display = 'block';
+            clearTimeout(toastTimeout); toastTimeout = setTimeout(() => toast.style.display = 'none', 3000);
+        };
+
+        window.copyBookLink = function() {
+            if (!currentBookId) return;
+            const shareUrl = window.location.origin + window.location.pathname + "?book=" + currentBookId;
+            if (navigator.clipboard && window.isSecureContext) {
+                navigator.clipboard.writeText(shareUrl).then(() => showToast("Book link copied! 📋")).catch(err => showToast("Failed to copy link."));
+            } else {
+                const tempInput = document.createElement("input"); tempInput.value = shareUrl; tempInput.style.userSelect = "text"; tempInput.style.webkitUserSelect = "text";
+                document.body.appendChild(tempInput); tempInput.select();
+                try { document.execCommand("copy"); showToast("Book link copied! 📋"); } catch (err) { showToast("Failed to copy link."); }
+                document.body.removeChild(tempInput);
+            }
+        };
+
+        // Initialize App Functionality
+        applyLanguage(); loadCategories(); loadBooks(); loadQA(); checkAds();    
     }
 
-    applyLanguage(); loadCategories(); loadBooks(); loadQA(); checkAds();    
+    // Trigger App Start
+    startApp();
 </script>
 
 </body>
