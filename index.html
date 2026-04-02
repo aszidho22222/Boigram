@@ -227,67 +227,54 @@
         .spinner { border:4px solid rgba(255,255,255,0.3); border-top:4px solid var(--primary); border-radius:50%; width:45px; height:45px; animation:spin 1s linear infinite; margin: 0 auto; }
         @keyframes spin { 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
 
+        /* Desktop Optimization & Enhancements */
         @media (min-width: 768px) {
-            #app-container {
-                max-width: 950px; 
-                height: 90vh; 
-                border-radius: 25px;
-            }
+            /* Scrollbar for Desktop */
+            ::-webkit-scrollbar { display: block; width: 6px; height: 6px; }
+            ::-webkit-scrollbar-track { background: transparent; }
+            ::-webkit-scrollbar-thumb { background: var(--border-color); border-radius: 10px; }
+            ::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
-            .grid-list {
-                grid-template-columns: repeat(4, 1fr);
-                gap: 20px;
-                padding-bottom: 25px;
-            }
-
-            #login-box, #register-box {
-                max-width: 450px;
-                margin: 0 auto;
-                padding: 20px;
-                background: var(--card-bg);
-                border-radius: var(--radius);
-                border: 1px solid var(--border-color);
-                box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-            }
-
-            .read-content {
-                max-width: 700px;
-                margin: 0 auto;
-                padding: 40px 20px;
-                font-size: 18px; 
-            }
-
-            #detail-screen .card {
-                max-width: 550px;
-                margin: 0 auto;
-                padding: 30px;
-            }
+            #app-container { max-width: 1100px; height: 95vh; border-radius: 25px; }
             
-            #det-cover {
-                width: 180px !important; 
-                border-radius: 15px !important;
+            /* Screen Padding Adjustment for Sidebar Navigation */
+            .screen { padding: 25px 25px 25px 115px; }
+            #auth-screen { padding-left: 25px; }
+            #reading-screen { padding: 0; }
+            
+            /* Desktop Sidebar Navigation */
+            .bottom-nav { 
+                top: 0; left: 0; width: 90px; height: 100%; 
+                flex-direction: column; justify-content: center; 
+                border-radius: 25px 0 0 25px; border-top: none; 
+                border-right: 1px solid var(--border-color); 
+                box-shadow: 4px 0 20px rgba(0,0,0,0.05); 
             }
+            .nav-item { padding: 15px 0; }
 
-            #wallet-screen .card, #wallet-screen .wallet-box, 
-            #profile-screen .card {
-                max-width: 550px;
-                margin: 0 auto 15px auto;
-            }
+            /* Modals and Overlays Size Limit */
+            .modal-content { max-width: 500px; margin: 0 auto; }
+            #toast { max-width: 400px; }
+            .search-input-anim.active { max-width: 400px; }
+            #payment-screen .card { max-width: 550px; margin: 0 auto 15px auto; }
 
-            #side-menu-drawer {
-                  width: 320px;
-                  left: -330px; 
+            .grid-list { grid-template-columns: repeat(4, 1fr); gap: 20px; padding-bottom: 25px; }
+            
+            #login-box, #register-box { 
+                max-width: 450px; margin: 0 auto; padding: 20px; 
+                background: var(--card-bg); border-radius: var(--radius); 
+                border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
             }
+            .read-content { max-width: 700px; margin: 0 auto; padding: 40px 20px; font-size: 18px; }
+            #detail-screen .card { max-width: 550px; margin: 0 auto; padding: 30px; }
+            #det-cover { width: 180px !important; border-radius: 15px !important; }
+            #wallet-screen .card, #wallet-screen .wallet-box, #profile-screen .card { max-width: 550px; margin: 0 auto 15px auto; }
+            #side-menu-drawer { width: 320px; left: -330px; }
         }
 
         @media (min-width: 1200px) {
-            #app-container {
-                max-width: 1100px;
-            }
-            .grid-list {
-                grid-template-columns: repeat(5, 1fr);
-                gap: 25px;
-            }
+            #app-container { max-width: 1300px; }
+            .grid-list { grid-template-columns: repeat(6, 1fr); gap: 25px; }
         }
     </style>
 </head>
@@ -579,7 +566,7 @@
                 <p>আমাদের প্ল্যাটফর্ম থেকে ই-বুক পড়ার জন্য আপনাকে নিচের নীতিমালাগুলো মেনে চলতে হবে:</p><br>
                 <p><b>১. ব্যক্তিগত ব্যবহার:</b> কেনা প্রতিটি ই-বুক শুধুমাত্র আপনার ব্যক্তিগত ব্যবহারের জন্য। একটি অ্যাকাউন্ট থেকে কেনা বই অন্য কাউকে শেয়ার করা, সোশ্যাল মিডিয়ায় আপলোড করা বা বাণিজ্যিক উদ্দেশ্যে ব্যবহার করা আইনত দণ্ডনীয় অপরাধ।</p><br>
                 <p><b>২. কপিরাইট সুরক্ষা:</b> ই-বুকের টেক্সট কপি করা বা স্ক্রিনশট নিয়ে ছড়িয়ে দেওয়া থেকে বিরত থাকুন। আমাদের সিস্টেমে কপিরাইট সুরক্ষার ব্যবস্থা রয়েছে এবং আইন ভঙ্গ করলে আপনার অ্যাকাউন্ট আজীবনের জন্য ব্লক করা শিক্ষিত হবে।</p><br>
-                <p><b>৩. রিফান্ড পলিসি:</b> যেহেতু ই-বুক একটি ডিজিটাল পণ্য, তাই একবার কেনা হয়ে গেলে বা পড়ার এক্সেস পেয়ে গেলে সাধারণত কোনো টাকা ফেরত (Refund) দেওয়া হয় না। তবে টেকনিক্যাল কোনো সমস্যার কারণে বই দেখতে না পারলে আমাদের সাপোর্টে যোগাযোগ করুন।</p><br>
+                <p><b>৩. রিফান্ড পলিসি:</b> যেহেতু ই-বুক একটি ডিজিটাল পণ্য, তাই একবার কেনা হয়ে গেলে বা পড়ার এক্সেস পেয়ে গেলে সাধারণত কোনো টাকা ফেরত (Refund) দেওয়া হয় আধুনিক। তবে টেকনিক্যাল কোনো সমস্যার কারণে বই দেখতে না পারলে আমাদের সাপোর্টে যোগাযোগ করুন।</p><br>
                 <p><b>৪. পেমেন্ট ভেরিফিকেশন:</b> পেমেন্ট করার পর সঠিক ট্রানজেকশন আইডি প্রদান করুন। ভুল তথ্য দিয়ে বই পাওয়ার চেষ্টা করলে আপনার অ্যাকাউন্টটি স্থগিত করা হতে পারে।</p><br>
             </div>
             <button class="btn btn-primary" onclick="acceptTerms()">আমি একমত (I Agree)</button>
@@ -1005,6 +992,11 @@
         });
 
         window.register = function() {
+            // ১. LocalStorage দিয়ে একই ডিভাইসে একাধিক অ্যাকাউন্ট ব্লক করা
+            if(localStorage.getItem('boigram_device_registered') === 'true') {
+                return showToast("সতর্কতা: এই ডিভাইস থেকে ইতিমধ্যে একটি অ্যাকাউন্ট তৈরি করা হয়েছে!");
+            }
+
             const name = document.getElementById('reg-name').value.trim(); 
             const username = document.getElementById('reg-username').value.trim(); 
             const email = document.getElementById('reg-email').value.trim(); 
@@ -1014,6 +1006,12 @@
             const isAgreed = document.getElementById('agree-tnc').checked;
             
             if(!name || !username || !email || !pass || !age || !isAgreed) return showToast("Please fill all required fields and agree to T&C!");
+            
+            // ২. শুধুমাত্র @gmail.com ভ্যালিডেশন (ফেক/টেম্প মেইল ব্লক)
+            if(!email.toLowerCase().endsWith('@gmail.com')) {
+                return showToast("অ্যাকাউন্ট খুলতে অবশ্যই একটি সঠিক @gmail.com ইমেইল ব্যবহার করতে হবে!");
+            }
+
             if(Number(age) < 12) return showToast("Age must be at least 12 years!");
             if(phone && phone.length < 11) return showToast("If provided, phone must be at least 11 digits!");
             
@@ -1023,8 +1021,16 @@
                     name: name, username: username, email: email, phone: phone, age: Number(age), 
                     coins: 0, role: 'user', joinedAt: Date.now(), status: 'active' 
                 }); 
-                window.hideLoader(); showToast("Registration Successful!");
-            }).catch(err => { window.hideLoader(); showToast(err.message); });
+                
+                // সফলভাবে অ্যাকাউন্ট খোলা হলে ডিভাইসে মার্ক করে দেওয়া
+                localStorage.setItem('boigram_device_registered', 'true');
+
+                window.hideLoader(); 
+                showToast("Registration Successful!");
+            }).catch(err => { 
+                window.hideLoader(); 
+                showToast(err.message); 
+            });
         };
 
         window.login = function() {
@@ -1322,12 +1328,18 @@
 
             if((Number(userData.coins) || 0) < finalPrice) { window.hideLoader(); return showToast("Insufficient coins! Please deposit.");}
 
+            // CRITICAL FIX: Calculate commissions based on finalPrice (discounted amount)
             const originalPrice = Number(currentBookData.price); 
-            const writerSplit = originalPrice * (sysWriterPercent / 100); 
+            const writerSplit = finalPrice * (sysWriterPercent / 100); 
             let affiliateSplit = 0, adminIncomeSplit = 0, systemReserveSplit = 0;
 
-            if (voucherData) { affiliateSplit = originalPrice * (sysAffiliatePercent / 100); adminIncomeSplit = finalPrice - writerSplit - affiliateSplit; } 
-            else { systemReserveSplit = originalPrice * (sysAffiliatePercent / 100); adminIncomeSplit = finalPrice - writerSplit - systemReserveSplit; }
+            if (voucherData) { 
+                affiliateSplit = finalPrice * (sysAffiliatePercent / 100); 
+                adminIncomeSplit = finalPrice - writerSplit - affiliateSplit; 
+            } else { 
+                systemReserveSplit = finalPrice * (sysAffiliatePercent / 100); 
+                adminIncomeSplit = finalPrice - writerSplit - systemReserveSplit; 
+            }
 
             const updates = {}; let txId = db.ref().push().key;
             updates[`users/${currentUser.uid}/coins`] = firebase.database.ServerValue.increment(-finalPrice);
