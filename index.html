@@ -888,13 +888,22 @@
                 let html = `<div class="cat-pill active" id="cat-all" onclick="selectCategory('', 'cat-all')"><span class="lang-all">${d.all}</span></div>
                             <div class="cat-pill" id="cat-free" onclick="selectCategory('_FREE_', 'cat-free')">🎁 <span class="lang-free">${d.free}</span></div>`;
                 if(snap.exists()) {
-                    let i = 0; snap.forEach(child => { 
+                    let catArray = [];
+                    snap.forEach(child => { 
                         let catVal = child.val(); 
                         if(catVal && typeof catVal === 'object' && catVal.name) {
-                            let catName = String(catVal.name);
-                            html += `<div class="cat-pill" id="cat-i-${i}" onclick="selectCategory('${catName.replace(/'/g, "\\'")}', 'cat-i-${i}')">${catName}</div>`; 
-                            i++;
+                            catArray.push(catVal);
                         }
+                    });
+                    
+                    // FIX: Sorted by Admin Panel's drag-and-drop order
+                    catArray.sort((a, b) => (a.order || 0) - (b.order || 0));
+                    
+                    let i = 0; 
+                    catArray.forEach(catVal => {
+                        let catName = String(catVal.name);
+                        html += `<div class="cat-pill" id="cat-i-${i}" onclick="selectCategory('${catName.replace(/'/g, "\\'")}', 'cat-i-${i}')">${catName}</div>`; 
+                        i++;
                     });
                 }
                 menu.innerHTML = html; applyLanguage();
@@ -930,6 +939,18 @@
             }
             db.ref(`books/${currentBookId}/ratings/${currentUser.uid}`).set(rating).then(() => { 
                 showToast("ধন্যবাদ! আপনার রেটিং সেভ হয়েছে। ⭐"); 
+                
+                // FIX: Real-time UI Update immediately
+                if(currentBookData) {
+                    if(!currentBookData.ratings) currentBookData.ratings = {};
+                    currentBookData.ratings[currentUser.uid] = rating;
+                    let ratingInfo = getBookRatingInfo(currentBookData);
+                    let display = document.getElementById('det-rating-display');
+                    if(display) {
+                        display.innerHTML = ratingInfo.count > 0 ? `<i class="fas fa-star"></i> ${ratingInfo.avg} out of 5 <span style="font-size: 13px; color:var(--text-muted);">(${ratingInfo.count} reviews)</span>` : `<i class="far fa-star"></i> No ratings yet`;
+                    }
+                }
+
                 if(isFromModal) { setTimeout(() => { closeModal('rating-modal'); }, 1000); }
             }).catch(err => showToast("Error saving rating: " + err.message));
         };
@@ -1046,8 +1067,13 @@
             db.ref('users/' + currentUser.uid).on('value', snap => {
                 if(snap.exists()){ 
                     userData = snap.val(); 
-                    if(userData.status === 'blocked') { showToast("Your account has been BLOCKED."); auth.signOut(); return; }
-                } else { userData = { name: "User", username: "", email: currentUser.email, phone: "", age: "", coins: 0, favorites: {}, library: {} }; }
+                    if(userData.status === 'blocked') { 
+                        // FIX: Robust real-time blocking that forces reload
+                        showToast("Your account has been BLOCKED."); 
+                        auth.signOut().then(() => { window.location.reload(); });
+                        return; 
+                    }
+                } else { userData = { name: "User", username: "", email: currentUser.email, phone: "", age: "", coins: 0, favorites: {}, library: {}, usedVouchers: {} }; }
                 
                 document.getElementById('user-balance').innerText = userData.coins || 0;
                 if(document.getElementById('profile-wallet-balance')) { document.getElementById('profile-wallet-balance').innerText = userData.coins || 0; }
@@ -1302,6 +1328,12 @@
             if(!currentUser) return showToast("Please login to apply vouchers.");
             const code = document.getElementById('voucher-code').value.trim();
             if(!code) return showToast("Enter voucher code");
+            
+            // FIX: Check if the user already used this specific voucher code
+            if(userData && userData.usedVouchers && userData.usedVouchers[code]) {
+                return showToast("You have already used this voucher!");
+            }
+
             db.ref('vouchers/' + code).once('value', snap => {
                 if(snap.exists() && snap.val().status === 'active' && snap.val().bookId === currentBookId) {
                     voucherData = snap.val(); voucherData.code = code; 
@@ -1328,7 +1360,6 @@
 
             if((Number(userData.coins) || 0) < finalPrice) { window.hideLoader(); return showToast("Insufficient coins! Please deposit.");}
 
-            // CRITICAL FIX: Calculate commissions based on finalPrice (discounted amount)
             const originalPrice = Number(currentBookData.price); 
             const writerSplit = finalPrice * (sysWriterPercent / 100); 
             let affiliateSplit = 0, adminIncomeSplit = 0, systemReserveSplit = 0;
@@ -1347,8 +1378,17 @@
             updates[`writers/${currentBookData.writerId}/wallet`] = firebase.database.ServerValue.increment(writerSplit);
             updates[`transactions/${currentUser.uid}/${txId}`] = { bookId: currentBookId, title: currentBookData.title, amount: finalPrice, timestamp: firebase.database.ServerValue.TIMESTAMP };
             
-            if (voucherData) { updates[`affiliates/${voucherData.affId}/wallet`] = firebase.database.ServerValue.increment(affiliateSplit); updates[`adminIncome/totalIncome`] = firebase.database.ServerValue.increment(adminIncomeSplit); updates[`vouchers/${voucherData.code}/status`] = 'used'; } 
-            else { updates[`adminIncome/totalIncome`] = firebase.database.ServerValue.increment(adminIncomeSplit); updates[`adminIncome/systemReserve`] = firebase.database.ServerValue.increment(systemReserveSplit); }
+            if (voucherData) { 
+                updates[`affiliates/${voucherData.affId}/wallet`] = firebase.database.ServerValue.increment(affiliateSplit); 
+                updates[`adminIncome/totalIncome`] = firebase.database.ServerValue.increment(adminIncomeSplit); 
+                
+                // FIX: Log this voucher as used ONLY for this specific user instead of destroying it globally
+                updates[`users/${currentUser.uid}/usedVouchers/${voucherData.code}`] = true; 
+            } 
+            else { 
+                updates[`adminIncome/totalIncome`] = firebase.database.ServerValue.increment(adminIncomeSplit); 
+                updates[`adminIncome/systemReserve`] = firebase.database.ServerValue.increment(systemReserveSplit); 
+            }
             updates[`adminIncome/totalSales`] = firebase.database.ServerValue.increment(1);
 
             try { await db.ref().update(updates); window.hideLoader(); showToast("Book purchased successfully!"); nav('library-screen'); } 
