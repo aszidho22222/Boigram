@@ -144,8 +144,8 @@
         .nav-label { font-size: 11px; display: block; margin-top: 4px; font-weight: bold; font-family: 'Nunito', sans-serif;}
 
         #reading-screen { background: var(--bg-color); color: var(--text-main); z-index: 30; position: absolute; top:0; left:0; width:100%; height:100%; display:none; flex-direction: column; overflow: hidden; border-radius: inherit; }
-        .read-tools { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: var(--card-bg); box-shadow: 0 2px 10px rgba(0,0,0,0.05); z-index: 2;}
-        .read-content { flex: 1; padding: 20px; overflow-y: auto; font-size: 16px; line-height: 1.8; transition: 0.3s; white-space: pre-wrap; z-index: 1; position: relative;}
+        .read-tools { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: var(--card-bg); box-shadow: 0 2px 10px rgba(0,0,0,0.05); z-index: 50; position: relative;}
+        .read-content { flex: 1; padding: 20px; overflow-y: auto; font-size: 16px; line-height: 1.8; transition: 0.3s; white-space: normal; z-index: 1; position: relative; text-align: justify;} /* Changed white-space for paragraphs */
         .read-footer { display: flex; justify-content: space-between; padding: 15px; background: var(--card-bg); box-shadow: 0 -2px 10px rgba(0,0,0,0.05); z-index: 2;}
 
         .watermark-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; opacity: 1; }
@@ -227,6 +227,122 @@
         .spinner { border:4px solid rgba(255,255,255,0.3); border-top:4px solid var(--primary); border-radius:50%; width:45px; height:45px; animation:spin 1s linear infinite; margin: 0 auto; }
         @keyframes spin { 0%{transform:rotate(0deg);} 100%{transform:rotate(360deg);} }
 
+        /* ========================================================
+           PREMIUM BOOK READING THEMES (Merged Intact)
+           ======================================================== */
+        
+        /* Drop-cap for paragraphs inside read-content */
+        #read-content p { margin-bottom: 15px; line-height: 1.8; }
+        #read-content p.drop-cap::first-letter {
+            font-size: 3.5em; color: var(--accent-color, var(--primary)); float: left; line-height: 0.8; 
+            padding-right: 8px; padding-top: 4px; font-weight: bold; font-family: 'Times New Roman', serif;
+        }
+
+        /* Reading Screen Base Variables */
+        #reading-screen {
+            --r-body-bg: var(--bg-color); --r-page-bg: var(--card-bg); --r-text-color: var(--text-main);
+            --r-accent-color: var(--primary); --r-page-border: none; --r-page-shadow: none;
+            --r-font-main: 'Nunito', sans-serif; --r-bg-pattern: none; --r-page-pattern: none;
+        }
+
+        /* 10 Premium Themes (Light Mode) */
+        #reading-screen[data-read-theme="1"] { /* Royal Classic */
+            --r-body-bg: #2c3e50; --r-page-bg: #fdfbf7; --r-text-color: #3e2723; --r-accent-color: #b8860b;
+            --r-page-border: 4px double #b8860b; --r-font-main: 'Georgia', serif;
+            --r-bg-pattern: radial-gradient(#d4af37 2px, transparent 2px); 
+        }
+        #reading-screen[data-read-theme="2"] { /* Vintage Scroll */
+            --r-body-bg: #8d6e63; --r-page-bg: #f4e8d2; --r-text-color: #4e342e; --r-accent-color: #bf360c;
+            --r-page-border: 2px dashed #a1887f; --r-font-main: 'Courier New', monospace;
+            --r-page-pattern: radial-gradient(circle, transparent 20%, #e0c9a3 150%);
+        }
+        #reading-screen[data-read-theme="3"] { /* Magic Fantasy */
+            --r-body-bg: #1a0b2e; --r-page-bg: #f3e5f5; --r-text-color: #4a148c; --r-accent-color: #ce93d8;
+            --r-page-border: 2px solid #ab47bc; --r-font-main: 'Trebuchet MS', sans-serif;
+            --r-bg-pattern: radial-gradient(circle, #fff 1px, transparent 1px);
+        }
+        #reading-screen[data-read-theme="4"] { /* Cyberpunk */
+            --r-body-bg: #000000; --r-page-bg: #e0f7fa; --r-text-color: #004d40; --r-accent-color: #00bfa5;
+            --r-page-border: 2px solid #00bfa5; --r-font-main: 'Lucida Console', monospace;
+            --r-bg-pattern: linear-gradient(transparent 95%, #00bfa5 95%), linear-gradient(90deg, transparent 95%, #00bfa5 95%);
+        }
+        #reading-screen[data-read-theme="5"] { /* Natural */
+            --r-body-bg: #e8f5e9; --r-page-bg: #ffffff; --r-text-color: #1b5e20; --r-accent-color: #43a047;
+            --r-page-border: 3px solid #81c784; --r-font-main: 'Arial', sans-serif;
+            --r-page-pattern: repeating-linear-gradient(45deg, #f1f8e9 25%, transparent 25%, transparent 75%, #f1f8e9 75%, #f1f8e9);
+        }
+        #reading-screen[data-read-theme="6"] { /* Diary */
+            --r-body-bg: #b0bec5; --r-page-bg: #fff9c4; --r-text-color: #263238; --r-accent-color: #1565c0;
+            --r-page-border: none; --r-font-main: 'Comic Sans MS', cursive;
+            --r-page-pattern: repeating-linear-gradient(transparent, transparent 31px, #90caf9 31px, #90caf9 32px);
+        }
+        #reading-screen[data-read-theme="7"] { /* Ocean Wave */
+            --r-body-bg: #e0f2f1; --r-page-bg: #ffffff; --r-text-color: #006064; --r-accent-color: #00bcd4;
+            --r-page-border: 2px solid #80deea; --r-font-main: 'Verdana', sans-serif;
+            --r-bg-pattern: repeating-radial-gradient(circle at 0 0, transparent 0, #e0f2f1 10px);
+        }
+        #reading-screen[data-read-theme="8"] { /* Glass Theme */
+            --r-body-bg: #ff9a9e; --r-page-bg: rgba(255, 255, 255, 0.7); --r-text-color: #333; --r-accent-color: #ff4081;
+            --r-page-border: 1px solid rgba(255,255,255,0.8); --r-font-main: 'Helvetica', sans-serif;
+            background-image: linear-gradient(to top, #fbc2eb 0%, #a6c1ee 100%);
+        }
+        #reading-screen[data-read-theme="9"] { /* Dark Gothic */
+            --r-body-bg: #212121; --r-page-bg: #eceff1; --r-text-color: #263238; --r-accent-color: #d32f2f;
+            --r-page-border: 3px solid #607d8b; --r-font-main: 'Times New Roman', serif;
+            --r-bg-pattern: linear-gradient(45deg, #000 25%, transparent 25%), linear-gradient(-45deg, #000 25%, transparent 25%);
+        }
+        #reading-screen[data-read-theme="10"] { /* Golden Sunset */
+            --r-body-bg: #ffeb3b; --r-page-bg: #fffde7; --r-text-color: #e65100; --r-accent-color: #ff6f00;
+            --r-page-border: 2px solid #ffca28; --r-font-main: 'Georgia', serif;
+            background-image: linear-gradient(120deg, #f6d365 0%, #fda085 100%);
+            --r-page-pattern: radial-gradient(circle, #fff 10%, transparent 80%);
+        }
+
+        /* 10 Premium Themes (Dark Mode overrides) */
+        body.dark-theme #reading-screen[data-read-theme="1"] { --r-page-bg: #1a1a1a; --r-text-color: #d4af37; }
+        body.dark-theme #reading-screen[data-read-theme="2"] { --r-page-bg: #2e201b; --r-text-color: #e0c9a3; }
+        body.dark-theme #reading-screen[data-read-theme="3"] { --r-page-bg: #120024; --r-text-color: #e1bee7; }
+        body.dark-theme #reading-screen[data-read-theme="4"] { --r-page-bg: #001100; --r-text-color: #00ffcc; --r-page-border: 2px solid #00ffcc; }
+        body.dark-theme #reading-screen[data-read-theme="5"] { --r-page-bg: #1b261b; --r-text-color: #a5d6a7; --r-page-pattern: repeating-linear-gradient(45deg, #253325 25%, transparent 25%, transparent 75%, #253325 75%, #253325); }
+        body.dark-theme #reading-screen[data-read-theme="6"] { --r-page-bg: #263238; --r-text-color: #cfd8dc; --r-page-pattern: repeating-linear-gradient(transparent, transparent 31px, #37474f 31px, #37474f 32px); }
+        body.dark-theme #reading-screen[data-read-theme="7"] { --r-page-bg: #002529; --r-text-color: #b2ebf2; --r-page-border: 2px solid #006064; }
+        body.dark-theme #reading-screen[data-read-theme="8"] { --r-page-bg: rgba(0, 0, 0, 0.7); --r-text-color: #f8bbd0; --r-page-border: 1px solid rgba(255,255,255,0.2); }
+        body.dark-theme #reading-screen[data-read-theme="9"] { --r-page-bg: #111; --r-text-color: #9e9e9e; --r-page-border: 3px solid #d32f2f; }
+        body.dark-theme #reading-screen[data-read-theme="10"]{ --r-page-bg: #3e2723; --r-text-color: #ffcc80; --r-page-border: 2px solid #e65100; }
+
+        /* Applying Variables */
+        #reading-screen { background-color: var(--r-body-bg); background-image: var(--r-bg-pattern); background-size: 30px 30px; font-family: var(--r-font-main); transition: all 0.3s ease; }
+        #read-content { 
+            background-color: var(--r-page-bg); background-image: var(--r-page-pattern); color: var(--r-text-color); 
+            border: var(--r-page-border); border-radius: 8px; margin: 10px auto; 
+            max-width: 700px; width: 95%; box-shadow: 0 10px 30px rgba(0,0,0,0.1); backdrop-filter: blur(10px);
+        }
+        #reading-screen .read-tools, #reading-screen .read-footer { background: var(--r-page-bg); color: var(--r-text-color); border-color: var(--r-page-border); }
+        #reading-screen .read-tools button, #read-page-indicator { color: var(--r-text-color) !important; text-shadow: none !important;}
+
+        /* Theme Dropdown Menu */
+        #read-theme-menu {
+            position: absolute; top: 60px; right: 15px; width: 260px;
+            background: var(--card-bg); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+            padding: 15px; border-radius: 12px; box-shadow: 0 8px 25px rgba(0,0,0,0.3);
+            z-index: 1001; transform: translateY(-10px) scale(0.95); opacity: 0; pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); transform-origin: top right;
+            border: 1px solid var(--border-color); color: var(--text-main);
+        }
+        #read-theme-menu.open { transform: translateY(0) scale(1); opacity: 1; pointer-events: auto; }
+        .theme-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; max-height: 250px; overflow-y: auto; padding-right: 5px; }
+        .theme-grid::-webkit-scrollbar { width: 4px; }
+        .theme-grid::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+        .theme-btn {
+            padding: 8px 10px; border: 1px solid var(--border-color); border-radius: 8px; font-size: 12px; font-family: sans-serif;
+            cursor: pointer; transition: all 0.2s; background: transparent; color: inherit; text-align: left; display: flex; align-items: center; gap: 6px;
+        }
+        .theme-btn:hover { background: rgba(112, 0, 255, 0.1); }
+        .theme-btn.active { border-color: var(--primary); background: rgba(112, 0, 255, 0.1); font-weight: bold; }
+
+        /* Fix for Diary Theme border-left */
+        #reading-screen[data-read-theme="6"] #read-content { border-left: 5px solid #d32f2f !important; }
+
         /* Desktop Optimization & Enhancements */
         @media (min-width: 768px) {
             /* Scrollbar for Desktop */
@@ -265,11 +381,14 @@
                 background: var(--card-bg); border-radius: var(--radius); 
                 border: 1px solid var(--border-color); box-shadow: 0 4px 15px rgba(0,0,0,0.05); 
             }
-            .read-content { max-width: 700px; margin: 0 auto; padding: 40px 20px; font-size: 18px; }
+            .read-content { max-width: 800px; width: 100%; margin: 20px auto; padding: 40px; font-size: 18px; }
             #detail-screen .card { max-width: 550px; margin: 0 auto; padding: 30px; }
             #det-cover { width: 180px !important; border-radius: 15px !important; }
             #wallet-screen .card, #wallet-screen .wallet-box, #profile-screen .card { max-width: 550px; margin: 0 auto 15px auto; }
             #side-menu-drawer { width: 320px; left: -330px; }
+            
+            /* Adjust Top Right Menu for Desktop */
+            #read-theme-menu { right: 25px; top: 70px; }
         }
 
         @media (min-width: 1200px) {
@@ -528,8 +647,8 @@
         </div>
     </div>
 
-    <!-- Reading Mode Screen -->
-    <div id="reading-screen">
+    <!-- Reading Mode Screen (Updated with Premium Themes) -->
+    <div id="reading-screen" data-read-theme="0">
         <div class="read-tools">
             <button onclick="closeReading()" style="background:none;border:none;font-size:20px;color:inherit;cursor:pointer;"><i class="fas fa-arrow-left"></i></button>
             <div id="read-page-indicator" style="font-size:14px; font-weight:bold; color:var(--secondary); text-shadow: var(--glow);">Page 1/1</div>
@@ -537,13 +656,35 @@
                 <button onclick="toggleAutoScroll()" id="auto-scroll-btn" style="background:none;border:none;font-size:18px;margin-right:15px;color:inherit;cursor:pointer;" title="Auto Scroll"><i class="fas fa-play"></i></button>
                 <button onclick="changeFontSize(-2)" style="background:none;border:none;font-size:18px;margin-right:10px;color:inherit;cursor:pointer;">A-</button>
                 <button onclick="changeFontSize(2)" style="background:none;border:none;font-size:18px;margin-right:15px;color:inherit;cursor:pointer;">A+</button>
-                <button onclick="toggleGlobalDarkMode()" style="background:none;border:none;font-size:20px;color:inherit;cursor:pointer;"><i class="fas fa-moon" id="read-dark-icon"></i></button>
+                <button onclick="toggleGlobalDarkMode()" style="background:none;border:none;font-size:20px;margin-right:15px;color:inherit;cursor:pointer;"><i class="fas fa-moon" id="read-dark-icon"></i></button>
+                <!-- New Settings Gear Icon -->
+                <button id="theme-settings-btn" style="background:none;border:none;font-size:20px;color:inherit;cursor:pointer;" title="Themes"><i class="fas fa-palette"></i></button>
             </div>
         </div>
         
+        <!-- Dropdown Menu for Themes -->
+        <div id="read-theme-menu">
+            <h3 style="font-family: sans-serif; font-size: 14px; margin-bottom: 8px; color: var(--text-muted);">ডিজাইন থিম</h3>
+            <div class="theme-grid" id="theme-buttons">
+                <button class="theme-btn active" data-t="0">📖 ডিফল্ট</button>
+                <button class="theme-btn" data-t="1">👑 ক্লাসিক</button>
+                <button class="theme-btn" data-t="2">📜 ভিনটেজ</button>
+                <button class="theme-btn" data-t="3">✨ ফ্যান্টাসি</button>
+                <button class="theme-btn" data-t="4">💻 সাইবারপাঙ্ক</button>
+                <button class="theme-btn" data-t="5">🌿 ন্যাচারাল</button>
+                <button class="theme-btn" data-t="6">🕵️ ডায়েরি</button>
+                <button class="theme-btn" data-t="7">🌊 ওয়েভ</button>
+                <button class="theme-btn" data-t="8">🔮 গ্লাস</button>
+                <button class="theme-btn" data-t="9">🦇 গথিক</button>
+                <button class="theme-btn" data-t="10">🌅 সানসেট</button>
+            </div>
+        </div>
+
         <div id="watermark-container" class="watermark-overlay"></div>
 
+        <!-- content area now acts as the physical book page -->
         <div id="read-content" class="read-content"></div>
+        
         <div class="read-footer">
             <button onclick="prevReadPage()" class="btn btn-secondary" style="width: 48%; border-radius: 12px;"><i class="fas fa-chevron-left"></i> Prev</button>
             <button onclick="nextReadPage()" class="btn btn-primary" style="width: 48%; border-radius: 12px;">Next <i class="fas fa-chevron-right"></i></button>
@@ -685,7 +826,7 @@
         let autoScrollInterval = null;
         let isAutoScrolling = false;
 
-        let sysWriterPercent = 50, sysAffiliatePercent = 20, sysUserDiscount = 10;
+        let sysWriterPercent = 50, sysWriterPercentNoVoucher = 70, sysAffiliatePercent = 20, sysUserDiscount = 10;
         let blockedWords = [];
         let communityLinks = { facebook: "https://facebook.com", telegram: "https://t.me" };
 
@@ -741,7 +882,10 @@
             db.ref('settings/commissions').on('value', snap => {
                 if(snap.exists()) {
                     let data = snap.val();
-                    sysWriterPercent = data.writerPercent || 50; sysAffiliatePercent = data.affiliatePercent || 20; sysUserDiscount = data.userDiscountPercent || 10;
+                    sysWriterPercent = data.writerPercent || 50; 
+                    sysWriterPercentNoVoucher = data.writerPercentNoVoucher || 70; 
+                    sysAffiliatePercent = data.affiliatePercent || 20; 
+                    sysUserDiscount = data.userDiscountPercent || 10;
                 }
             });
             db.ref('settings/blockedWords').on('value', snap => {
@@ -1013,7 +1157,6 @@
         });
 
         window.register = function() {
-            // ১. LocalStorage দিয়ে একই ডিভাইসে একাধিক অ্যাকাউন্ট ব্লক করা
             if(localStorage.getItem('boigram_device_registered') === 'true') {
                 return showToast("সতর্কতা: এই ডিভাইস থেকে ইতিমধ্যে একটি অ্যাকাউন্ট তৈরি করা হয়েছে!");
             }
@@ -1028,7 +1171,6 @@
             
             if(!name || !username || !email || !pass || !age || !isAgreed) return showToast("Please fill all required fields and agree to T&C!");
             
-            // ২. শুধুমাত্র @gmail.com ভ্যালিডেশন (ফেক/টেম্প মেইল ব্লক)
             if(!email.toLowerCase().endsWith('@gmail.com')) {
                 return showToast("অ্যাকাউন্ট খুলতে অবশ্যই একটি সঠিক @gmail.com ইমেইল ব্যবহার করতে হবে!");
             }
@@ -1043,7 +1185,6 @@
                     coins: 0, role: 'user', joinedAt: Date.now(), status: 'active' 
                 }); 
                 
-                // সফলভাবে অ্যাকাউন্ট খোলা হলে ডিভাইসে মার্ক করে দেওয়া
                 localStorage.setItem('boigram_device_registered', 'true');
 
                 window.hideLoader(); 
@@ -1068,7 +1209,6 @@
                 if(snap.exists()){ 
                     userData = snap.val(); 
                     if(userData.status === 'blocked') { 
-                        // FIX: Robust real-time blocking that forces reload
                         showToast("Your account has been BLOCKED."); 
                         auth.signOut().then(() => { window.location.reload(); });
                         return; 
@@ -1171,7 +1311,7 @@
                 processBooksData(snap);
             }, err => {
                 isBooksLoaded = true; 
-                document.getElementById('books-list').innerHTML = '<div style="text-align:center; grid-column:span 2; color:#e74c3c; padding:40px 10px;"><i class="fas fa-wifi" style="font-size:30px; margin-bottom:15px;"></i><p>ইন্টারনেট সংযোগ চেক করুন বা রিফ্রেশ দিন।</p></div>';
+                document.getElementById('books-list').innerHTML = '<div style="text-align:center; grid-column:span 2; color:#e74c3c; padding:40px 10px;"><i class="fas fa-wifi" style="font-size:30px; margin-bottom:15px;"></i><p>ইন্টারনেট সংযোগ চেক করুন বা রিফ্রেশ দিন.</p></div>';
             });
         }
 
@@ -1329,7 +1469,6 @@
             const code = document.getElementById('voucher-code').value.trim();
             if(!code) return showToast("Enter voucher code");
             
-            // FIX: Check if the user already used this specific voucher code
             if(userData && userData.usedVouchers && userData.usedVouchers[code]) {
                 return showToast("You have already used this voucher!");
             }
@@ -1361,13 +1500,15 @@
             if((Number(userData.coins) || 0) < finalPrice) { window.hideLoader(); return showToast("Insufficient coins! Please deposit.");}
 
             const originalPrice = Number(currentBookData.price); 
-            const writerSplit = finalPrice * (sysWriterPercent / 100); 
+            let writerSplit = 0; 
             let affiliateSplit = 0, adminIncomeSplit = 0, systemReserveSplit = 0;
 
             if (voucherData) { 
+                writerSplit = finalPrice * (sysWriterPercent / 100);
                 affiliateSplit = finalPrice * (sysAffiliatePercent / 100); 
                 adminIncomeSplit = finalPrice - writerSplit - affiliateSplit; 
             } else { 
+                writerSplit = finalPrice * (sysWriterPercentNoVoucher / 100);
                 systemReserveSplit = finalPrice * (sysAffiliatePercent / 100); 
                 adminIncomeSplit = finalPrice - writerSplit - systemReserveSplit; 
             }
@@ -1381,8 +1522,6 @@
             if (voucherData) { 
                 updates[`affiliates/${voucherData.affId}/wallet`] = firebase.database.ServerValue.increment(affiliateSplit); 
                 updates[`adminIncome/totalIncome`] = firebase.database.ServerValue.increment(adminIncomeSplit); 
-                
-                // FIX: Log this voucher as used ONLY for this specific user instead of destroying it globally
                 updates[`users/${currentUser.uid}/usedVouchers/${voucherData.code}`] = true; 
             } 
             else { 
@@ -1526,9 +1665,18 @@
 
         function renderReadingPage() {
             stopAutoScroll(); 
-            document.getElementById('read-content').innerText = currentReadingPages[currentReadingIndex] || "Empty Page";
+            let rawText = currentReadingPages[currentReadingIndex] || "Empty Page";
+            
+            // Convert raw text into paragraphs so the themes and drop-cap work correctly
+            let paragraphs = rawText.split(/\n+/).filter(p => p.trim() !== '').map(p => `<p>${p}</p>`).join('');
+            
+            document.getElementById('read-content').innerHTML = paragraphs;
             document.getElementById('read-page-indicator').innerText = `Page ${currentReadingIndex + 1} / ${currentReadingPages.length}`;
             document.getElementById('read-content').scrollTop = 0; 
+
+            // Add drop-cap class to the first paragraph automatically
+            let firstP = document.querySelector('#read-content p');
+            if(firstP) firstP.classList.add('drop-cap');
         }
 
         window.prevReadPage = function() { if(currentReadingIndex > 0) { currentReadingIndex--; renderReadingPage(); } else { showToast("This is the first page!"); } };
@@ -1566,6 +1714,53 @@
                 document.body.removeChild(tempInput);
             }
         };
+
+        // ==========================================
+        // Theme Menu Settings JS Initialization
+        // ==========================================
+        const themeSettingsBtn = document.getElementById('theme-settings-btn');
+        const themeMenu = document.getElementById('read-theme-menu');
+        const themeButtonsList = document.querySelectorAll('.theme-btn');
+        const readingScreen = document.getElementById('reading-screen');
+
+        // Toggle Theme Menu
+        themeSettingsBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            themeMenu.classList.toggle('open');
+        });
+
+        // Close when clicked outside
+        document.addEventListener('click', (e) => {
+            if (!themeMenu.contains(e.target) && e.target !== themeSettingsBtn && !themeSettingsBtn.contains(e.target)) {
+                themeMenu.classList.remove('open');
+            }
+        });
+
+        // Apply selected theme
+        themeButtonsList.forEach(btn => {
+            btn.addEventListener('click', () => {
+                themeButtonsList.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                const themeId = btn.getAttribute('data-t');
+                readingScreen.setAttribute('data-read-theme', themeId);
+                
+                // Save to local storage for future reads
+                localStorage.setItem('boigram_read_theme', themeId);
+            });
+        });
+
+        // Load saved theme on startup
+        const savedTheme = localStorage.getItem('boigram_read_theme');
+        if (savedTheme) {
+            readingScreen.setAttribute('data-read-theme', savedTheme);
+            themeButtonsList.forEach(b => {
+                if(b.getAttribute('data-t') === savedTheme) {
+                    themeButtonsList.forEach(btn => btn.classList.remove('active'));
+                    b.classList.add('active');
+                }
+            });
+        }
 
         // Initialize App Functionality
         applyLanguage(); loadCategories(); loadBooks(); loadQA(); checkAds();    
