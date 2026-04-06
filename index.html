@@ -796,6 +796,16 @@
     // This prevents all script crashes by ensuring
     // Firebase is fully loaded before ANY code runs.
     // ==========================================
+    
+    // ফায়ারবেস পারমিশন এরর কন্ট্রোল (নতুন যোগ করা হয়েছে)
+    function handleError(err) {
+        let msg = err ? (err.message || String(err)) : "Unknown Error";
+        if (msg.toLowerCase().includes('permission') || msg.toLowerCase().includes('access denied') || msg.toLowerCase().includes('client doesn\'t have permission')) {
+            return "আপনার জন্য অনুমতি নেই";
+        }
+        return msg;
+    }
+
     function startApp() {
         if (typeof firebase === 'undefined' || !firebase.apps) {
             setTimeout(startApp, 100); // Wait 100ms and try again
@@ -1009,7 +1019,7 @@
             }).then(() => {
                 window.hideLoader(); showToast("আপনার রিপোর্ট সফলভাবে জমা হয়েছে!");
                 document.getElementById('report-text').value = ''; closeModal('report-modal');
-            }).catch(e => { window.hideLoader(); showToast("Error: " + e.message); });
+            }).catch(e => { window.hideLoader(); showToast(handleError(e)); });
         };
 
         window.toggleSearch = function() {
@@ -1051,7 +1061,11 @@
                     });
                 }
                 menu.innerHTML = html; applyLanguage();
-            }, err => console.error("Categories error", err));
+            }, err => {
+                console.error("Categories error", err);
+                let errMsg = handleError(err);
+                if (errMsg === "আপনার জন্য অনুমতি নেই") showToast(errMsg);
+            });
         }
 
         window.selectCategory = function(val, pillId) {
@@ -1096,7 +1110,7 @@
                 }
 
                 if(isFromModal) { setTimeout(() => { closeModal('rating-modal'); }, 1000); }
-            }).catch(err => showToast("Error saving rating: " + err.message));
+            }).catch(err => showToast(handleError(err)));
         };
 
         window.showTerms = function() { openModal('tnc-modal'); };
@@ -1183,7 +1197,7 @@
                 db.ref('users/' + res.user.uid).set({ 
                     name: name, username: username, email: email, phone: phone, age: Number(age), 
                     coins: 0, role: 'user', joinedAt: Date.now(), status: 'active' 
-                }); 
+                }).catch(e => { window.hideLoader(); showToast(handleError(e)); }); 
                 
                 localStorage.setItem('boigram_device_registered', 'true');
 
@@ -1191,7 +1205,7 @@
                 showToast("Registration Successful!");
             }).catch(err => { 
                 window.hideLoader(); 
-                showToast(err.message); 
+                showToast(handleError(err)); 
             });
         };
 
@@ -1199,7 +1213,7 @@
             const email = document.getElementById('login-email').value.trim(); const pass = document.getElementById('login-pass').value;
             if(!email || !pass) return showToast("Enter email and password!");
             window.showLoader();
-            auth.signInWithEmailAndPassword(email, pass).then(()=> window.hideLoader()).catch(err => { window.hideLoader(); showToast(err.message); });
+            auth.signInWithEmailAndPassword(email, pass).then(()=> window.hideLoader()).catch(err => { window.hideLoader(); showToast(handleError(err)); });
         };
         
         window.logout = function() { if(confirm("Are you sure you want to logout?")) { auth.signOut(); } };
@@ -1232,6 +1246,9 @@
                 } else { ageInput.style.border = "1.5px solid var(--border-color)"; }
                 
                 renderBooks();
+            }, err => {
+                let errMsg = handleError(err);
+                if (errMsg === "আপনার জন্য অনুমতি নেই") showToast(errMsg);
             });
             
             db.ref('depositRequests').orderByChild('uid').equalTo(currentUser.uid).on('value', snap => {
@@ -1287,7 +1304,7 @@
             }).then(() => { 
                 window.hideLoader(); showToast("Profile updated!"); 
                 document.getElementById('edit-profile-age').style.border = "1.5px solid var(--border-color)";
-            }).catch(err => { window.hideLoader(); showToast("Error: " + err.message); });
+            }).catch(err => { window.hideLoader(); showToast(handleError(err)); });
         };
 
         function loadAdminPaymentSettings() {
@@ -1311,7 +1328,12 @@
                 processBooksData(snap);
             }, err => {
                 isBooksLoaded = true; 
-                document.getElementById('books-list').innerHTML = '<div style="text-align:center; grid-column:span 2; color:#e74c3c; padding:40px 10px;"><i class="fas fa-wifi" style="font-size:30px; margin-bottom:15px;"></i><p>ইন্টারনেট সংযোগ চেক করুন বা রিফ্রেশ দিন.</p></div>';
+                let errMsg = handleError(err);
+                if(errMsg === "আপনার জন্য অনুমতি নেই") {
+                    document.getElementById('books-list').innerHTML = `<div style="text-align:center; grid-column:span 2; color:#e74c3c; padding:40px 10px;"><p>${errMsg}</p></div>`;
+                } else {
+                    document.getElementById('books-list').innerHTML = '<div style="text-align:center; grid-column:span 2; color:#e74c3c; padding:40px 10px;"><i class="fas fa-wifi" style="font-size:30px; margin-bottom:15px;"></i><p>ইন্টারনেট সংযোগ চেক করুন বা রিফ্রেশ দিন.</p></div>';
+                }
             });
         }
 
@@ -1370,10 +1392,18 @@
                     let category = String(book.category || "General"); 
                     let bookPrice = Number(book.price) || 0; 
                     let bookCover = book.coverUrl || book.cover || 'https://via.placeholder.com/150x200?text=Cover';
+                    let writerEmailStr = String(book.writerEmail || "").toLowerCase();
                     
                     if(q !== '' && !title.toLowerCase().includes(q)) return;
-                    if (currentCategory === '_FREE_') { if (bookPrice > 0) return; } 
-                    else if (currentCategory && category !== currentCategory) { return; }
+                    
+                    // HQ Category logic
+                    if (currentCategory === '_FREE_') { 
+                        if (bookPrice > 0) return; 
+                    } else if (currentCategory === 'HQ') {
+                        if (writerEmailStr !== 'sazidhowlader07@gmail.com') return;
+                    } else if (currentCategory && category !== currentCategory) { 
+                        return; 
+                    }
 
                     let isFav = userData && userData.favorites && userData.favorites[book.id]; 
                     let favClass = isFav ? 'active' : '';
@@ -1424,8 +1454,8 @@
             if(!currentUser) { showToast("Please login to add favorites."); nav('auth-screen'); return; }
             if(!userData) { userData = { favorites: {} }; } 
             let isFav = userData.favorites && userData.favorites[bookId];
-            if(isFav) { db.ref(`users/${currentUser.uid}/favorites/${bookId}`).remove().then(() => showToast("Removed from Favorites")); } 
-            else { db.ref(`users/${currentUser.uid}/favorites/${bookId}`).set(true).then(() => showToast("Added to Favorites ❤️")); }
+            if(isFav) { db.ref(`users/${currentUser.uid}/favorites/${bookId}`).remove().then(() => showToast("Removed from Favorites")).catch(e => showToast(handleError(e))); } 
+            else { db.ref(`users/${currentUser.uid}/favorites/${bookId}`).set(true).then(() => showToast("Added to Favorites ❤️")).catch(e => showToast(handleError(e))); }
         };
 
         window.openBookDetail = function(id) {
@@ -1480,7 +1510,7 @@
                     finalPrice = Math.floor(currentBookData.price - discountAmount); if(finalPrice < 0) finalPrice = 0;
                     document.getElementById('det-price').innerText = finalPrice + ` (-${sysUserDiscount}%)`; showToast("Voucher Applied!");
                 } else { showToast("Invalid or expired voucher for this book!"); }
-            });
+            }).catch(e => showToast(handleError(e)));
         };
 
         window.buyBook = async function() {
@@ -1493,7 +1523,7 @@
                 const updates = {}; 
                 updates[`users/${currentUser.uid}/library/${currentBookId}`] = true; 
                 updates[`books/${currentBookId}/salesCount`] = firebase.database.ServerValue.increment(1);
-                db.ref().update(updates).then(() => { window.hideLoader(); showToast("Book added to Library! 🎉"); nav('library-screen'); }).catch(e => { window.hideLoader(); showToast("Error: " + e.message);});
+                db.ref().update(updates).then(() => { window.hideLoader(); showToast("Book added to Library! 🎉"); nav('library-screen'); }).catch(e => { window.hideLoader(); showToast(handleError(e));});
                 return; 
             }
 
@@ -1531,7 +1561,7 @@
             updates[`adminIncome/totalSales`] = firebase.database.ServerValue.increment(1);
 
             try { await db.ref().update(updates); window.hideLoader(); showToast("Book purchased successfully!"); nav('library-screen'); } 
-            catch(e) { window.hideLoader(); showToast("Error processing transaction!"); }
+            catch(e) { window.hideLoader(); showToast(handleError(e)); }
         };
 
         window.submitDepositRequest = function() {
@@ -1554,7 +1584,7 @@
                 window.hideLoader(); showToast("Request submitted successfully!");
                 document.getElementById('pay-amount').value = ''; document.getElementById('pay-trxid').value = ''; document.getElementById('pay-sender').value = '';
                 nav('wallet-screen');
-            }).catch(e => { window.hideLoader(); showToast("Error: " + e.message);});
+            }).catch(e => { window.hideLoader(); showToast(handleError(e));});
         };
 
         function loadLibrary() {
@@ -1633,7 +1663,7 @@
                 let book = snap.val();
                 if(book && book.pages && Array.isArray(book.pages)) { currentReadingPages = book.pages; } else if(book && book.content) { currentReadingPages = [book.content]; } else { currentReadingPages = ["No content available."]; }
                 generateCanvasWatermark(); currentReadingIndex = 0; renderReadingPage(); document.getElementById('reading-screen').style.display = 'flex';
-            });
+            }).catch(err => showToast(handleError(err)));
         };
 
         function stopAutoScroll() {
