@@ -1496,7 +1496,7 @@
 
         window.applyVoucher = function() {
             if(!currentUser) return showToast("Please login to apply vouchers.");
-            const code = document.getElementById('voucher-code').value.trim();
+            const code = document.getElementById('voucher-code').value.trim().toUpperCase(); 
             if(!code) return showToast("Enter voucher code");
             
             if(userData && userData.usedVouchers && userData.usedVouchers[code]) {
@@ -1505,8 +1505,17 @@
 
             db.ref('vouchers/' + code).once('value', snap => {
                 if(snap.exists() && snap.val().status === 'active' && snap.val().bookId === currentBookId) {
-                    voucherData = snap.val(); voucherData.code = code; 
-                    let discountAmount = currentBookData.price * (sysUserDiscount / 100);
+                    
+                    let vData = snap.val();
+                    let currentUses = vData.usageCount || 0;
+                    let maxUses = vData.maxUsage || 50;
+
+                    if (currentUses >= maxUses) {
+                        return showToast("This voucher has reached its maximum usage limit (50/50)!");
+                    }
+
+                    voucherData = vData; voucherData.code = code; 
+                    let discountAmount = Math.floor(currentBookData.price * (sysUserDiscount / 100));
                     finalPrice = Math.floor(currentBookData.price - discountAmount); if(finalPrice < 0) finalPrice = 0;
                     document.getElementById('det-price').innerText = finalPrice + ` (-${sysUserDiscount}%)`; showToast("Voucher Applied!");
                 } else { showToast("Invalid or expired voucher for this book!"); }
@@ -1534,31 +1543,80 @@
             let affiliateSplit = 0, adminIncomeSplit = 0, systemReserveSplit = 0;
 
             if (voucherData) { 
-                writerSplit = finalPrice * (sysWriterPercent / 100);
-                affiliateSplit = finalPrice * (sysAffiliatePercent / 100); 
+                writerSplit = Math.floor(finalPrice * (sysWriterPercent / 100));
+                affiliateSplit = Math.floor(finalPrice * (sysAffiliatePercent / 100)); 
                 adminIncomeSplit = finalPrice - writerSplit - affiliateSplit; 
             } else { 
-                writerSplit = finalPrice * (sysWriterPercentNoVoucher / 100);
-                systemReserveSplit = finalPrice * (sysAffiliatePercent / 100); 
+                writerSplit = Math.floor(finalPrice * (sysWriterPercentNoVoucher / 100));
+                systemReserveSplit = Math.floor(finalPrice * (sysAffiliatePercent / 100)); 
                 adminIncomeSplit = finalPrice - writerSplit - systemReserveSplit; 
             }
 
-            const updates = {}; let txId = db.ref().push().key;
+            const updates = {}; 
+            let txId = db.ref().push().key;
+            let saleId = db.ref().push().key; 
+
             updates[`users/${currentUser.uid}/coins`] = firebase.database.ServerValue.increment(-finalPrice);
             updates[`users/${currentUser.uid}/library/${currentBookId}`] = true; 
+            
+            // রাইটারের ব্যালেন্স এবং হিস্ট্রি আপডেট
             updates[`writers/${currentBookData.writerId}/wallet`] = firebase.database.ServerValue.increment(writerSplit);
+            updates[`writers/${currentBookData.writerId}/totalEarned`] = firebase.database.ServerValue.increment(writerSplit);
+            updates[`writers/${currentBookData.writerId}/totalSalesCount`] = firebase.database.ServerValue.increment(1);
+
+            // ইউজারের ট্রানজেকশন আপডেট
             updates[`transactions/${currentUser.uid}/${txId}`] = { bookId: currentBookId, title: currentBookData.title, amount: finalPrice, timestamp: firebase.database.ServerValue.TIMESTAMP };
             
+            // রাইটার অ্যাপের জন্য সেলস রেকর্ড অ্যাড করা হলো
+            updates[`sales/${saleId}`] = {
+                writerId: currentBookData.writerId,
+                bookId: currentBookId,
+                bookTitle: currentBookData.title,
+                writerEarnings: writerSplit,
+                buyerId: currentUser.uid,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            };
+
             if (voucherData) { 
+                // ১. অ্যাফিলিয়েটের ওয়ালেটে টাকা যোগ
                 updates[`affiliates/${voucherData.affId}/wallet`] = firebase.database.ServerValue.increment(affiliateSplit); 
-                updates[`adminIncome/totalIncome`] = firebase.database.ServerValue.increment(adminIncomeSplit); 
+                
+                // [UPDATE]: লিডারবোর্ড এবং আয়ের হিসাব ঠিক রাখতে অ্যাফিলিয়েটের মোট সেলস ও আর্নিং আপডেট
+                updates[`affiliates/${voucherData.affId}/totalSalesCount`] = firebase.database.ServerValue.increment(1);
+                updates[`affiliates/${voucherData.affId}/totalEarned`] = firebase.database.ServerValue.increment(affiliateSplit);
+
+                // ২. অ্যাফিলিয়েট অ্যাপ `vouchers/{code}/usageCount` থেকে ডাটা রিড করে।
+                updates[`vouchers/${voucherData.code}/usageCount`] = firebase.database.ServerValue.increment(1);
+                
+                // [UPDATE]: ভাউচার লিমিট শেষ হলে স্বয়ংক্রিয়ভাবে স্ট্যাটাস আপডেট
+                let currentUses = voucherData.usageCount || 0;
+                let maxUses = voucherData.maxUsage || 50;
+                if ((currentUses + 1) >= maxUses) {
+                    updates[`vouchers/${voucherData.code}/status`] = 'expired';
+                }
+
+                // ৩. নতুন সেলস রেকর্ড তৈরি
+                let affSaleId = db.ref().push().key;
+                updates[`affiliateSales/${voucherData.affId}/${affSaleId}`] = {
+                    bookId: currentBookId,
+                    bookTitle: currentBookData.title,
+                    buyerId: currentUser.uid,
+                    commission: affiliateSplit,
+                    voucherCode: voucherData.code,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP
+                };
+
                 updates[`users/${currentUser.uid}/usedVouchers/${voucherData.code}`] = true; 
-            } 
-            else { 
-                updates[`adminIncome/totalIncome`] = firebase.database.ServerValue.increment(adminIncomeSplit); 
+            } else { 
                 updates[`adminIncome/systemReserve`] = firebase.database.ServerValue.increment(systemReserveSplit); 
             }
+
+            if(adminIncomeSplit > 0) {
+                updates[`adminIncome/totalIncome`] = firebase.database.ServerValue.increment(adminIncomeSplit);
+            }
+
             updates[`adminIncome/totalSales`] = firebase.database.ServerValue.increment(1);
+            updates[`books/${currentBookId}/salesCount`] = firebase.database.ServerValue.increment(1);
 
             try { await db.ref().update(updates); window.hideLoader(); showToast("Book purchased successfully!"); nav('library-screen'); } 
             catch(e) { window.hideLoader(); showToast(handleError(e)); }
